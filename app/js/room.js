@@ -42,8 +42,8 @@ export async function joinRoom(roomId, { name, avatar }) {
   return roomId;
 }
 
-/** ロビーでの退室（オーナーの場合はルーム解散） */
-export async function leaveLobby() {
+/** ルームからの退室（オーナーの場合はルーム解散、ゲストのゲーム中退室は待機スキップ設定） */
+export async function leaveRoom() {
   const id = S.roomId;
   if (!id) return;
   try {
@@ -53,11 +53,14 @@ export async function leaveLobby() {
       ps.forEach((d) => batch.delete(d.ref));
       await batch.commit();
       await fb.deleteDoc(fb.roomRef(id));
-    } else {
+    } else if (S.room?.status === "waiting") {
       await fb.deleteDoc(fb.playerRef(id, S.uid));
+    } else if (S.room?.status === "playing") {
+      await fb.updateDoc(fb.playerRef(id, S.uid), { readySeq: 999999 });
     }
   } catch (e) { console.warn(e); }
 }
+export const leaveLobby = leaveRoom;
 
 /** 「OK」ボタン：現在フェーズ準備完了 */
 export async function markReady() {

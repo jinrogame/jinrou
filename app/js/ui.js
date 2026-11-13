@@ -11,6 +11,7 @@ const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const phone = $("#phone");
 const dlg = $("#resultDialog");
+const leaveDlg = $("#leaveDialog");
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const fmt = (s) => `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
 const fmtS = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
@@ -20,9 +21,16 @@ export const addCleanup = (f) => cleanups.push(f);
 export const profile = { name: localStorage.getItem("jinrou.name") || "", avatar: localStorage.getItem("jinrou.avatar") || "" };
 
 /* ------------------------------ 共通パーツ ------------------------------ */
+const roomBar = () => S.roomId && S.room ? `
+<div class="room-bar">
+  <span class="room-bar__id">ROOM: <b>${esc(S.roomId)}</b>${S.room.turn ? ` <span>（ターン ${S.room.turn}/${S.room.maxTurns}）</span>` : ""}</span>
+  <button type="button" class="room-leave-btn" data-leave-room>${isHost() ? "🚪 解散・退室" : "🚪 ルームを抜ける"}</button>
+</div>` : "";
+
 const shell = ({ phase = "night", bg = "bg_night", body, footer = "" }) => `
 <section class="screen is-active" data-phase="${phase}">
   <div class="screen__bg"><img src="img/${bg}.svg" alt="" width="390" height="844"></div>
+  ${roomBar()}
   <div class="screen__body">${body}</div>
   <div class="screen__footer">${footer}</div>
 </section>`;
@@ -52,12 +60,44 @@ export function showDialog({ ico = "🔮", title = "", body = "", note = "" }) {
 }
 dlg.addEventListener("click", (e) => { if (e.target === dlg) dlg.close(); });
 
+/** ルーム退室・解散の警告確認モーダルを表示 */
+export function confirmLeaveRoom() {
+  if (!leaveDlg) {
+    if (confirm(isHost() ? "本当にルームを解散してトップへ戻りますか？" : "本当にルームを抜けてトップへ戻りますか？")) {
+      window.dispatchEvent(new CustomEvent("jinrou:leave"));
+    }
+    return;
+  }
+  const host = isHost();
+  const playing = S.room?.status === "playing";
+  $("#leaveTitle").textContent = host ? "本当にルームを解散しますか？" : "本当にルームを抜けますか？";
+  $("#leaveBody").innerHTML = host
+    ? `あなたはオーナーのため、抜けると<span class="wolf">ルーム全体が解散</span>され、参加中の全プレイヤーがトップ画面へ戻ります。`
+    : playing
+      ? `現在ゲーム進行中です。<br>ルーム（<span class="human">${esc(S.roomId)}</span>）を抜けてトップ画面へ戻りますか？`
+      : `ルーム（<span class="human">${esc(S.roomId)}</span>）から退室してトップ画面へ戻ります。よろしいですか？`;
+  $("#leaveNote").textContent = host
+    ? "※解散したルームは元に戻せません。"
+    : "※ゲーム中に抜けた場合でも、同じルームIDを入力すれば再接続できます。";
+  $("#btnLeaveConfirm").textContent = host ? "はい、解散して抜ける" : "はい、ルームを抜ける";
+  if (!leaveDlg.open) leaveDlg.showModal();
+}
+leaveDlg?.addEventListener("click", (e) => { if (e.target === leaveDlg) leaveDlg.close(); });
+$("#btnLeaveCancel")?.addEventListener("click", () => leaveDlg?.close());
+$("#btnLeaveConfirm")?.addEventListener("click", () => {
+  leaveDlg?.close();
+  window.dispatchEvent(new CustomEvent("jinrou:leave"));
+});
+phone.addEventListener("click", (e) => {
+  if (e.target.closest("[data-leave-room]")) confirmLeaveRoom();
+});
+
 function syncOk(r, required, label, canOk = true) {
   const btn = $("#okBtn", r);
   if (!btn) return;
   const seq = S.room.phaseSeq;
-  const done = me()?.readySeq === seq;
-  const n = required.filter((p) => p.readySeq === seq).length;
+  const done = (me()?.readySeq || 0) >= seq;
+  const n = required.filter((p) => (p.readySeq || 0) >= seq).length;
   if (!required.some((p) => p.uid === S.uid)) {
     btn.disabled = true;
     btn.textContent = `観戦中（${n}/${required.length}）`;
@@ -225,7 +265,7 @@ SCREENS.lobby = {
       try { await navigator.clipboard.writeText(url); showDialog({ ico: "📋", title: "招待リンクをコピーしました", body: `<span style="font-size:14px">${esc(url)}</span>`, note: "LINEなどで友だちに送ってください" }); }
       catch { prompt("招待リンク", url); }
     });
-    $("#leaveBtn", r).addEventListener("click", () => window.dispatchEvent(new CustomEvent("jinrou:leave")));
+    $("#leaveBtn", r).addEventListener("click", () => confirmLeaveRoom());
     if (!isHost()) return;
     $("#turnMinus", r).addEventListener("click", () => Host.setMaxTurns((S.room.maxTurns || 5) - 1));
     $("#turnPlus", r).addEventListener("click", () => Host.setMaxTurns((S.room.maxTurns || 5) + 1));
@@ -711,7 +751,7 @@ SCREENS.finished = {
   },
   bind(r) {
     $("#againBtn", r)?.addEventListener("click", (e) => { e.currentTarget.disabled = true; Host.resetToLobby(); });
-    $("#topBtn", r).addEventListener("click", () => window.dispatchEvent(new CustomEvent("jinrou:leave", { detail: { keepRoom: true } })));
+    $("#topBtn", r).addEventListener("click", () => confirmLeaveRoom());
   },
 };
 

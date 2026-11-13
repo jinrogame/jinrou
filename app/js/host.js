@@ -110,7 +110,7 @@ async function evaluate() {
   const forced = S.forcedSeq === seq;
   const all = playerList();
   const alive = all.filter((p) => p.alive);
-  const readyAll = (arr) => arr.every((p) => p.readySeq === seq);
+  const readyAll = (arr) => arr.every((p) => (p.readySeq || 0) >= seq);
   const expired = !!r.phaseEndsAt && now >= r.phaseEndsAt;
   const go = async (fn) => {
     actedSeq = seq;

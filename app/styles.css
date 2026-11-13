@@ -951,3 +951,54 @@ button.big-id { font-family: inherit; }
   border-color: #38bdf8;
   color: #38bdf8;
 }
+
+/* ---------------- ルーム上部ステータス＆退室ボタンバー ---------------- */
+.room-bar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 14px 2px;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--muted);
+  border-bottom: 1px solid #ffffff12;
+  background: #06091399;
+}
+.room-bar__id {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.room-bar__id b {
+  color: var(--cyan);
+  letter-spacing: 1px;
+}
+.room-leave-btn {
+  background: #2a121d;
+  border: 1px solid #fb718566;
+  color: #fecdd3;
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all .15s ease;
+}
+.room-leave-btn:hover, .room-leave-btn:active {
+  background: #4c1529;
+  border-color: var(--red);
+  color: #fff;
+}
+
+/* ---------------- 退室確認警告モーダル ---------------- */
+dialog.result--warn {
+  border-color: var(--red);
+  box-shadow: 0 0 50px #fb718555;
+}
+.leave-dialog__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+

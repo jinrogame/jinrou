@@ -76,7 +76,7 @@ function subscribe(roomId) {
 
 window.addEventListener("jinrou:enter", (e) => subscribe(e.detail));
 window.addEventListener("jinrou:leave", async () => {
-  if (S.room?.status === "waiting") await Room.leaveLobby();
+  await Room.leaveRoom();
   leaveToTitle();
 });
 
