@@ -1,37 +1,3 @@
-export function triggerConfetti(container = $("#phone")) {
-  if (!container) return;
-  const wrap = document.createElement("div");
-  wrap.className = "mash-celebration";
-  const colors = ["#f59e0b", "#fbbf24", "#38bdf8", "#34d399", "#f43f5e", "#fff"];
-  for (let i = 0; i < 35; i++) {
-    const c = document.createElement("div");
-    c.className = "mash-confetti";
-    c.style.setProperty("--c", colors[i % colors.length]);
-    c.style.setProperty("--x", `${Math.random() * 95}%`);
-    c.style.setProperty("--drift", `${(Math.random() - 0.5) * 80}px`);
-    c.style.animationDelay = `${Math.random() * 0.8}s`;
-    c.style.animationDuration = `${1.6 + Math.random() * 1}s`;
-    wrap.appendChild(c);
-  }
-  container.appendChild(wrap);
-  setTimeout(() => wrap.remove(), 2800);
-}
-
-/* ---------------- 投票時の断罪ハンマー・執行カットイン ---------------- */
-export function triggerJudgeEffect(targetName) {
-  const phone = $("#phone");
-  if (!phone) return;
-  const overlay = document.createElement("div");
-  overlay.className = "judge-overlay";
-  overlay.innerHTML = `
-    <div class="judge-hammer">🔨</div>
-    <div class="judge-stamp">執行確定</div>
-    <div class="judge-target-name">対象：${esc(targetName)}</div>
-  `;
-  phone.appendChild(overlay);
-  setTimeout(() => overlay.remove(), 850);
-}
-
 // 画面描画（フェーズごとに画面を1回だけ構築し、スナップショットのたびに update() で差分反映）
 import { S, isHost, me, playerList, aliveList, nameOf, avatarOf, sortedPlayers } from "./state.js";
 import { ROLES, WOLF_CONFIG, CITIZEN_CONFIG, TASKS, EFFECTS, TIME, MAX_PLAYERS } from "./data.js";
@@ -53,6 +19,40 @@ const fmtS = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
 let root = null, lastKey = null, ctx = {}, cleanups = [];
 export const addCleanup = (f) => cleanups.push(f);
 export const profile = { name: localStorage.getItem("jinrou.name") || "", avatar: localStorage.getItem("jinrou.avatar") || "" };
+
+export function triggerConfetti(container = $("#phone")) {
+  if (!container) return;
+  const wrap = document.createElement("div");
+  wrap.className = "mash-celebration";
+  const colors = ["#f59e0b", "#fbbf24", "#38bdf8", "#34d399", "#f43f5e", "#fff"];
+  for (let i = 0; i < 35; i++) {
+    const c = document.createElement("div");
+    c.className = "mash-confetti";
+    c.style.setProperty("--c", colors[i % colors.length]);
+    c.style.setProperty("--x", `${Math.random() * 95}%`);
+    c.style.setProperty("--drift", `${(Math.random() - 0.5) * 80}px`);
+    c.style.animationDelay = `${Math.random() * 0.8}s`;
+    c.style.animationDuration = `${1.6 + Math.random() * 1}s`;
+    wrap.appendChild(c);
+  }
+  container.appendChild(wrap);
+  setTimeout(() => wrap.remove(), 2800);
+}
+
+/* ---------------- 投票時の断罪ハンマー・執行カットイン ---------------- */
+export function triggerJudgeEffect(targetName) {
+  const p = $("#phone");
+  if (!p) return;
+  const overlay = document.createElement("div");
+  overlay.className = "judge-overlay";
+  overlay.innerHTML = `
+    <div class="judge-hammer">🔨</div>
+    <div class="judge-stamp">執行確定</div>
+    <div class="judge-target-name">対象：${esc(targetName)}</div>
+  `;
+  p.appendChild(overlay);
+  setTimeout(() => overlay.remove(), 850);
+}
 
 /* ------------------------------ 共通パーツ ------------------------------ */
 const roomBar = () => S.roomId && S.room ? `
