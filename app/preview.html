@@ -26,9 +26,9 @@
             <button type="button" class="btn btn--ghost btn--sm" id="btnFlipToggle" style="width:auto">🔄 裏表反転</button>
           </div>
 
-          <button type="button" class="flip is-flipped" id="previewFlip" aria-label="カードをタップして反転">
+          <button type="button" class="flip" id="previewFlip" aria-label="カードをタップして反転">
             <div class="flip__inner">
-              <div class="flip__face"><img src="img/role_card_back.svg" alt="役職カード裏面" width="400" height="560"></div>
+              <div class="flip__face"><img src="img/role_card_back.jpg" alt="役職カード裏面" width="571" height="1024"></div>
               <div class="flip__face flip__front"><img id="previewRoleImg" src="img/role_wolf_god.jpg" alt="役職カード" width="571" height="1024"></div>
             </div>
           </button>
@@ -83,7 +83,7 @@
     const curRoleLabel = document.getElementById("curRoleLabel");
     const screen = document.getElementById("previewScreen");
 
-    function selectRole(key) {
+    function selectRole(key, flipToFront = true) {
       const r = ROLES[key];
       if (!r) return;
       roleImg.src = r.img;
@@ -94,7 +94,7 @@
       roleTeam.textContent = isWolf ? "人狼陣営" : "市民陣営";
       roleTeam.className = "chip " + (isWolf ? "chip--red" : "chip--accent");
       screen.style.setProperty("--accent", isWolf ? "var(--red)" : "var(--cyan)");
-      flipBtn.classList.add("is-flipped");
+      if (flipToFront) flipBtn.classList.add("is-flipped");
       [...roleChips.querySelectorAll(".dev-btn")].forEach((b) => {
         b.style.borderColor = b.dataset.role === key ? "#38bdf8" : "#475569";
         b.style.color = b.dataset.role === key ? "#38bdf8" : "#f1f5f9";
@@ -107,9 +107,9 @@
       btn.className = "dev-btn";
       btn.dataset.role = key;
       btn.textContent = r.name;
-      btn.addEventListener("click", () => selectRole(key));
+      btn.addEventListener("click", () => selectRole(key, true));
       roleChips.appendChild(btn);
-      if (idx === 0) selectRole(key);
+      if (idx === 0) selectRole(key, false);
     });
 
     flipBtn.addEventListener("click", () => flipBtn.classList.toggle("is-flipped"));
