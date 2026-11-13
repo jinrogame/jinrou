@@ -275,6 +275,9 @@ export function playMorningCutscene(report, turn, onDone) {
         <!-- ナイト護衛成功時の聖なる盾カットインエフェクト（飛びかかった瞬間に発動） -->
         <div class="cutscene__shield-intervene" id="csShieldIntervene" hidden>
           <div class="shield-flash"></div>
+          <div class="shield-hex-barrier">
+            <div class="shield-hex-grid"></div>
+          </div>
           <div class="shield-barrier">
             <div class="shield-ring shield-ring--1"></div>
             <div class="shield-ring shield-ring--2"></div>

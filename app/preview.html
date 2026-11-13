@@ -56,6 +56,19 @@
               <button type="button" class="btn btn--violet btn--sm" id="pNight">🐺 夜：狼の遠吠え</button>
             </div>
           </div>
+
+          <!-- 新規追加リッチエフェクト個別テスト -->
+          <div class="card card--blue">
+            <h2 class="card__title"><span class="dot"></span>✨ リッチエフェクト個別テスト</h2>
+            <div class="config-grid-2">
+              <button type="button" class="btn btn--solid btn--red btn--sm" id="fxPulse">💓 画面端ビネット脈動ON/OFF</button>
+              <button type="button" class="btn btn--solid btn--red btn--sm" id="fxJudge">🔨 投票断罪ハンマー</button>
+              <button type="button" class="btn btn--solid btn--green btn--sm" id="fxShield">🛡️ ホログラムバリア＆衝撃波</button>
+              <button type="button" class="btn btn--solid btn--amber btn--sm" id="fxMashPop">💥 連打オノマトペ＆紙吹雪</button>
+              <button type="button" class="btn btn--solid btn--cyan btn--sm" id="fxWinCit">🏆 市民勝利（聖光エフェクト）</button>
+              <button type="button" class="btn btn--solid btn--red btn--sm" id="fxWinWolf">🐺 人狼勝利（深紅瘴気エフェクト）</button>
+            </div>
+          </div>
         </div>
         <div class="screen__footer">
           <a href="index.html" class="btn btn--ghost" style="text-decoration:none;text-align:center;display:flex;align-items:center;justify-content:center">ゲーム本編へ戻る</a>
@@ -68,6 +81,7 @@
     import { S } from "./js/state.js";
     import { ROLES } from "./js/data.js";
     import { playMorningCutscene, playDayCutscene, playNightCutscene } from "./js/cutscenes.js";
+    import { triggerJudgeEffect, triggerConfetti } from "./js/ui.js";
 
     S.players = {
       p1: { name: "たろう", avatarId: "1", alive: true },
@@ -148,6 +162,58 @@
     });
     document.getElementById("pNight").addEventListener("click", () => {
       playNightCutscene(2, false);
+    });
+
+    // 新規エフェクト個別テスト配線
+    let isPulseOn = false;
+    document.getElementById("fxPulse").addEventListener("click", () => {
+      isPulseOn = !isPulseOn;
+      if (isPulseOn) screen.setAttribute("data-role-unrevealed", "");
+      else screen.removeAttribute("data-role-unrevealed");
+    });
+
+    document.getElementById("fxJudge").addEventListener("click", () => {
+      triggerJudgeEffect("たろう");
+    });
+
+    document.getElementById("fxShield").addEventListener("click", () => {
+      // 盾防御シーンを即座にプレビュー
+      playMorningCutscene({ exiled: ["p3"], victims: [], guardedSuccess: true }, 2);
+    });
+
+    document.getElementById("fxMashPop").addEventListener("click", () => {
+      const words = ["ドガッ！", "ズバッ！", "バババッ！", "ドカン！"];
+      for (let i = 0; i < 4; i++) {
+        setTimeout(() => {
+          const pop = document.createElement("div");
+          pop.className = "mash-pop-text";
+          pop.textContent = words[i % words.length];
+          pop.style.left = `${50 + (Math.random() * 30 - 15)}%`;
+          pop.style.top = `${45 + (Math.random() * 20 - 10)}%`;
+          pop.style.setProperty("--r", `${Math.random() * 24 - 12}deg`);
+          screen.appendChild(pop);
+          setTimeout(() => pop.remove(), 550);
+        }, i * 120);
+      }
+      triggerConfetti(document.getElementById("phone"));
+    });
+
+    document.getElementById("fxWinCit").addEventListener("click", () => {
+      const old = screen.querySelector(".win-fx-citizen, .win-fx-wolf");
+      old?.remove();
+      const fx = document.createElement("div");
+      fx.className = "win-fx-citizen";
+      screen.appendChild(fx);
+      setTimeout(() => fx.remove(), 4000);
+    });
+
+    document.getElementById("fxWinWolf").addEventListener("click", () => {
+      const old = screen.querySelector(".win-fx-citizen, .win-fx-wolf");
+      old?.remove();
+      const fx = document.createElement("div");
+      fx.className = "win-fx-wolf";
+      screen.appendChild(fx);
+      setTimeout(() => fx.remove(), 4000);
     });
   </script>
 </body>

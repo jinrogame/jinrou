@@ -1,3 +1,37 @@
+export function triggerConfetti(container = $("#phone")) {
+  if (!container) return;
+  const wrap = document.createElement("div");
+  wrap.className = "mash-celebration";
+  const colors = ["#f59e0b", "#fbbf24", "#38bdf8", "#34d399", "#f43f5e", "#fff"];
+  for (let i = 0; i < 35; i++) {
+    const c = document.createElement("div");
+    c.className = "mash-confetti";
+    c.style.setProperty("--c", colors[i % colors.length]);
+    c.style.setProperty("--x", `${Math.random() * 95}%`);
+    c.style.setProperty("--drift", `${(Math.random() - 0.5) * 80}px`);
+    c.style.animationDelay = `${Math.random() * 0.8}s`;
+    c.style.animationDuration = `${1.6 + Math.random() * 1}s`;
+    wrap.appendChild(c);
+  }
+  container.appendChild(wrap);
+  setTimeout(() => wrap.remove(), 2800);
+}
+
+/* ---------------- 投票時の断罪ハンマー・執行カットイン ---------------- */
+export function triggerJudgeEffect(targetName) {
+  const phone = $("#phone");
+  if (!phone) return;
+  const overlay = document.createElement("div");
+  overlay.className = "judge-overlay";
+  overlay.innerHTML = `
+    <div class="judge-hammer">🔨</div>
+    <div class="judge-stamp">執行確定</div>
+    <div class="judge-target-name">対象：${esc(targetName)}</div>
+  `;
+  phone.appendChild(overlay);
+  setTimeout(() => overlay.remove(), 850);
+}
+
 // 画面描画（フェーズごとに画面を1回だけ構築し、スナップショットのたびに update() で差分反映）
 import { S, isHost, me, playerList, aliveList, nameOf, avatarOf, sortedPlayers } from "./state.js";
 import { ROLES, WOLF_CONFIG, CITIZEN_CONFIG, TASKS, EFFECTS, TIME, MAX_PLAYERS } from "./data.js";
@@ -326,9 +360,19 @@ SCREENS.role = {
   },
   bind(r) {
     bindCommon(r);
-    $("#flip", r).addEventListener("click", () => { if (!S.secret) return; ctx.revealed = true; SCREENS.role.update(r); });
+    $("#flip", r).addEventListener("click", () => {
+      if (!S.secret) return;
+      ctx.revealed = true;
+      r.removeAttribute("data-role-unrevealed");
+      SCREENS.role.update(r);
+    });
   },
   update(r) {
+    if (!ctx.revealed) {
+      r.setAttribute("data-role-unrevealed", "");
+    } else {
+      r.removeAttribute("data-role-unrevealed");
+    }
     const s = S.secret;
     if (s) {
       const def = ROLES[s.role];
@@ -561,9 +605,24 @@ SCREENS.task_play = {
     const send = async (v) => { c.n += 1; try { await Room.sendTask(v, c.n); } catch (e) { console.warn(e); } };
     if (t.id === "mash") {
       const tap = $("#tapBtn", r);
-      tap.addEventListener("pointerdown", () => {
+      const onomatopoeia = ["ドガッ！", "ズバッ！", "バババッ！", "ドカン！", "ゴゴゴ！", "ガガガッ！"];
+      tap.addEventListener("pointerdown", (e) => {
         if (Date.now() > ends()) return;
         tap.classList.add("is-down"); c.mine += 1; c.dirty = true; SCREENS.task_play.update(r);
+
+        // オノマトペポップアップエフェクト
+        const pop = document.createElement("div");
+        pop.className = "mash-pop-text";
+        pop.textContent = onomatopoeia[Math.floor(Math.random() * onomatopoeia.length)];
+        const rect = tap.getBoundingClientRect();
+        const rRect = r.getBoundingClientRect();
+        const x = rect.left - rRect.left + rect.width / 2 + (Math.random() * 40 - 20);
+        const y = rect.top - rRect.top + 20;
+        pop.style.left = `${x}px`;
+        pop.style.top = `${y}px`;
+        pop.style.setProperty("--r", `${Math.random() * 24 - 12}deg`);
+        r.appendChild(pop);
+        setTimeout(() => pop.remove(), 550);
       });
       ["pointerup", "pointerleave", "pointercancel"].forEach((ev) => tap.addEventListener(ev, () => tap.classList.remove("is-down")));
       const iv = setInterval(() => {
@@ -720,7 +779,10 @@ function voteScreen(kind) {
       // 投票内容を先に送信してから準備完了にする
       bindCommon(r, async () => {
         const v = checkedVal("vote", r);
-        if (v) await Room.sendAction({ [field]: v });
+        if (v) {
+          triggerJudgeEffect(v === "__skip__" ? "誰にも投票しない" : nameOf(v));
+          await Room.sendAction({ [field]: v });
+        }
       });
       r.addEventListener("change", () => SCREENS[kind].update(r));
     },
@@ -743,9 +805,11 @@ SCREENS.finished = {
     const list = sortedPlayers();
     const aliveRoles = list.filter((p) => p.alive).map((p) => roles[p.uid]);
     const wc = aliveRoles.filter(isWolfTeam).length;
+    const winFxClass = w === "wolf" ? "win-fx-wolf" : "win-fx-citizen";
     return shell({
       phase: "win", bg: "bg_result",
       body: `
+      <div class="${winFxClass}"></div>
       <div class="hero"><img src="${D[0]}" alt="" width="600" height="300" fetchpriority="high"></div>
       <h1 class="big center">${D[1]}</h1>
       <div class="versus"><div class="cit">市民陣営 生存<b>${aliveRoles.length - wc}人</b></div><div class="vs">VS</div><div class="wol">人狼陣営 生存<b>${wc}人</b></div></div>
