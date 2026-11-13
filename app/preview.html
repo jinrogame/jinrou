@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>演出確認専用プレイヤー - オリジナル人狼ゲーム</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="stage">
+    <div class="phone" id="phone">
+      <section class="screen is-active" data-phase="night">
+        <div class="screen__bg"><img src="img/bg_night.svg" alt="" width="390" height="844"></div>
+        <div class="screen__body" style="justify-content:center;gap:12px">
+          <div class="card card--glow card--violet center">
+            <h1 class="big">🎬 演出確認プレイヤー</h1>
+            <p class="muted">ボタンを押すとスマホ画面いっぱいに演出ムービーが再生されます（画面右上の「スキップ ⏩」でいつでも戻れます）</p>
+          </div>
+
+          <div class="card card--red">
+            <h2 class="card__title"><span class="dot"></span>🌅 朝のターン開始演出</h2>
+            <button type="button" class="btn btn--solid btn--red" id="pMorningAttack">
+              ① 朝：追放発表 ➔ 🐺 夜襲（爪切り裂き動画）
+            </button>
+            <button type="button" class="btn btn--green" id="pMorningShield">
+              ② 朝：追放発表 ➔ 🛡️ ナイト盾防御（前半狼➔盾）
+            </button>
+            <button type="button" class="btn btn--amber btn--sm" id="pMorningPeace">
+              ③ 朝：初日の朝（犠牲者なし）
+            </button>
+          </div>
+
+          <div class="card card--blue">
+            <h2 class="card__title"><span class="dot"></span>☀️ 昼・🌙 夜のターン開始演出</h2>
+            <button type="button" class="btn btn--solid btn--cyan" id="pDay">
+              ④ 昼：村人が広場に集合（day_gather.mp4）
+            </button>
+            <button type="button" class="btn btn--solid btn--violet" id="pNight">
+              ⑤ 夜：日没＆オオカミ遠吠え（night_howl.mp4）
+            </button>
+          </div>
+        </div>
+        <div class="screen__footer">
+          <a href="index.html" class="btn btn--ghost" style="text-decoration:none;text-align:center;display:flex;align-items:center;justify-content:center">ゲーム本編へ戻る</a>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script type="module">
+    import { S } from "./js/state.js";
+    import { playMorningCutscene, playDayCutscene, playNightCutscene } from "./js/cutscenes.js";
+
+    // ダミープレイヤーをセット
+    S.players = {
+      p1: { name: "たろう", avatarId: "1", alive: true },
+      p2: { name: "はなこ", avatarId: "2", alive: true },
+      p3: { name: "じろう", avatarId: "3", alive: true },
+      p4: { name: "さぶろう", avatarId: "4", alive: true },
+      p5: { name: "しろう", avatarId: "5", alive: true },
+      p6: { name: "ごろう", avatarId: "6", alive: true },
+    };
+
+    document.getElementById("pMorningAttack").addEventListener("click", () => {
+      playMorningCutscene({ exiled: ["p1"], victims: ["p2"], guardedSuccess: false }, 2);
+    });
+
+    document.getElementById("pMorningShield").addEventListener("click", () => {
+      playMorningCutscene({ exiled: ["p3"], victims: [], guardedSuccess: true }, 2);
+    });
+
+    document.getElementById("pMorningPeace").addEventListener("click", () => {
+      playMorningCutscene({ exiled: [], victims: [], guardedSuccess: false }, 1);
+    });
+
+    document.getElementById("pDay").addEventListener("click", () => {
+      playDayCutscene(2);
+    });
+
+    document.getElementById("pNight").addEventListener("click", () => {
+      playNightCutscene(2, false);
+    });
+  </script>
+</body>
+</html>
