@@ -3,7 +3,7 @@ import { S, isHost, playerList, aliveList } from "./state.js";
 import * as fb from "./firebase.js";
 import { TASKS, EFFECTS, QUIZ_TOPICS, RELAY_TOPICS, TIME, MIN_PLAYERS } from "./data.js";
 import {
-  assignRoles, shuffle, pickOne, tallyTop, judgeSeer, judgeMedium, resolveNight, evalTask, findPref,
+  assignRoles, shuffle, pickOne, tallyTop, tallyTopWithTie, judgeSeer, judgeMedium, resolveNight, evalTask, findPref,
   finalWin, capabilities, roleCounts, isWolfTeam,
 } from "./engine.js";
 
@@ -223,12 +223,12 @@ async function resolveVote() {
   const r = S.room;
   const acts = actionsOf(r.phaseSeq);
   const alive = aliveList();
-  const votes = alive.map((p) => acts[p.uid]?.target).filter((t) => t && S.players[t]?.alive);
+  const votes = alive.map((p) => acts[p.uid]?.target).filter((t) => t && t !== "__skip__" && S.players[t]?.alive);
   const flags = flagsOf(r);
-  const pending = tallyTop(votes, flags.doubleExile ? 2 : 1);
+  const { selected: pending, tieCandidates } = tallyTopWithTie(votes, flags.doubleExile ? 2 : 1);
   const hasDead = playerList().some((p) => !p.alive);
-  if (flags.revive && hasDead) await setPhase("revive_vote", { pendingExile: pending }, TIME.revive);
-  else await setPhase("skill", { pendingExile: pending, reviveTarget: null }, TIME.skill);
+  if (flags.revive && hasDead) await setPhase("revive_vote", { pendingExile: pending, pendingExileTie: tieCandidates }, TIME.revive);
+  else await setPhase("skill", { pendingExile: pending, pendingExileTie: tieCandidates, reviveTarget: null }, TIME.skill);
 }
 
 async function resolveRevive() {
@@ -257,8 +257,14 @@ async function resolveSkill() {
   if (!ending && turn > r.maxTurns) ending = finalWin(aliveRoles);
   batch.update(roomR(), {
     phase: "morning_report", phaseSeq: r.phaseSeq + 1, phaseEndsAt: null, turn,
-    morningReport: { exiled: res.log.exiled, victims: [...res.log.attacked, ...res.log.retaliated, ...res.log.follow], revived: res.log.revived, guardedSuccess: !!res.guardedSuccess },
-    ending: ending || null, effectState: null, pendingExile: [], reviveTarget: null,
+    morningReport: {
+      exiled: res.log.exiled,
+      tieCandidates: r.pendingExileTie || [],
+      victims: [...res.log.attacked, ...res.log.retaliated, ...res.log.follow],
+      revived: res.log.revived,
+      guardedSuccess: !!res.guardedSuccess,
+    },
+    ending: ending || null, effectState: null, pendingExile: [], pendingExileTie: [], reviveTarget: null,
   });
   await batch.commit();
 }

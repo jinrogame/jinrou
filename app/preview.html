@@ -26,14 +26,14 @@
             <button type="button" class="btn btn--ghost btn--sm" id="btnFlipToggle" style="width:auto">🔄 裏表反転</button>
           </div>
 
-          <button type="button" class="flip" id="previewFlip" aria-label="カードをタップして反転">
+          <button type="button" class="flip" id="previewFlip" style="height:min(30dvh, 225px)" aria-label="カードをタップして反転">
             <div class="flip__inner">
               <div class="flip__face"><img src="img/role_card_back.jpg" alt="役職カード裏面" width="571" height="1024"></div>
               <div class="flip__face flip__front"><img id="previewRoleImg" src="img/role_wolf_god.jpg" alt="役職カード" width="571" height="1024"></div>
             </div>
           </button>
 
-          <div class="card card--glow" id="previewRoleCard">
+          <div class="card card--glow" id="previewRoleCard" style="padding:7px 10px">
             <h2 class="card__title">
               <span class="dot"></span>
               <span id="previewRoleName">人狼神</span>
@@ -42,12 +42,16 @@
             <p class="muted" id="previewRoleDesc"></p>
           </div>
 
-          <!-- ターン開始カットシーン動画確認ボタン -->
+          <!-- ターン開始カットシーン＆同票ルーレット演出確認ボタン -->
           <div class="card card--violet">
-            <h2 class="card__title"><span class="dot"></span>🎬 ターン開始動画演出を再生</h2>
+            <h2 class="card__title"><span class="dot"></span>🎬 演出・ルーレットデバッグ再生</h2>
             <div class="config-grid-2">
-              <button type="button" class="btn btn--solid btn--red btn--sm" id="pMorningAttack">🌅 朝：夜襲（爪動画）</button>
-              <button type="button" class="btn btn--green btn--sm" id="pMorningShield">🛡️ 朝：ナイト盾防御</button>
+              <button type="button" class="btn btn--solid btn--amber btn--sm" id="pRoulette2">🎰 2人同票ルーレット＋夜襲</button>
+              <button type="button" class="btn btn--amber btn--sm" id="pRoulette3">🎰 3人同票ルーレット＋盾防御</button>
+              <button type="button" class="btn btn--amber btn--sm" id="pRoulette4">🎰 4人同票ルーレットのみ</button>
+              <button type="button" class="btn btn--ghost btn--sm" id="pSkipAll">🚫 全員スキップ（追放なし）</button>
+              <button type="button" class="btn btn--solid btn--red btn--sm" id="pMorningAttack">🌅 通常追放＋夜襲（爪動画）</button>
+              <button type="button" class="btn btn--green btn--sm" id="pMorningShield">🛡️ 通常追放＋ナイト盾防御</button>
               <button type="button" class="btn btn--cyan btn--sm" id="pDay">🗣️ 昼：広場に集合</button>
               <button type="button" class="btn btn--violet btn--sm" id="pNight">🐺 夜：狼の遠吠え</button>
             </div>
@@ -115,6 +119,24 @@
     flipBtn.addEventListener("click", () => flipBtn.classList.toggle("is-flipped"));
     document.getElementById("btnFlipToggle").addEventListener("click", () => flipBtn.classList.toggle("is-flipped"));
 
+    document.getElementById("pRoulette2").addEventListener("click", () => {
+      const cands = ["p1", "p2"];
+      const winner = cands[Math.floor(Math.random() * cands.length)];
+      playMorningCutscene({ exiled: [winner], tieCandidates: cands, victims: ["p3"], guardedSuccess: false }, 2);
+    });
+    document.getElementById("pRoulette3").addEventListener("click", () => {
+      const cands = ["p1", "p2", "p3"];
+      const winner = cands[Math.floor(Math.random() * cands.length)];
+      playMorningCutscene({ exiled: [winner], tieCandidates: cands, victims: [], guardedSuccess: true }, 2);
+    });
+    document.getElementById("pRoulette4").addEventListener("click", () => {
+      const cands = ["p1", "p2", "p3", "p4"];
+      const winner = cands[Math.floor(Math.random() * cands.length)];
+      playMorningCutscene({ exiled: [winner], tieCandidates: cands, victims: [], guardedSuccess: false }, 2);
+    });
+    document.getElementById("pSkipAll").addEventListener("click", () => {
+      playMorningCutscene({ exiled: [], tieCandidates: [], victims: ["p2"], guardedSuccess: false }, 2);
+    });
     document.getElementById("pMorningAttack").addEventListener("click", () => {
       playMorningCutscene({ exiled: ["p1"], victims: ["p2"], guardedSuccess: false }, 2);
     });

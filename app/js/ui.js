@@ -45,9 +45,11 @@ const spectator = (text = "奇跡の医者や報酬で復活する可能性が�
   <div class="art"><img src="img/icon_spectator.svg" alt="" width="400" height="260"></div>
   <h2 class="big">あなたは死亡しています</h2><p class="muted">${text}</p>
 </div>`;
-const picksHtml = (name, list, cls = "") => `<div class="picklist ${cls}">${list.map((p) => `
+const picksHtml = (name, list, cls = "", { allowSkip = false } = {}) => `<div class="picklist ${cls}">${list.map((p) => `
   <label class="pick${p.alive ? "" : " is-dead"}"><input type="radio" name="${name}" value="${p.uid}"><span class="radio" aria-hidden="true"></span>
-  ${avImg(p.uid, "avatar", 28)}<span class="pick__name">${esc(p.name)}</span></label>`).join("")}</div>`;
+  ${avImg(p.uid, "avatar", 28)}<span class="pick__name">${esc(p.name)}</span></label>`).join("")}${allowSkip ? `
+  <label class="pick pick--skip"><input type="radio" name="${name}" value="__skip__"><span class="radio" aria-hidden="true"></span>
+  <span class="pick__skip-ico" aria-hidden="true">🚫</span><span class="pick__name">誰にも投票しない（スキップ）</span></label>` : ""}</div>`;
 const checkedVal = (name, r = root) => $(`input[name="${name}"]:checked`, r)?.value ?? null;
 const lockInputs = (r, sel = "input,button.lockable") => $$(sel, r).forEach((e) => { e.disabled = true; });
 
@@ -464,6 +466,10 @@ SCREENS.morning_report = {
     const row = (ico, label, arr) => `<div class="event">${arr.length ? avImg(arr[0], "avatar", 30) : `<div class="event__ico">${ico}</div>`}<div><div class="event__label">${label}</div><div class="event__val">${names(arr)}</div></div></div>`;
     const final = r0.turn > r0.maxTurns;
     const alive = aliveList().length, total = playerList().length;
+    const isTie = (rep.tieCandidates?.length || 0) >= 2 && rep.exiled?.length > 0;
+    const exileLabel = isTie
+      ? `⚖️ 追放された人 <span class="chip chip--amber" style="font-size:10px;padding:1px 6px;margin-left:4px">🎰 同票ルーレット決着（候補：${rep.tieCandidates.map((u) => esc(nameOf(u))).join("・")}）</span>`
+      : "⚖️ 追放された人";
     return shell({
       phase: "morning", bg: "bg_morning",
       body: `
@@ -471,7 +477,7 @@ SCREENS.morning_report = {
       <div class="hero"><img src="img/hero_morning.svg" alt="" width="600" height="240" fetchpriority="high"></div>
       <div class="card"><div class="row-between"><b>現在の生存者</b><b class="accent">${alive}人 / ${total}人</b></div><div class="stat-bar"><i style="--w:${Math.round((alive / total) * 100)}%"></i></div></div>
       <div class="card card--red"><h2 class="card__title"><span class="dot"></span>${r0.turn === 1 && !rep.exiled.length && !rep.victims.length ? "初日の夜は誰も犠牲になりませんでした" : "昨晩の追放・夜襲・復活発表"}</h2>
-        <div class="events">${row("⚖️", "⚖️ 追放された人", rep.exiled)}${row("🐺", "🐺 昨晩の犠牲者", rep.victims)}${row("💫", "💉 復活した人", rep.revived)}</div></div>
+        <div class="events">${row("⚖️", exileLabel, rep.exiled)}${row("🐺", "🐺 昨晩の犠牲者", rep.victims)}${row("💫", "💉 復活した人", rep.revived)}</div></div>
       ${r0.ending ? `<div class="chip chip--amber center" style="justify-content:center">決着がつきました！</div>` : ""}`,
       footer: okFooter(r0.ending ? "ゲーム結果発表へ" : "本日のタスク発表へ", "btn--amber"),
     });
@@ -704,7 +710,7 @@ function voteScreen(kind) {
       else if (revive) body = `<div class="card card--glow card--green center"><h1 class="big" style="color:var(--green)">✨ 報酬発動：脱落者1名復活投票</h1><p class="muted">墓地の脱落者から1名を選んで復活させよう！（人狼が復活する可能性もあり）</p></div>
         <div class="art"><img src="img/effect_revive.svg" alt="" width="400" height="260"></div>${picksHtml("vote", list)}`;
       else body = `<div class="card card--violet"><h2 class="card__title"><span class="dot"></span>追放したいプレイヤーを1人選択</h2>
-        <p class="muted">※同票はランダム。${flags.doubleExile ? "💀罰発動中：上位2名が追放されます！" : "罰「2人追放」発生時は上位2名が追放されます。"}</p></div>${picksHtml("vote", list)}`;
+        <p class="muted">※最多得票が同数の場合は翌朝のルーレットで決定！「誰にも投票しない」も選択可能です。${flags.doubleExile ? "<br>💀罰発動中：上位2名が追放されます！" : ""}</p></div>${picksHtml("vote", list, "", { allowSkip: true })}`;
       return shell({
         body: `<div class="hdr"><h1 class="hdr__title">🌙 夜：${revive ? "復活投票" : "追放投票"}</h1>${ring(revive ? TIME.revive : TIME.vote)}</div>${body}`,
         footer: okFooter(revive ? "復活に投票する" : "投票する", revive ? "btn--green" : "btn--red"),

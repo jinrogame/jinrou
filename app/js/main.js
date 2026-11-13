@@ -108,33 +108,57 @@ setInterval(() => UI.tickUI(), 250);
 setInterval(() => Host.onState(), 500);
 
 // 演出テストボタンの配線（スマホ画面上部のテストバーからワンクリック再生）
+function ensureDummyPlayers() {
+  const names = ["たろう", "はなこ", "じろう", "さぶろう", "しろう", "ごろう"];
+  names.forEach((name, i) => {
+    const id = `test_${i + 1}`;
+    if (!S.players[id]) S.players[id] = { name, avatarId: String(i + 1), alive: true };
+  });
+}
+
+document.getElementById("btnTestMorningRoulette2")?.addEventListener("click", () => {
+  ensureDummyPlayers();
+  playMorningCutscene({
+    exiled: ["test_2"],
+    tieCandidates: ["test_1", "test_2"],
+    victims: ["test_3"],
+    guardedSuccess: false,
+  }, 2);
+});
+
+document.getElementById("btnTestMorningRoulette3")?.addEventListener("click", () => {
+  ensureDummyPlayers();
+  playMorningCutscene({
+    exiled: ["test_3"],
+    tieCandidates: ["test_1", "test_2", "test_3"],
+    victims: [],
+    guardedSuccess: true,
+  }, 2);
+});
+
 document.getElementById("btnTestMorningKill")?.addEventListener("click", () => {
-  // テスト用ダミーデータ：追放者たろう、夜襲犠牲者はなこ
+  ensureDummyPlayers();
   const dummyReport = {
     exiled: [S.uid || "test_1"],
     victims: ["test_2"],
     guardedSuccess: false,
   };
-  if (!S.players[S.uid]) S.players[S.uid] = { name: "たろう", avatarId: "1" };
-  if (!S.players["test_2"]) S.players["test_2"] = { name: "はなこ", avatarId: "2" };
+  if (S.uid && !S.players[S.uid]) S.players[S.uid] = { name: "たろう", avatarId: "1" };
   playMorningCutscene(dummyReport, 2);
 });
 
 document.getElementById("btnTestMorningShield")?.addEventListener("click", () => {
-  // テスト用ダミーデータ：追放者じろう、ナイト盾防御成功
+  ensureDummyPlayers();
   const dummyReport = {
     exiled: ["test_3"],
     victims: [],
     guardedSuccess: true,
   };
-  if (!S.players["test_3"]) S.players["test_3"] = { name: "じろう", avatarId: "3" };
   playMorningCutscene(dummyReport, 2);
 });
 
 document.getElementById("btnTestDay")?.addEventListener("click", () => {
-  ["1", "2", "3", "4", "5", "6"].forEach((id, i) => {
-    if (!S.players[`p_${id}`]) S.players[`p_${id}`] = { name: `村人${i+1}`, avatarId: id };
-  });
+  ensureDummyPlayers();
   playDayCutscene(2);
 });
 

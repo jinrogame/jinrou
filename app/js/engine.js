@@ -42,15 +42,32 @@ export const judgeSeer = (role) => (role === "wolf_god" || role === "werewolf" |
 /** 霊媒判定: コスプレイヤーは人間 */
 export const judgeMedium = (role) => (role === "wolf_god" || role === "werewolf" ? "wolf" : "human");
 
-/** 多数決。同票はランダム。上位n人のuidを返す */
-export function tallyTop(votes, n = 1, rng = Math.random) {
+/** 多数決。同票はランダム。上位n人のuidと、同票決着になった場合の候補一覧(tieCandidates)を返す */
+export function tallyTopWithTie(votes, n = 1, rng = Math.random) {
   const cnt = new Map();
-  votes.filter(Boolean).forEach((v) => cnt.set(v, (cnt.get(v) || 0) + 1));
+  votes.filter((v) => v && v !== "__skip__").forEach((v) => cnt.set(v, (cnt.get(v) || 0) + 1));
   const groups = new Map();
   cnt.forEach((c, u) => { if (!groups.has(c)) groups.set(c, []); groups.get(c).push(u); });
-  const result = [];
-  [...groups.keys()].sort((a, b) => b - a).forEach((c) => { shuffle(groups.get(c), rng).forEach((u) => result.push(u)); });
-  return result.slice(0, n);
+  const selected = [];
+  let tieCandidates = [];
+  const sortedCounts = [...groups.keys()].sort((a, b) => b - a);
+  for (const c of sortedCounts) {
+    if (selected.length >= n) break;
+    const grp = groups.get(c);
+    const remain = n - selected.length;
+    if (grp.length <= remain) {
+      shuffle(grp, rng).forEach((u) => selected.push(u));
+    } else {
+      tieCandidates = [...grp];
+      shuffle(grp, rng).slice(0, remain).forEach((u) => selected.push(u));
+    }
+  }
+  return { selected, tieCandidates };
+}
+
+/** 多数決。同票はランダム。上位n人のuidを返す */
+export function tallyTop(votes, n = 1, rng = Math.random) {
+  return tallyTopWithTie(votes, n, rng).selected;
 }
 
 /** その夜に使えるスキル */

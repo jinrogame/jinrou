@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
-  assignRoles, resolveNight, checkWin, finalWin, judgeSeer, judgeMedium, tallyTop, evalTask, findPref, roleCounts, generateRoomId,
+  assignRoles, resolveNight, checkWin, finalWin, judgeSeer, judgeMedium, tallyTop, tallyTopWithTie, evalTask, findPref, roleCounts, generateRoomId,
 } from "../js/engine.js";
 
 const mk = (roleMap) => {
@@ -101,10 +101,18 @@ test("勝敗判定", () => {
   assert.equal(finalWin(["werewolf", "citizen", "citizen"]), "citizen");
 });
 
-test("tallyTop: 多数決と同票ランダム", () => {
+test("tallyTop / tallyTopWithTie: 多数決・スキップ・同票ルーレット候補", () => {
   assert.deepEqual(tallyTop(["a", "b", "a"], 1), ["a"]);
   assert.deepEqual(tallyTop(["a", "a", "b", "c"], 2, () => 0).length, 2);
   assert.deepEqual(tallyTop([], 1), []);
+  // 全員「誰にも投票しない(__skip__)」の場合は追放なし
+  assert.deepEqual(tallyTopWithTie(["__skip__", "__skip__"], 1), { selected: [], tieCandidates: [] });
+  // 単独最多得票の場合は tieCandidates は空
+  assert.deepEqual(tallyTopWithTie(["a", "a", "b", "__skip__"], 1), { selected: ["a"], tieCandidates: [] });
+  // 同票の場合は tieCandidates に同票候補が入り、selected に1人選ばれる
+  const tie = tallyTopWithTie(["a", "b", "a", "b", "__skip__"], 1, () => 0);
+  assert.equal(tie.selected.length, 1);
+  assert.deepEqual(tie.tieCandidates.sort(), ["a", "b"]);
 });
 
 test("ミニゲーム評価", () => {

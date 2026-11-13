@@ -76,6 +76,50 @@ function playShieldClangSound() {
   } catch { /* ignore */ }
 }
 
+/** ルーレット回転中のカチッという効果音＆決定時のドラムロール音（Web Audio API） */
+let rouletteAudioCtx = null;
+function playRouletteSound(isFinal = false) {
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return;
+    if (!rouletteAudioCtx || rouletteAudioCtx.state === "closed") {
+      rouletteAudioCtx = new AudioCtx();
+    }
+    if (rouletteAudioCtx.state === "suspended") {
+      rouletteAudioCtx.resume().catch(() => {});
+    }
+    const ctx = rouletteAudioCtx;
+    const now = ctx.currentTime;
+
+    if (!isFinal) {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "triangle";
+      osc.frequency.setValueAtTime(680, now);
+      osc.frequency.exponentialRampToValueAtTime(320, now + 0.045);
+      gain.gain.setValueAtTime(0.16, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.055);
+    } else {
+      // 決定時のドドン！という重低音＋緊迫ブラス和音
+      [146.8, 220, 293.7, 440, 587.3].forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = i === 0 ? "sawtooth" : "triangle";
+        osc.frequency.setValueAtTime(freq, now);
+        osc.frequency.exponentialRampToValueAtTime(freq * 0.98, now + 0.65);
+        gain.gain.setValueAtTime(0.2 / (i + 1), now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.68);
+        osc.connect(gain).connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.7);
+      });
+    }
+  } catch { /* ignore */ }
+}
+
 function mountCutscene(html, durationMs, onDone) {
   clearCutscene();
   const phone = document.getElementById("phone");
@@ -116,11 +160,36 @@ function mountCutscene(html, durationMs, onDone) {
  */
 export function playMorningCutscene(report, turn, onDone) {
   const exiled = report?.exiled || [];
+  const tieCandidates = report?.tieCandidates || [];
+  const isTieRoulette = tieCandidates.length >= 2 && exiled.length > 0;
   const victims = report?.victims || [];
-  const isNight0 = turn === 1 && !exiled.length && !victims.length && !report?.guardedSuccess;
+  const isNight0 = turn === 1 && !exiled.length && !victims.length && !report?.guardedSuccess && !isTieRoulette;
   const guardedSuccess = !!report?.guardedSuccess;
 
-  const exiledHtml = exiled.length
+  const exiledHtml = isTieRoulette
+    ? `<div class="cutscene__card cutscene__card--roulette" id="csRouletteCard">
+        <div class="cutscene__badge cutscene__badge--amber" id="csRouletteBadge">🎰 得票同数！運命の追放ルーレット</div>
+        <div class="roulette-candidates" id="csRoulettePool">
+          ${tieCandidates.map((u, idx) => `
+            <div class="roulette-cand${idx === 0 ? " is-active" : ""}" data-uid="${esc(u)}">
+              ${avImg(u, 42)}
+              <span>${esc(nameOf(u))}</span>
+            </div>
+          `).join("")}
+        </div>
+        <div class="roulette-stage">
+          <div class="roulette-pointer">▼</div>
+          <div class="roulette-wheel" id="csRouletteWheel">
+            <div class="roulette-wheel__ring"></div>
+            <div class="roulette-wheel__center">
+              <img class="cutscene__avatar" id="csRouletteAvatar" src="${avatarOf(tieCandidates[0])}" alt="" width="72" height="72">
+            </div>
+          </div>
+          <div class="cutscene__name" id="csRouletteName">${esc(nameOf(tieCandidates[0]))}</div>
+        </div>
+        <div class="cutscene__desc" id="csRouletteDesc">最多得票が同数のため、ルーレットで追放者を抽選中…</div>
+      </div>`
+    : exiled.length
     ? `<div class="cutscene__card cutscene__card--exile">
         <div class="cutscene__badge cutscene__badge--red">⚖️ 昨晩の追放投票結果</div>
         <div class="cutscene__person">
@@ -132,6 +201,7 @@ export function playMorningCutscene(report, turn, onDone) {
     : `<div class="cutscene__card cutscene__card--safe">
         <div class="cutscene__badge cutscene__badge--cyan">⚖️ 昨晩の追放投票結果</div>
         <div class="cutscene__name">追放された人はいませんでした</div>
+        <div class="cutscene__desc">全員が投票をスキップしたため追放なし</div>
       </div>`;
 
   // 初日の夜明け（平和な朝）
@@ -157,9 +227,10 @@ export function playMorningCutscene(report, turn, onDone) {
     return;
   }
 
-  // 2ターン目以降（日の出＋追放発表 ➔ 狼の襲撃ムービー or 騎士の盾防御）
+  // 2ターン目以降（日の出＋追放発表[同票時はルーレット] ➔ 狼の襲撃ムービー or 騎士の盾防御）
   const hasWolfScene = victims.length > 0 || guardedSuccess;
-  const totalDuration = hasWolfScene ? 8200 : 4500;
+  const sunriseDuration = isTieRoulette ? 4900 : 2600;
+  const totalDuration = hasWolfScene ? sunriseDuration + 5600 : sunriseDuration + 1900;
 
   const attackResultCard = guardedSuccess && !victims.length
     ? `<div class="cutscene__card cutscene__card--shield">
@@ -237,16 +308,62 @@ export function playMorningCutscene(report, turn, onDone) {
   `;
 
   const mounted = mountCutscene(html, totalDuration, onDone);
-  if (!mounted || !hasWolfScene) return;
+  if (!mounted) return;
 
   const { overlay } = mounted;
+
+  // 同票ルーレット演出：高速回転から徐々に減速して追放者でピタッと止まる
+  if (isTieRoulette) {
+    const rCard = overlay.querySelector("#csRouletteCard");
+    const rBadge = overlay.querySelector("#csRouletteBadge");
+    const rPool = overlay.querySelector("#csRoulettePool");
+    const rWheel = overlay.querySelector("#csRouletteWheel");
+    const rAvatar = overlay.querySelector("#csRouletteAvatar");
+    const rName = overlay.querySelector("#csRouletteName");
+    const rDesc = overlay.querySelector("#csRouletteDesc");
+    const cands = [...rPool.querySelectorAll(".roulette-cand")];
+
+    const winnerUid = exiled[0];
+    const winnerIdx = Math.max(0, tieCandidates.indexOf(winnerUid));
+    const totalSteps = 16;
+    // 最終ステップで必ず winnerIdx に着地するよう逆算
+    const startIdx = (winnerIdx - (totalSteps % tieCandidates.length) + tieCandidates.length * 10) % tieCandidates.length;
+    const intervals = [75, 80, 85, 95, 105, 115, 130, 145, 165, 190, 220, 260, 310, 370, 440, 520];
+
+    let elapsed = 200;
+    intervals.forEach((dt, step) => {
+      elapsed += dt;
+      const isFinal = step === intervals.length - 1;
+      const idx = (startIdx + step + 1) % tieCandidates.length;
+      const uid = tieCandidates[idx];
+      addTimer(() => {
+        cands.forEach((el, i) => el.classList.toggle("is-active", i === idx));
+        if (rAvatar) rAvatar.src = avatarOf(uid);
+        if (rName) rName.textContent = exiled.length > 1 && isFinal ? exiled.map((u) => nameOf(u)).join("・") : nameOf(uid);
+        if (rWheel) rWheel.style.setProperty("--rot", `${(step + 1) * 65}deg`);
+        playRouletteSound(isFinal);
+
+        if (isFinal) {
+          rCard?.classList.add("is-decided");
+          if (rBadge) {
+            rBadge.className = "cutscene__badge cutscene__badge--red";
+            rBadge.textContent = "⚖️ ルーレット決着！追放者決定";
+          }
+          if (rDesc) rDesc.textContent = "ルーレットの結果、村から追放されました！";
+        }
+      }, elapsed);
+    });
+  }
+
+  if (!hasWolfScene) return;
+
   const sunriseStage = overlay.querySelector("#csSunriseStage");
   const wolfStage = overlay.querySelector("#csWolfStage");
   const wolfVideo = overlay.querySelector("#csWolfVideo");
   const shieldEl = overlay.querySelector("#csShieldIntervene");
   const attackCard = overlay.querySelector("#csAttackCard");
 
-  // 2.6秒後：日の出＆追放発表から「人狼の夜襲ムービー」へ切り替え！
+  // 日の出＆追放発表（ルーレット時は4.9秒後、通常時は2.6秒後）から「人狼の夜襲ムービー」へ切り替え！
   addTimer(() => {
     if (sunriseStage) sunriseStage.hidden = true;
     if (wolfStage) wolfStage.hidden = false;
@@ -272,7 +389,7 @@ export function playMorningCutscene(report, turn, onDone) {
         if (attackCard) attackCard.hidden = false;
       }, 2650);
     }
-  }, 2600);
+  }, sunriseDuration);
 }
 
 /**
