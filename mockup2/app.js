@@ -21,17 +21,17 @@
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 
   const ROLES = [
-    { key: "wolf_god", name: "人狼神", team: "w", img: "img/role_wolf_god.svg", desc: "全員の役職が最初からわかる。夜に市民を襲撃する。", extra: `<div class="muted" style="font-size:11px;color:#fda4af">👁️ 全役職：はなこ(人狼)・じろう(サイコ)・さぶろう(占)・しろう(騎)・ろくろう(霊)・ななこ&はちろう(恋)・きゅうた(医)</div>` },
-    { key: "werewolf", name: "人狼", team: "w", img: "img/role_werewolf.svg", desc: "人狼同士は互いがわかる。協力して夜に市民を襲撃する。", extra: `<div class="muted" style="font-size:11px;color:#fda4af">🐺 仲間：たろう（人狼神）</div>` },
-    { key: "madman", name: "狂人", team: "w", img: "img/role_madman.svg", desc: "人狼の味方をする人間。占い結果は「人間」と出る。", extra: "" },
-    { key: "psycho", name: "サイコキラー", team: "w", img: "img/role_psycho.svg", desc: "夜に自分へ関わったプレイヤーを全員返り討ちにする。", extra: "" },
-    { key: "citizen", name: "市民", team: "c", img: "img/role_citizen.svg", desc: "特殊能力なし。議論・タスク貢献度・投票で人狼を追放しよう。", extra: "" },
-    { key: "seer", name: "占い師", team: "c", img: "img/role_seer.svg", desc: "毎夜1人を占い「人狼」か「人間」かその場ですぐ知る。", extra: "" },
-    { key: "medium", name: "霊媒師", team: "c", img: "img/role_medium.svg", desc: "追放された人が「人狼」だったかその場ですぐ知る。", extra: "" },
-    { key: "knight", name: "騎士", team: "c", img: "img/role_knight.svg", desc: "毎夜1人を人狼の襲撃から守る。", extra: "" },
-    { key: "lovers", name: "恋人", team: "c", img: "img/role_lovers.svg", desc: "2人1セット。片方が死ぬともう片方も後追いする。", extra: `<div class="muted" style="font-size:11px;color:#f9a8d4">💕 相方：ななこ さん</div>` },
-    { key: "cosplayer", name: "コスプレイヤー", team: "c", img: "img/role_cosplayer.svg", desc: "毎夜1人を護衛できるが、占われると「人狼」と判定される。", extra: "" },
-    { key: "doctor", name: "奇跡の医者", team: "c", img: "img/role_doctor.svg", desc: "ゲーム中1回だけ死者を蘇生（サイコキラーなら自分が死ぬ）。", extra: "" },
+    { key: "wolf_god", name: "人狼神", team: "w", img: "img/role_wolf_god.jpg", desc: "全員の役職が最初からわかる。夜に市民を襲撃する。", extra: `<div class="muted" style="font-size:11px;color:#fda4af">👁️ 全役職：はなこ(人狼)・じろう(サイコ)・さぶろう(占)・しろう(騎)・ろくろう(霊)・ななこ&はちろう(恋)・きゅうた(医)</div>` },
+    { key: "werewolf", name: "人狼", team: "w", img: "img/role_werewolf.jpg", desc: "人狼同士は互いがわかる。協力して夜に市民を襲撃する。", extra: `<div class="muted" style="font-size:11px;color:#fda4af">🐺 仲間：たろう（人狼神）</div>` },
+    { key: "madman", name: "狂人", team: "w", img: "img/role_madman.jpg", desc: "人狼の味方をする人間。占い結果は「人間」と出る。", extra: "" },
+    { key: "psycho", name: "サイコキラー", team: "w", img: "img/role_psycho.jpg", desc: "夜に自分へ関わったプレイヤーを全員返り討ちにする。", extra: "" },
+    { key: "citizen", name: "市民", team: "c", img: "img/role_citizen.jpg", desc: "特殊能力なし。議論・タスク貢献度・投票で人狼を追放しよう。", extra: "" },
+    { key: "seer", name: "占い師", team: "c", img: "img/role_seer.jpg", desc: "毎夜1人を占い「人狼」か「人間」かその場ですぐ知る。", extra: "" },
+    { key: "medium", name: "霊媒師", team: "c", img: "img/role_medium.jpg", desc: "追放された人が「人狼」だったかその場ですぐ知る。", extra: "" },
+    { key: "knight", name: "騎士", team: "c", img: "img/role_knight.jpg", desc: "毎夜1人を人狼の襲撃から守る。", extra: "" },
+    { key: "lovers", name: "恋人", team: "c", img: "img/role_lovers.jpg", desc: "2人1セット。片方が死ぬともう片方も後追いする。", extra: `<div class="muted" style="font-size:11px;color:#f9a8d4">💕 相方：ななこ さん</div>` },
+    { key: "cosplayer", name: "コスプレイヤー", team: "c", img: "img/role_cosplayer.jpg", desc: "毎夜1人を護衛できるが、占われると「人狼」と判定される。", extra: "" },
+    { key: "doctor", name: "奇跡の医者", team: "c", img: "img/role_doctor.jpg", desc: "ゲーム中1回だけ死者を蘇生（サイコキラーなら自分が死ぬ）。", extra: "" },
   ];
 
   const TASKS = [

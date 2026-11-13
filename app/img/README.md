@@ -13,17 +13,17 @@
 | ファイル | 内容 |
 | :--- | :--- |
 | `role_card_back.svg` | カード裏面（役職発表の「タップしてめくる」状態） |
-| `role_wolf_god.svg` | 人狼神（人狼陣営） |
-| `role_werewolf.svg` | 人狼（人狼陣営） |
-| `role_madman.svg` | 狂人（人狼陣営） |
-| `role_psycho.svg` | サイコキラー（人狼陣営） |
-| `role_citizen.svg` | 市民（市民陣営） |
-| `role_seer.svg` | 占い師（市民陣営） |
-| `role_medium.svg` | 霊媒師（市民陣営） |
-| `role_knight.svg` | 騎士（市民陣営） |
-| `role_lovers.svg` | 恋人（市民陣営） |
-| `role_cosplayer.svg` | コスプレイヤー（市民陣営） |
-| `role_doctor.svg` | 奇跡の医者（市民陣営） |
+| `role_wolf_god.jpg` | 人狼神（人狼陣営・右下文字「狼神」） |
+| `role_werewolf.jpg` | 人狼（人狼陣営・右下文字「狼」） |
+| `role_madman.jpg` | 狂人（人狼陣営・右下文字「狂」） |
+| `role_psycho.jpg` | サイコキラー（人狼陣営・右下文字「鬼」） |
+| `role_citizen.jpg` | 市民（市民陣営・右下文字「民」） |
+| `role_seer.jpg` | 占い師（市民陣営・右下文字「占」） |
+| `role_medium.jpg` | 霊媒師（市民陣営・右下文字「霊」） |
+| `role_knight.jpg` | 騎士（市民陣営・右下文字「騎」） |
+| `role_lovers.jpg` | 恋人（市民陣営・右下文字「恋」） |
+| `role_cosplayer.jpg` | コスプレイヤー（市民陣営・右下文字「化」） |
+| `role_doctor.jpg` | 奇跡の医者（市民陣営・右下文字「医」） |
 
 ## 2. プレイヤーアバター（正円で表示）— 10点
 `avatar_01.svg` 〜 `avatar_10.svg`　推奨 `160 × 160 px`（正方形・円形にクロップされます）

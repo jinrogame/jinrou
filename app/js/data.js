@@ -6,17 +6,17 @@ export const MIN_PLAYERS = 3;
 export const TIME = { intro: 180, day: 300, vote: 120, revive: 60, skill: 120, mash: 60, quiz: 60, relay: 60, timer: 60 };
 
 export const ROLES = {
-  wolf_god: { name: "人狼神", team: "wolf", img: "img/role_wolf_god.svg", desc: "全員の役職が最初からわかる。夜に市民を襲撃する。（占い・霊媒では「人狼」）" },
-  werewolf: { name: "人狼", team: "wolf", img: "img/role_werewolf.svg", desc: "人狼同士は互いがわかる。協力して夜に市民を襲撃する。（占いでは「人狼」）" },
-  madman: { name: "狂人", team: "wolf", img: "img/role_madman.svg", desc: "人狼の味方をする人間。夜の行動なし。占い結果は「人間」と出る。" },
-  psycho: { name: "サイコキラー", team: "wolf", img: "img/role_psycho.svg", desc: "夜に自分へ関わった（占い・護衛・襲撃・蘇生）プレイヤーを返り討ちにする。占い結果は「人間」。" },
-  citizen: { name: "市民", team: "citizen", img: "img/role_citizen.svg", desc: "特殊能力なし。議論・タスク貢献度・投票で人狼を追放しよう。" },
-  seer: { name: "占い師", team: "citizen", img: "img/role_seer.svg", desc: "毎夜1人を占い「人狼」か「人間」かその場ですぐ知る。" },
-  medium: { name: "霊媒師", team: "citizen", img: "img/role_medium.svg", desc: "夜に、直前に追放された人が「人狼」だったかその場ですぐ知る。" },
-  knight: { name: "騎士", team: "citizen", img: "img/role_knight.svg", desc: "毎夜1人を人狼の襲撃から守る。" },
-  lovers: { name: "恋人", team: "citizen", img: "img/role_lovers.svg", desc: "2人1セット。お互いが誰かわかる。片方が死ぬともう片方も後追いする。" },
-  cosplayer: { name: "コスプレイヤー", team: "citizen", img: "img/role_cosplayer.svg", desc: "毎夜1人を護衛できるが、占われると「人狼」と判定される。" },
-  doctor: { name: "奇跡の医者", team: "citizen", img: "img/role_doctor.svg", desc: "ゲーム中1回だけ死者を蘇生できる（サイコキラーを蘇生すると自分が死ぬ）。" },
+  wolf_god: { name: "人狼神", team: "wolf", img: "img/role_wolf_god.jpg", desc: "全員の役職が最初からわかる。夜に市民を襲撃する。（占い・霊媒では「人狼」）" },
+  werewolf: { name: "人狼", team: "wolf", img: "img/role_werewolf.jpg", desc: "人狼同士は互いがわかる。協力して夜に市民を襲撃する。（占いでは「人狼」）" },
+  madman: { name: "狂人", team: "wolf", img: "img/role_madman.jpg", desc: "人狼の味方をする人間。夜の行動なし。占い結果は「人間」と出る。" },
+  psycho: { name: "サイコキラー", team: "wolf", img: "img/role_psycho.jpg", desc: "夜に自分へ関わった（占い・護衛・襲撃・蘇生）プレイヤーを返り討ちにする。占い結果は「人間」。" },
+  citizen: { name: "市民", team: "citizen", img: "img/role_citizen.jpg", desc: "特殊能力なし。議論・タスク貢献度・投票で人狼を追放しよう。" },
+  seer: { name: "占い師", team: "citizen", img: "img/role_seer.jpg", desc: "毎夜1人を占い「人狼」か「人間」かその場ですぐ知る。" },
+  medium: { name: "霊媒師", team: "citizen", img: "img/role_medium.jpg", desc: "夜に、直前に追放された人が「人狼」だったかその場ですぐ知る。" },
+  knight: { name: "騎士", team: "citizen", img: "img/role_knight.jpg", desc: "毎夜1人を人狼の襲撃から守る。" },
+  lovers: { name: "恋人", team: "citizen", img: "img/role_lovers.jpg", desc: "2人1セット。お互いが誰かわかる。片方が死ぬともう片方も後追いする。" },
+  cosplayer: { name: "コスプレイヤー", team: "citizen", img: "img/role_cosplayer.jpg", desc: "毎夜1人を護衛できるが、占われると「人狼」と判定される。" },
+  doctor: { name: "奇跡の医者", team: "citizen", img: "img/role_doctor.jpg", desc: "ゲーム中1回だけ死者を蘇生できる（サイコキラーを蘇生すると自分が死ぬ）。" },
 };
 
 export const WOLF_CONFIG = [
