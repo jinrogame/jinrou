@@ -20,53 +20,82 @@
       <section class="screen is-active" data-phase="night" id="previewScreen">
         <div class="screen__bg"><img src="img/bg_night.svg" alt="" width="390" height="844"></div>
         <div class="screen__body">
-          <!-- 役職カードプレビュー（上部チップで11種切替＆タップで反転） -->
           <div class="hdr">
-            <h1 class="hdr__title">🃏 役職カード＆🎬演出確認</h1>
-            <button type="button" class="btn btn--ghost btn--sm" id="btnFlipToggle" style="width:auto">🔄 裏表反転</button>
+            <h1 class="hdr__title">🔧 デバッグ＆演出確認</h1>
           </div>
 
-          <button type="button" class="flip" id="previewFlip" style="height:min(30dvh, 225px)" aria-label="カードをタップして反転">
-            <div class="flip__inner">
-              <div class="flip__face"><img src="img/role_card_back.jpg" alt="役職カード裏面" width="571" height="1024"></div>
-              <div class="flip__face flip__front"><img id="previewRoleImg" src="img/role_wolf_god.jpg" alt="役職カード" width="571" height="1024"></div>
+          <!-- タブ切り替えボタン -->
+          <nav class="debug-tabs" role="tablist">
+            <button type="button" class="debug-tab-btn is-active" data-tab="tabCard">🃏 役職カード</button>
+            <button type="button" class="debug-tab-btn" data-tab="tabCutscene">🎬 動画＆ルーレット</button>
+            <button type="button" class="debug-tab-btn" data-tab="tabEffects">✨ 個別エフェクト</button>
+          </nav>
+
+          <!-- タブ1: 役職カード確認 -->
+          <div class="debug-tab-pane" id="tabCard">
+            <div class="row-between" style="padding:0 4px">
+              <span class="muted" style="font-size:11px;font-weight:700">タップまたは右のボタンで裏表反転</span>
+              <button type="button" class="btn btn--ghost btn--sm" id="btnFlipToggle" style="width:auto;min-height:28px;padding:3px 10px">🔄 裏表反転</button>
             </div>
-          </button>
 
-          <div class="card card--glow" id="previewRoleCard" style="padding:7px 10px">
-            <h2 class="card__title">
-              <span class="dot"></span>
-              <span id="previewRoleName">人狼神</span>
-              <span class="chip chip--red" id="previewRoleTeam" style="margin-left:auto">人狼陣営</span>
-            </h2>
-            <p class="muted" id="previewRoleDesc"></p>
-          </div>
+            <button type="button" class="flip" id="previewFlip" style="height:min(34dvh, 260px)" aria-label="カードをタップして反転">
+              <div class="flip__inner">
+                <div class="flip__face"><img src="img/role_card_back.jpg" alt="役職カード裏面" width="571" height="1024"></div>
+                <div class="flip__face flip__front"><img id="previewRoleImg" src="img/role_wolf_god.jpg" alt="役職カード" width="571" height="1024"></div>
+              </div>
+            </button>
 
-          <!-- ターン開始カットシーン＆同票ルーレット演出確認ボタン -->
-          <div class="card card--violet">
-            <h2 class="card__title"><span class="dot"></span>🎬 演出・ルーレットデバッグ再生</h2>
-            <div class="config-grid-2">
-              <button type="button" class="btn btn--solid btn--amber btn--sm" id="pRoulette2">🎰 2人同票ルーレット＋夜襲</button>
-              <button type="button" class="btn btn--amber btn--sm" id="pRoulette3">🎰 3人同票ルーレット＋盾防御</button>
-              <button type="button" class="btn btn--amber btn--sm" id="pRoulette4">🎰 4人同票ルーレットのみ</button>
-              <button type="button" class="btn btn--ghost btn--sm" id="pSkipAll">🚫 全員スキップ（追放なし）</button>
-              <button type="button" class="btn btn--solid btn--red btn--sm" id="pMorningAttack">🌅 通常追放＋夜襲（爪動画）</button>
-              <button type="button" class="btn btn--green btn--sm" id="pMorningShield">🛡️ 通常追放＋ナイト盾防御</button>
-              <button type="button" class="btn btn--cyan btn--sm" id="pDay">🗣️ 昼：広場に集合</button>
-              <button type="button" class="btn btn--violet btn--sm" id="pNight">🐺 夜：狼の遠吠え</button>
+            <div class="card card--glow" id="previewRoleCard" style="padding:8px 12px">
+              <h2 class="card__title">
+                <span class="dot"></span>
+                <span id="previewRoleName">人狼神</span>
+                <span class="chip chip--red" id="previewRoleTeam" style="margin-left:auto">人狼陣営</span>
+              </h2>
+              <p class="muted" id="previewRoleDesc" style="font-size:11px;line-height:1.4"></p>
             </div>
           </div>
 
-          <!-- 新規追加リッチエフェクト個別テスト -->
-          <div class="card card--blue">
-            <h2 class="card__title"><span class="dot"></span>✨ リッチエフェクト個別テスト</h2>
-            <div class="config-grid-2">
-              <button type="button" class="btn btn--solid btn--red btn--sm" id="fxPulse">💓 画面端ビネット脈動ON/OFF</button>
-              <button type="button" class="btn btn--solid btn--red btn--sm" id="fxJudge">🔨 投票断罪ハンマー</button>
-              <button type="button" class="btn btn--solid btn--green btn--sm" id="fxShield">🛡️ ホログラムバリア＆衝撃波</button>
-              <button type="button" class="btn btn--solid btn--amber btn--sm" id="fxMashPop">💥 連打オノマトペ＆紙吹雪</button>
-              <button type="button" class="btn btn--solid btn--cyan btn--sm" id="fxWinCit">🏆 市民勝利（聖光エフェクト）</button>
-              <button type="button" class="btn btn--solid btn--red btn--sm" id="fxWinWolf">🐺 人狼勝利（深紅瘴気エフェクト）</button>
+          <!-- タブ2: 動画カットシーン＆ルーレット演出 -->
+          <div class="debug-tab-pane" id="tabCutscene" hidden>
+            <div class="card card--violet">
+              <h2 class="card__title"><span class="dot"></span>🎰 同票ルーレット決着パターン</h2>
+              <div class="config-grid-2">
+                <button type="button" class="btn btn--solid btn--amber btn--sm" id="pRoulette2">🎰 2人同票ルーレット＋夜襲</button>
+                <button type="button" class="btn btn--amber btn--sm" id="pRoulette3">🎰 3人同票ルーレット＋盾防御</button>
+                <button type="button" class="btn btn--amber btn--sm" id="pRoulette4">🎰 4人同票ルーレットのみ</button>
+                <button type="button" class="btn btn--ghost btn--sm" id="pSkipAll">🚫 全員スキップ（追放なし）</button>
+              </div>
+            </div>
+
+            <div class="card card--blue">
+              <h2 class="card__title"><span class="dot"></span>🎬 ターン開始動画ムービー</h2>
+              <div class="config-grid-2">
+                <button type="button" class="btn btn--solid btn--red btn--sm" id="pMorningAttack">🌅 朝：夜襲（爪切り裂き）</button>
+                <button type="button" class="btn btn--green btn--sm" id="pMorningShield">🛡️ 朝：ナイト盾防御</button>
+                <button type="button" class="btn btn--cyan btn--sm" id="pDay">🗣️ 昼：村人広場に集合</button>
+                <button type="button" class="btn btn--violet btn--sm" id="pNight">🐺 夜：狼の遠吠え</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- タブ3: 新規リッチエフェクト個別テスト -->
+          <div class="debug-tab-pane" id="tabEffects" hidden>
+            <div class="card card--red">
+              <h2 class="card__title"><span class="dot"></span>💓 緊迫感・判定エフェクト</h2>
+              <div class="config-grid-2">
+                <button type="button" class="btn btn--solid btn--red btn--sm" id="fxPulse">💓 画面端ビネット脈動 切替</button>
+                <button type="button" class="btn btn--solid btn--red btn--sm" id="fxJudge">🔨 投票断罪ハンマー</button>
+                <button type="button" class="btn btn--solid btn--green btn--sm" id="fxShield">🛡️ ホログラムバリア＆衝撃波</button>
+                <button type="button" class="btn btn--solid btn--amber btn--sm" id="fxMashPop">💥 連打オノマトペ＆紙吹雪</button>
+              </div>
+            </div>
+
+            <div class="card card--blue">
+              <h2 class="card__title"><span class="dot"></span>🏆 最終結果画面オーラエフェクト</h2>
+              <div class="config-grid-2">
+                <button type="button" class="btn btn--solid btn--cyan btn--sm" id="fxWinCit">🏆 市民勝利（聖なる光柱）</button>
+                <button type="button" class="btn btn--solid btn--red btn--sm" id="fxWinWolf">🐺 人狼勝利（深紅の瘴気）</button>
+              </div>
             </div>
           </div>
         </div>
@@ -128,6 +157,23 @@
       btn.addEventListener("click", () => selectRole(key, true));
       roleChips.appendChild(btn);
       if (idx === 0) selectRole(key, false);
+    });
+
+    // タブ切り替え処理
+    const tabBtns = document.querySelectorAll(".debug-tab-btn");
+    const tabPanes = document.querySelectorAll(".debug-tab-pane");
+    const headerRoleChips = document.querySelector(".dev-preview-bar");
+
+    tabBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const targetId = btn.dataset.tab;
+        tabBtns.forEach((b) => b.classList.toggle("is-active", b === btn));
+        tabPanes.forEach((p) => { p.hidden = p.id !== targetId; });
+        // 役職カードタブのときだけ上部の役職チップバーを表示
+        if (headerRoleChips) {
+          headerRoleChips.style.display = targetId === "tabCard" ? "flex" : "none";
+        }
+      });
     });
 
     flipBtn.addEventListener("click", () => flipBtn.classList.toggle("is-flipped"));
