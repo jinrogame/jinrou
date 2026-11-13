@@ -3,41 +3,54 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>演出確認専用プレイヤー - オリジナル人狼ゲーム</title>
+  <title>演出＆役職カード確認プレイヤー - オリジナル人狼ゲーム</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <header class="dev-preview-bar">
+    <div class="dev-preview-bar__header">
+      <span>🃏 役職カード切替（11種）</span>
+      <span style="color:#38bdf8" id="curRoleLabel">人狼神</span>
+    </div>
+    <div class="dev-preview-bar__buttons" id="roleChips"></div>
+  </header>
+
   <main class="stage">
     <div class="phone" id="phone">
-      <section class="screen is-active" data-phase="night">
+      <section class="screen is-active" data-phase="night" id="previewScreen">
         <div class="screen__bg"><img src="img/bg_night.svg" alt="" width="390" height="844"></div>
-        <div class="screen__body" style="justify-content:center;gap:12px">
-          <div class="card card--glow card--violet center">
-            <h1 class="big">🎬 演出確認プレイヤー</h1>
-            <p class="muted">ボタンを押すとスマホ画面いっぱいに演出ムービーが再生されます（画面右上の「スキップ ⏩」でいつでも戻れます）</p>
+        <div class="screen__body">
+          <!-- 役職カードプレビュー（上部チップで11種切替＆タップで反転） -->
+          <div class="hdr">
+            <h1 class="hdr__title">🃏 役職カード＆🎬演出確認</h1>
+            <button type="button" class="btn btn--ghost btn--sm" id="btnFlipToggle" style="width:auto">🔄 裏表反転</button>
           </div>
 
-          <div class="card card--red">
-            <h2 class="card__title"><span class="dot"></span>🌅 朝のターン開始演出</h2>
-            <button type="button" class="btn btn--solid btn--red" id="pMorningAttack">
-              ① 朝：追放発表 ➔ 🐺 夜襲（爪切り裂き動画）
-            </button>
-            <button type="button" class="btn btn--green" id="pMorningShield">
-              ② 朝：追放発表 ➔ 🛡️ ナイト盾防御（前半狼➔盾）
-            </button>
-            <button type="button" class="btn btn--amber btn--sm" id="pMorningPeace">
-              ③ 朝：初日の朝（犠牲者なし）
-            </button>
+          <button type="button" class="flip is-flipped" id="previewFlip" aria-label="カードをタップして反転">
+            <div class="flip__inner">
+              <div class="flip__face"><img src="img/role_card_back.svg" alt="役職カード裏面" width="400" height="560"></div>
+              <div class="flip__face flip__front"><img id="previewRoleImg" src="img/role_wolf_god.jpg" alt="役職カード" width="571" height="1024"></div>
+            </div>
+          </button>
+
+          <div class="card card--glow" id="previewRoleCard">
+            <h2 class="card__title">
+              <span class="dot"></span>
+              <span id="previewRoleName">人狼神</span>
+              <span class="chip chip--red" id="previewRoleTeam" style="margin-left:auto">人狼陣営</span>
+            </h2>
+            <p class="muted" id="previewRoleDesc"></p>
           </div>
 
-          <div class="card card--blue">
-            <h2 class="card__title"><span class="dot"></span>☀️ 昼・🌙 夜のターン開始演出</h2>
-            <button type="button" class="btn btn--solid btn--cyan" id="pDay">
-              ④ 昼：村人が広場に集合（day_gather.mp4）
-            </button>
-            <button type="button" class="btn btn--solid btn--violet" id="pNight">
-              ⑤ 夜：日没＆オオカミ遠吠え（night_howl.mp4）
-            </button>
+          <!-- ターン開始カットシーン動画確認ボタン -->
+          <div class="card card--violet">
+            <h2 class="card__title"><span class="dot"></span>🎬 ターン開始動画演出を再生</h2>
+            <div class="config-grid-2">
+              <button type="button" class="btn btn--solid btn--red btn--sm" id="pMorningAttack">🌅 朝：夜襲（爪動画）</button>
+              <button type="button" class="btn btn--green btn--sm" id="pMorningShield">🛡️ 朝：ナイト盾防御</button>
+              <button type="button" class="btn btn--cyan btn--sm" id="pDay">🗣️ 昼：広場に集合</button>
+              <button type="button" class="btn btn--violet btn--sm" id="pNight">🐺 夜：狼の遠吠え</button>
+            </div>
           </div>
         </div>
         <div class="screen__footer">
@@ -49,9 +62,9 @@
 
   <script type="module">
     import { S } from "./js/state.js";
+    import { ROLES } from "./js/data.js";
     import { playMorningCutscene, playDayCutscene, playNightCutscene } from "./js/cutscenes.js";
 
-    // ダミープレイヤーをセット
     S.players = {
       p1: { name: "たろう", avatarId: "1", alive: true },
       p2: { name: "はなこ", avatarId: "2", alive: true },
@@ -61,22 +74,56 @@
       p6: { name: "ごろう", avatarId: "6", alive: true },
     };
 
+    const roleChips = document.getElementById("roleChips");
+    const flipBtn = document.getElementById("previewFlip");
+    const roleImg = document.getElementById("previewRoleImg");
+    const roleName = document.getElementById("previewRoleName");
+    const roleTeam = document.getElementById("previewRoleTeam");
+    const roleDesc = document.getElementById("previewRoleDesc");
+    const curRoleLabel = document.getElementById("curRoleLabel");
+    const screen = document.getElementById("previewScreen");
+
+    function selectRole(key) {
+      const r = ROLES[key];
+      if (!r) return;
+      roleImg.src = r.img;
+      roleName.textContent = r.name;
+      roleDesc.textContent = r.desc;
+      curRoleLabel.textContent = `${r.name} (${r.img})`;
+      const isWolf = r.team === "wolf";
+      roleTeam.textContent = isWolf ? "人狼陣営" : "市民陣営";
+      roleTeam.className = "chip " + (isWolf ? "chip--red" : "chip--accent");
+      screen.style.setProperty("--accent", isWolf ? "var(--red)" : "var(--cyan)");
+      flipBtn.classList.add("is-flipped");
+      [...roleChips.querySelectorAll(".dev-btn")].forEach((b) => {
+        b.style.borderColor = b.dataset.role === key ? "#38bdf8" : "#475569";
+        b.style.color = b.dataset.role === key ? "#38bdf8" : "#f1f5f9";
+      });
+    }
+
+    Object.entries(ROLES).forEach(([key, r], idx) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "dev-btn";
+      btn.dataset.role = key;
+      btn.textContent = r.name;
+      btn.addEventListener("click", () => selectRole(key));
+      roleChips.appendChild(btn);
+      if (idx === 0) selectRole(key);
+    });
+
+    flipBtn.addEventListener("click", () => flipBtn.classList.toggle("is-flipped"));
+    document.getElementById("btnFlipToggle").addEventListener("click", () => flipBtn.classList.toggle("is-flipped"));
+
     document.getElementById("pMorningAttack").addEventListener("click", () => {
       playMorningCutscene({ exiled: ["p1"], victims: ["p2"], guardedSuccess: false }, 2);
     });
-
     document.getElementById("pMorningShield").addEventListener("click", () => {
       playMorningCutscene({ exiled: ["p3"], victims: [], guardedSuccess: true }, 2);
     });
-
-    document.getElementById("pMorningPeace").addEventListener("click", () => {
-      playMorningCutscene({ exiled: [], victims: [], guardedSuccess: false }, 1);
-    });
-
     document.getElementById("pDay").addEventListener("click", () => {
       playDayCutscene(2);
     });
-
     document.getElementById("pNight").addEventListener("click", () => {
       playNightCutscene(2, false);
     });
