@@ -4,7 +4,6 @@ import * as fb from "./firebase.js";
 import * as Room from "./room.js";
 import * as Host from "./host.js";
 import * as UI from "./ui.js";
-import { playMorningCutscene, playDayCutscene, playNightCutscene } from "./cutscenes.js";
 
 let unsubs = [];
 let hostSubscribed = false;
@@ -106,64 +105,5 @@ async function boot() {
 
 setInterval(() => UI.tickUI(), 250);
 setInterval(() => Host.onState(), 500);
-
-// 演出テストボタンの配線（スマホ画面上部のテストバーからワンクリック再生）
-function ensureDummyPlayers() {
-  const names = ["たろう", "はなこ", "じろう", "さぶろう", "しろう", "ごろう"];
-  names.forEach((name, i) => {
-    const id = `test_${i + 1}`;
-    if (!S.players[id]) S.players[id] = { name, avatarId: String(i + 1), alive: true };
-  });
-}
-
-document.getElementById("btnTestMorningRoulette2")?.addEventListener("click", () => {
-  ensureDummyPlayers();
-  playMorningCutscene({
-    exiled: ["test_2"],
-    tieCandidates: ["test_1", "test_2"],
-    victims: ["test_3"],
-    guardedSuccess: false,
-  }, 2);
-});
-
-document.getElementById("btnTestMorningRoulette3")?.addEventListener("click", () => {
-  ensureDummyPlayers();
-  playMorningCutscene({
-    exiled: ["test_3"],
-    tieCandidates: ["test_1", "test_2", "test_3"],
-    victims: [],
-    guardedSuccess: true,
-  }, 2);
-});
-
-document.getElementById("btnTestMorningKill")?.addEventListener("click", () => {
-  ensureDummyPlayers();
-  const dummyReport = {
-    exiled: [S.uid || "test_1"],
-    victims: ["test_2"],
-    guardedSuccess: false,
-  };
-  if (S.uid && !S.players[S.uid]) S.players[S.uid] = { name: "たろう", avatarId: "1" };
-  playMorningCutscene(dummyReport, 2);
-});
-
-document.getElementById("btnTestMorningShield")?.addEventListener("click", () => {
-  ensureDummyPlayers();
-  const dummyReport = {
-    exiled: ["test_3"],
-    victims: [],
-    guardedSuccess: true,
-  };
-  playMorningCutscene(dummyReport, 2);
-});
-
-document.getElementById("btnTestDay")?.addEventListener("click", () => {
-  ensureDummyPlayers();
-  playDayCutscene(2);
-});
-
-document.getElementById("btnTestNight")?.addEventListener("click", () => {
-  playNightCutscene(2, false);
-});
 
 boot();
