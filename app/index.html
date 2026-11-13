@@ -8,6 +8,20 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <!-- 演出テスト用操作バー（ワンタップで全演出を再生確認可能） -->
+  <header class="dev-preview-bar">
+    <div class="dev-preview-bar__header">
+      <span>🎬 演出テスト用プレビューバー</span>
+      <span style="color:#64748b">いつでもテスト再生可能</span>
+    </div>
+    <div class="dev-preview-bar__buttons">
+      <button type="button" class="dev-btn" id="btnTestMorningKill">🌅 朝（追放＋夜襲爪切り裂き）</button>
+      <button type="button" class="dev-btn" id="btnTestMorningShield">🛡️ 朝（追放＋ナイト盾防御）</button>
+      <button type="button" class="dev-btn" id="btnTestDay">🗣️ 昼（村人広場に集合）</button>
+      <button type="button" class="dev-btn" id="btnTestNight">🐺 夜（日没＋オオカミ遠吠え）</button>
+    </div>
+  </header>
+
   <main class="stage">
     <div class="phone" id="phone" aria-live="polite"></div>
   </main>

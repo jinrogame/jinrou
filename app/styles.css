@@ -978,3 +978,52 @@ button.big-id { font-family: inherit; }
   from { transform: scale(0.95); opacity: 0.75; }
   to { transform: scale(1.06); opacity: 1; }
 }
+
+/* ==========================================================
+   演出テスト・プレビューバー（画面上部固定・スマホ枠外）
+   ========================================================== */
+.dev-preview-bar {
+  width: 100%;
+  max-width: 480px;
+  background: #0f172aee;
+  border-bottom: 1.5px solid #334155;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  z-index: 9999;
+  backdrop-filter: blur(8px);
+}
+.dev-preview-bar__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  font-weight: 800;
+  color: #94a3b8;
+}
+.dev-preview-bar__buttons {
+  display: flex;
+  gap: 5px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 2px;
+}
+.dev-preview-bar__buttons::-webkit-scrollbar { display: none; }
+.dev-btn {
+  background: #1e293b;
+  border: 1px solid #475569;
+  color: #f1f5f9;
+  padding: 5px 9px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all .15s ease;
+}
+.dev-btn:hover, .dev-btn:active {
+  background: #334155;
+  border-color: #38bdf8;
+  color: #38bdf8;
+}

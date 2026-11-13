@@ -4,6 +4,7 @@ import * as fb from "./firebase.js";
 import * as Room from "./room.js";
 import * as Host from "./host.js";
 import * as UI from "./ui.js";
+import { playMorningCutscene, playDayCutscene, playNightCutscene } from "./cutscenes.js";
 
 let unsubs = [];
 let hostSubscribed = false;
@@ -105,4 +106,40 @@ async function boot() {
 
 setInterval(() => UI.tickUI(), 250);
 setInterval(() => Host.onState(), 500);
+
+// 演出テストボタンの配線（スマホ画面上部のテストバーからワンクリック再生）
+document.getElementById("btnTestMorningKill")?.addEventListener("click", () => {
+  // テスト用ダミーデータ：追放者たろう、夜襲犠牲者はなこ
+  const dummyReport = {
+    exiled: [S.uid || "test_1"],
+    victims: ["test_2"],
+    guardedSuccess: false,
+  };
+  if (!S.players[S.uid]) S.players[S.uid] = { name: "たろう", avatarId: "1" };
+  if (!S.players["test_2"]) S.players["test_2"] = { name: "はなこ", avatarId: "2" };
+  playMorningCutscene(dummyReport, 2);
+});
+
+document.getElementById("btnTestMorningShield")?.addEventListener("click", () => {
+  // テスト用ダミーデータ：追放者じろう、ナイト盾防御成功
+  const dummyReport = {
+    exiled: ["test_3"],
+    victims: [],
+    guardedSuccess: true,
+  };
+  if (!S.players["test_3"]) S.players["test_3"] = { name: "じろう", avatarId: "3" };
+  playMorningCutscene(dummyReport, 2);
+});
+
+document.getElementById("btnTestDay")?.addEventListener("click", () => {
+  ["1", "2", "3", "4", "5", "6"].forEach((id, i) => {
+    if (!S.players[`p_${id}`]) S.players[`p_${id}`] = { name: `村人${i+1}`, avatarId: id };
+  });
+  playDayCutscene(2);
+});
+
+document.getElementById("btnTestNight")?.addEventListener("click", () => {
+  playNightCutscene(2, false);
+});
+
 boot();
