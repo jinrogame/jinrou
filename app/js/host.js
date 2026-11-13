@@ -257,7 +257,7 @@ async function resolveSkill() {
   if (!ending && turn > r.maxTurns) ending = finalWin(aliveRoles);
   batch.update(roomR(), {
     phase: "morning_report", phaseSeq: r.phaseSeq + 1, phaseEndsAt: null, turn,
-    morningReport: { exiled: res.log.exiled, victims: [...res.log.attacked, ...res.log.retaliated, ...res.log.follow], revived: res.log.revived },
+    morningReport: { exiled: res.log.exiled, victims: [...res.log.attacked, ...res.log.retaliated, ...res.log.follow], revived: res.log.revived, guardedSuccess: !!res.guardedSuccess },
     ending: ending || null, effectState: null, pendingExile: [], reviveTarget: null,
   });
   await batch.commit();

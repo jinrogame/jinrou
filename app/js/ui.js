@@ -5,6 +5,7 @@ import { roleCounts, capabilities, isWolfTeam, checkWin } from "./engine.js";
 import * as Host from "./host.js";
 import * as Room from "./room.js";
 import * as fb from "./firebase.js";
+import { playMorningCutscene, playDayCutscene, playNightCutscene, clearCutscene } from "./cutscenes.js";
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -730,11 +731,24 @@ export function render() {
     root = phone.firstElementChild;
     sc.bind?.(root);
     lastKey = key;
+
+    // カットシーン演出トリガー（フェーズ切替時に1回再生）
+    if (id === "morning_report") {
+      playMorningCutscene(S.room?.morningReport, S.room?.turn || 1);
+    } else if (id === "day") {
+      playDayCutscene(S.room?.turn || 1);
+    } else if (id === "night0") {
+      playNightCutscene(0, true);
+    } else if (id === "vote") {
+      playNightCutscene(S.room?.turn || 1, false);
+    } else {
+      clearCutscene();
+    }
   }
   sc.update?.(root);
   showInbox();
 }
-export function resetView() { lastKey = null; }
+export function resetView() { lastKey = null; clearCutscene(); }
 
 /* 占い師・霊媒師の即時結果（オーナー端末からの返信を受信したら表示） */
 function showInbox() {

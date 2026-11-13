@@ -124,6 +124,7 @@ export function resolveNight(ctx) {
 
   // 5. 夜襲
   const attackedSet = new Set();
+  let guardedSuccess = false;
   if (!ctx.night0 && !effects.noAttack) {
     const wolves = actors.filter((u) => capOf(u).attack);
     const validTarget = (t) => t && alive[t] && !(roles[t] === "wolf_god" || roles[t] === "werewolf");
@@ -137,7 +138,9 @@ export function resolveNight(ctx) {
     targets.forEach((t) => {
       if (roles[t] === "psycho") {
         votes.filter((v) => v.t === t).forEach((v) => { if (kill(v.voter)) log.retaliated.push(v.voter); });
-      } else if (!guarded.has(t) && kill(t)) {
+      } else if (guarded.has(t)) {
+        guardedSuccess = true;
+      } else if (kill(t)) {
         attackedSet.add(t);
         log.attacked.push(t);
       }
@@ -169,7 +172,7 @@ export function resolveNight(ctx) {
     });
   }
 
-  return { alive, log, win: checkWin(Object.keys(alive).filter((u) => alive[u]).map((u) => roles[u])) };
+  return { alive, log, guardedSuccess, win: checkWin(Object.keys(alive).filter((u) => alive[u]).map((u) => roles[u])) };
 }
 
 /* ---------------- ミニゲーム評価 ---------------- */
