@@ -1,0 +1,147 @@
+rules_version = '2';
+
+// ===============================================================
+// Assumed Data Model
+// ===============================================================
+// Collection: rooms/{roomId}
+//   hostUid: string (required, immutable), status: 'waiting'|'playing'|'finished'
+//   phase: string, phaseSeq/turn/maxTurns: int, phaseEndsAt: number|timestamp,
+//   roleConfig: map, plus other host-managed fields (<= 40 keys).
+// rooms/{roomId}/players/{uid}: name (string 1..8), avatarDataUrl (string <= 30000, optional),
+//   avatarId, readySeq, taskSeq, taskV, taskN, alive (bool), host-managed fields.
+// rooms/{roomId}/secrets/{uid}: host-written role secrets, read by owner/host.
+// rooms/{roomId}/actions/{uid}: owner-written votes/skill targets (<= 12 keys).
+// Auth: anonymous Firebase Auth. The host is the room's hostUid (host-authoritative).
+// ===============================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---------------- Helpers ----------------
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isAuthenticated() && request.auth.uid == uid;
+    }
+
+    function roomPath(roomId) {
+      return /databases/$(database)/documents/rooms/$(roomId);
+    }
+
+    function roomExists(roomId) {
+      return exists(roomPath(roomId));
+    }
+
+    function isHost(roomId) {
+      return isAuthenticated() && roomExists(roomId) &&
+        get(roomPath(roomId)).data.hostUid == request.auth.uid;
+    }
+
+    function isRoomWaiting(roomId) {
+      return roomExists(roomId) && get(roomPath(roomId)).data.status == 'waiting';
+    }
+
+    function validOptionalString(data, field, maxLen) {
+      return !(field in data) || (data[field] is string && data[field].size() <= maxLen);
+    }
+
+    // ---------------- Domain validators ----------------
+    function isValidRoom(data) {
+      return data.keys().size() <= 40 &&
+        data.hostUid is string && data.hostUid.size() > 0 && data.hostUid.size() <= 128 &&
+        data.status in ['waiting', 'playing', 'finished'] &&
+        validOptionalString(data, 'phase', 64) &&
+        (!('phaseSeq' in data) || data.phaseSeq is number) &&
+        (!('turn' in data) || data.turn is number) &&
+        (!('maxTurns' in data) || (data.maxTurns is number && data.maxTurns >= 0 && data.maxTurns <= 1000)) &&
+        (!('roleConfig' in data) || (data.roleConfig is map && data.roleConfig.keys().size() <= 50));
+    }
+
+    function isValidPlayer(data) {
+      return data.keys().size() <= 30 &&
+        data.name is string && data.name.size() >= 1 && data.name.size() <= 8 &&
+        validOptionalString(data, 'avatarDataUrl', 30000) &&
+        validOptionalString(data, 'avatarId', 128) &&
+        (!('alive' in data) || data.alive is bool);
+    }
+
+    function ownerPlayerKeys() {
+      return ['name', 'avatarDataUrl', 'avatarId', 'readySeq', 'taskSeq', 'taskV', 'taskN'];
+    }
+
+    function isValidPlayerCreate(data) {
+      return isValidPlayer(data) &&
+        data.keys().hasOnly(['name', 'avatarDataUrl', 'avatarId', 'alive', 'readySeq', 'taskSeq', 'taskV', 'taskN']) &&
+        data.alive == true;
+    }
+
+    function isValidOwnerPlayerUpdate() {
+      return isValidPlayer(request.resource.data) &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(ownerPlayerKeys());
+    }
+
+    function isValidSecret(data) {
+      return data.keys().size() <= 20;
+    }
+
+    function isValidAction(data) {
+      return data.keys().size() <= 12;
+    }
+
+    // ---------------- Default deny ----------------
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // ---------------- Rooms ----------------
+    match /rooms/{roomId} {
+      allow read: if isAuthenticated();
+
+      allow create: if isAuthenticated() &&
+        roomId.size() <= 64 &&
+        isValidRoom(request.resource.data) &&
+        request.resource.data.hostUid == request.auth.uid &&
+        request.resource.data.status == 'waiting';
+
+      allow update: if isAuthenticated() &&
+        resource.data.hostUid == request.auth.uid &&
+        request.resource.data.hostUid == resource.data.hostUid &&
+        isValidRoom(request.resource.data);
+
+      allow delete: if isAuthenticated() && resource.data.hostUid == request.auth.uid;
+
+      // ---------------- Players ----------------
+      match /players/{uid} {
+        allow read: if isAuthenticated();
+
+        allow create: if isOwner(uid) &&
+          isRoomWaiting(roomId) &&
+          isValidPlayerCreate(request.resource.data);
+
+        allow update: if isAuthenticated() &&
+          ((isOwner(uid) && isValidOwnerPlayerUpdate()) ||
+           (isHost(roomId) && isValidPlayer(request.resource.data)));
+
+        allow delete: if isOwner(uid) && isRoomWaiting(roomId) || isHost(roomId);
+      }
+
+      // ---------------- Secrets ----------------
+      match /secrets/{uid} {
+        allow read: if isOwner(uid) || isHost(roomId);
+        allow create, update: if isHost(roomId) && isValidSecret(request.resource.data);
+        allow delete: if isHost(roomId);
+      }
+
+      // ---------------- Actions ----------------
+      match /actions/{uid} {
+        allow read: if isOwner(uid) || isHost(roomId);
+        allow create, update: if isOwner(uid) &&
+          roomExists(roomId) &&
+          isValidAction(request.resource.data);
+        allow delete: if isOwner(uid) || isHost(roomId);
+      }
+    }
+  }
+}

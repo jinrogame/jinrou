@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="160" height="160">
+<defs><clipPath id="c"><circle cx="80" cy="80" r="78"/></clipPath><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#14b8a6"/><stop offset="100%" stop-color="#14b8a6" stop-opacity=".6"/></linearGradient></defs>
+<circle cx="80" cy="80" r="78" fill="url(#g)"/>
+<g clip-path="url(#c)">
+<path d="M20 170 Q24 118 80 116 Q136 118 140 170Z" fill="#1e293b"/><rect x="68" y="98" width="24" height="24" fill="#e0ac69"/>
+
+<ellipse cx="80" cy="76" rx="32" ry="36" fill="#e0ac69"/>
+<path d="M42 70 Q40 36 80 34 Q120 36 118 70 Q100 52 80 54 Q60 52 42 70Z" fill="#111827"/><circle cx="80" cy="30" r="12" fill="#111827"/>
+<circle cx="68" cy="78" r="3.4" fill="#111827"/><circle cx="92" cy="78" r="3.4" fill="#111827"/>
+<path d="M70 92 Q80 100 90 92" stroke="#7f1d1d" stroke-width="3" fill="none" stroke-linecap="round"/>
+</g>
+<circle cx="80" cy="80" r="78" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="3"/>
+</svg>

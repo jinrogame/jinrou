@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>オリジナル人狼ゲーム - 画面遷移モックアップ</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- モックアップ確認用ナビゲーションバー（全画面ジャンプ対応） -->
+  <header class="mockup-nav">
+    <nav aria-label="モックアップ画面切替ナビゲーション" class="mockup-nav-row">
+      <label for="screen-jump-select">画面ジャンプ:</label>
+      <select id="screen-jump-select" class="mockup-select">
+        <option value="screen-01">[01] トップ・名前入力＆入室</option>
+        <option value="screen-02">[02] ロビー＆役職設定（オーナー用）</option>
+        <option value="screen-03">[03] ロビー待機（参加メンバー用）</option>
+        <option value="screen-04">[04] 役職発表</option>
+        <option value="screen-05">[05] 自己紹介タイム</option>
+        <option value="screen-06">[06] 初日の夜（0ターン目夜）</option>
+        <option value="screen-07">[07] 朝①：前夜の追放・夜襲・復活発表</option>
+        <option value="screen-08">[08] 朝②：本日のタスク＆報酬(または罰)発表</option>
+        <option value="screen-09">[09] 朝③：タスク（ミニゲーム全5種）実行</option>
+        <option value="screen-10">[10] 朝④：タスク結果＆貢献度発表</option>
+        <option value="screen-11">[11] 昼のターン：話し合い（5分）</option>
+        <option value="screen-12a">[12-1] 夜のターン①：追放投票</option>
+        <option value="screen-12b">[12-2] 夜のターン②：脱落者復活投票（報酬時）</option>
+        <option value="screen-13">[13] 夜のターン③：スキル発動・夜襲・静観</option>
+        <option value="screen-14">[14] ゲーム結果発表（勝敗・引き分け）</option>
+      </select>
+      <div class="mockup-step-btns">
+        <button type="button" id="btn-prev-screen" class="btn-mini">◀ 前へ</button>
+        <button type="button" id="btn-next-screen" class="btn-mini">次へ ▶</button>
+      </div>
+    </nav>
+  </header>
+
+  <main class="phone-shell">
+    <h1 class="screen-title" id="current-screen-heading">オリジナル人狼ゲーム</h1>
+
+    <!-- ==========================================
+         [画面01] トップ・名前入力＆ルーム作成/入室画面
+         ========================================== -->
+    <section id="screen-01" class="screen is-active" aria-label="トップ・名前入力画面">
+      <img src="img/logo_title.svg" alt="人狼ゲーム タイトルロゴ" class="art-banner" width="600" height="220" fetchpriority="high">
+
+      <div class="card">
+        <h2 class="card-title">ステップ2：プレイヤー名入力</h2>
+        <div class="field-group">
+          <label for="player-name-input">あなたの名前</label>
+          <input type="text" id="player-name-input" class="text-input" value="たろう" autocomplete="nickname">
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">ステップ3：ルームオーナーとして開始</h2>
+        <p class="card-sub">新しいルームIDを発行し、役職の配分を設定します。</p>
+        <button type="button" class="btn btn-primary" data-go="screen-02">ルームを作成する（オーナー）</button>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">ステップ4：ルームIDを入力して入室</h2>
+        <div class="field-group">
+          <label for="room-id-input">ルームID（4桁）</label>
+          <input type="text" id="room-id-input" class="text-input" value="AB12">
+        </div>
+        <button type="button" class="btn btn-secondary" data-go="screen-03">ルームに入室する（メンバー）</button>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         [画面02] ルーム待機＆役職設定画面【オーナー用】
+         ========================================== -->
+    <section id="screen-02" class="screen" aria-label="ルーム待機・役職設定画面（オーナー用）">
+      <div class="screen-header">
+        <span class="badge badge-turn">ルームID: AB12</span>
+        <span class="badge badge-alive">参加者: 10 / 10人</span>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">入室メンバー一覧（10人）</h2>
+        <p class="card-sub">たろう(オーナー) / じろう / さぶろう / しろう / ごろう / ろくろう / ななこ / はちろう / きゅうた / じゅうべえ</p>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">人狼陣営の配分設定（計 <span id="wolf-total-count">3</span> 人）</h2>
+        <ul class="role-config-list">
+          <li class="role-config-item">
+            <span>👁️ 人狼神（全役職把握・夜襲）</span>
+            <div class="counter-group">
+              <button type="button" class="counter-btn" data-wolf-role="god" data-delta="-1" aria-label="人狼神を減らす">-</button>
+              <strong id="count-wolf-god">1</strong>
+              <button type="button" class="counter-btn" data-wolf-role="god" data-delta="1" aria-label="人狼神を増やす">+</button>
+            </div>
+          </li>
+          <li class="role-config-item">
+            <span>🐺 人狼（仲間認識・夜襲）</span>
+            <div class="counter-group">
+              <button type="button" class="counter-btn" data-wolf-role="wolf" data-delta="-1" aria-label="人狼を減らす">-</button>
+              <strong id="count-wolf-normal">1</strong>
+              <button type="button" class="counter-btn" data-wolf-role="wolf" data-delta="1" aria-label="人狼を増やす">+</button>
+            </div>
+          </li>
+          <li class="role-config-item">
+            <span>🃏 狂人（人間判定）</span>
+            <div class="counter-group">
+              <button type="button" class="counter-btn" data-wolf-role="mad" data-delta="-1" aria-label="狂人を減らす">-</button>
+              <strong id="count-wolf-mad">0</strong>
+              <button type="button" class="counter-btn" data-wolf-role="mad" data-delta="1" aria-label="狂人を増やす">+</button>
+            </div>
+          </li>
+          <li class="role-config-item">
+            <span>🔪 サイコキラー（関わると死亡）</span>
+            <div class="counter-group">
+              <button type="button" class="counter-btn" data-wolf-role="psycho" data-delta="-1" aria-label="サイコキラーを減らす">-</button>
+              <strong id="count-wolf-psycho">1</strong>
+              <button type="button" class="counter-btn" data-wolf-role="psycho" data-delta="1" aria-label="サイコキラーを増やす">+</button>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">市民陣営の配分設定（各1人 or 0人 チェックボックス）</h2>
+        <p class="card-sub">チェックした役職が1人ずつ（恋人は2人組）配役され、残りが「市民」になります。</p>
+        <ul class="role-config-list">
+          <li class="role-config-item">
+            <label class="checkbox-row">
+              <span>🔮 占い師（1人）</span>
+              <input type="checkbox" class="citizen-role-cb" data-slots="1" checked>
+            </label>
+          </li>
+          <li class="role-config-item">
+            <label class="checkbox-row">
+              <span>🕯️ 霊媒師（1人）</span>
+              <input type="checkbox" class="citizen-role-cb" data-slots="1" checked>
+            </label>
+          </li>
+          <li class="role-config-item">
+            <label class="checkbox-row">
+              <span>🛡️ 騎士（1人）</span>
+              <input type="checkbox" class="citizen-role-cb" data-slots="1" checked>
+            </label>
+          </li>
+          <li class="role-config-item">
+            <label class="checkbox-row">
+              <span>💕 恋人（2人1セット）</span>
+              <input type="checkbox" class="citizen-role-cb" data-slots="2" checked>
+            </label>
+          </li>
+          <li class="role-config-item">
+            <label class="checkbox-row">
+              <span>🎭 コスプレイヤー（1人・占い黒）</span>
+              <input type="checkbox" class="citizen-role-cb" data-slots="1">
+            </label>
+          </li>
+          <li class="role-config-item">
+            <label class="checkbox-row">
+              <span>💉 奇跡の医者（1人・1回蘇生）</span>
+              <input type="checkbox" class="citizen-role-cb" data-slots="1" checked>
+            </label>
+          </li>
+          <li class="role-config-item">
+            <span>🏠 <strong>市民（残り枠へ自動割当）</strong></span>
+            <strong id="auto-citizen-count">1人</strong>
+          </li>
+        </ul>
+      </div>
+
+      <button type="button" class="btn btn-primary" data-go="screen-04">ステップ5：ゲーム開始！</button>
+    </section>
+
+    <!-- ==========================================
+         [画面03] ルーム待機画面【参加メンバー用】
+         ========================================== -->
+    <section id="screen-03" class="screen" aria-label="ルーム待機画面（参加メンバー用）">
+      <div class="screen-header">
+        <span class="badge badge-turn">ルームID: AB12</span>
+        <span class="badge badge-alive">入室完了</span>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">ルームオーナーの開始を待っています…</h2>
+        <p class="card-sub">オーナーが全員の入室を確認し、役職配分を設定しています。このままお待ちください。</p>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">現在の入室メンバー（10人）</h2>
+        <ul class="player-list">
+          <li class="player-item"><span>たろう（ルームオーナー）</span><span class="badge badge-alive">準備OK</span></li>
+          <li class="player-item"><span>じろう（あなた）</span><span class="badge badge-alive">準備OK</span></li>
+          <li class="player-item"><span>さぶろう 他8名</span><span class="badge badge-alive">準備OK</span></li>
+        </ul>
+      </div>
+
+      <button type="button" class="btn btn-primary" data-go="screen-04">（オーナーが開始 ➔ 役職発表へ）</button>
+      <button type="button" class="btn btn-secondary" data-go="screen-01">トップへ戻る</button>
+    </section>
+
+    <!-- ==========================================
+         [画面04] 役職発表画面
+         ========================================== -->
+    <section id="screen-04" class="screen" aria-label="役職発表画面">
+      <div class="card">
+        <h2 class="card-title">モック確認用：表示する役職カードを切替</h2>
+        <div class="switcher-tabs" id="role-preview-tabs">
+          <button type="button" class="tab-chip is-selected" data-role-img="img/role_wolf_god.svg" data-role-name="人狼神" data-role-extra="【人狼神の特権】全員の役職が判明しています：じろう(人狼), さぶろう(サイコキラー), しろう(占い師), ごろう(騎士)...">人狼神</button>
+          <button type="button" class="tab-chip" data-role-img="img/role_werewolf.svg" data-role-name="人狼" data-role-extra="【仲間の人狼】たろう(人狼神) があなたの仲間です。">人狼</button>
+          <button type="button" class="tab-chip" data-role-img="img/role_madman.svg" data-role-name="狂人" data-role-extra="人狼の味方です。占われても「人間」と判定されます。">狂人</button>
+          <button type="button" class="tab-chip" data-role-img="img/role_psycho.svg" data-role-name="サイコキラー" data-role-extra="夜にあなたに関わったプレイヤー（占い・護衛・夜襲・蘇生）は全員死亡します。">サイコキラー</button>
+          <button type="button" class="tab-chip" data-role-img="img/role_citizen.svg" data-role-name="市民" data-role-extra="特殊能力はありません。議論とタスクで人狼を見つけましょう。">市民</button>
+          <button type="button" class="tab-chip" data-role-img="img/role_seer.svg" data-role-name="占い師" data-role-extra="毎晩1人を占い、「人間」か「人狼」かを知ることができます。">占い師</button>
+          <button type="button" class="tab-chip" data-role-img="img/role_medium.svg" data-role-name="霊媒師" data-role-extra="追放されたプレイヤーが「人間」だったか「人狼」だったかを知ることができます。">霊媒師</button>
+          <button type="button" class="tab-chip" data-role-img="img/role_knight.svg" data-role-name="騎士" data-role-extra="毎晩1人を人狼の襲撃から守ることができます。">騎士</button>
+          <button type="button" class="tab-chip" data-role-img="img/role_lovers.svg" data-role-name="恋人" data-role-extra="【恋人の相方】ななこ さんがあなたの恋人です。片方が死ぬともう片方も後追いします。">恋人</button>
+          <button type="button" class="tab-chip" data-role-img="img/role_cosplayer.svg" data-role-name="コスプレイヤー" data-role-extra="騎士と同じく毎晩1人を守りますが、占われると「人狼」と判定されます。">コスプレイヤー</button>
+          <button type="button" class="tab-chip" data-role-img="img/role_doctor.svg" data-role-name="奇跡の医者" data-role-extra="ゲーム中1回だけ死亡者を復活させます（サイコキラーを蘇生すると自分が死にます）。">奇跡の医者</button>
+        </div>
+      </div>
+
+      <img id="role-card-img" src="img/role_wolf_god.svg" alt="役職カードイラスト（ポケモンカードサイズ縦長）" class="art-poke-card" width="400" height="560" loading="lazy">
+
+      <div class="card">
+        <h2 class="card-title">あなたの役職：<span id="role-card-title">人狼神</span></h2>
+        <p class="card-sub" id="role-card-desc">【人狼神の特権】全員の役職が判明しています：じろう(人狼), さぶろう(サイコキラー), しろう(占い師), ごろう(騎士)...</p>
+      </div>
+
+      <button type="button" class="btn btn-primary" data-go="screen-05">役職を確認しました（自己紹介へ）</button>
+    </section>
+
+    <!-- ==========================================
+         [画面05] 自己紹介タイム画面
+         ========================================== -->
+    <section id="screen-05" class="screen" aria-label="自己紹介タイム画面">
+      <img src="img/banner_intro.svg" alt="自己紹介タイムバナー" class="art-banner" width="600" height="160" loading="lazy">
+
+      <div class="card">
+        <h2 class="card-title">ステップ7：リアルに自己紹介！</h2>
+        <p class="card-sub">参加者全員で順番にリアルで自己紹介をしましょう。全員終わったら初日の夜へ進みます。</p>
+      </div>
+
+      <button type="button" class="btn btn-primary" data-go="screen-06">初日の夜（0ターン目夜）へ進む</button>
+    </section>
+
+    <!-- ==========================================
+         [画面06] 初日の夜（0ターン目夜）画面
+         ========================================== -->
+    <section id="screen-06" class="screen" aria-label="初日の夜画面">
+      <img src="img/banner_night.svg" alt="初日の夜バナー" class="art-banner" width="600" height="160" loading="lazy">
+
+      <div class="card">
+        <h2 class="card-title">ステップ8：初日の夜（誰も殺されません）</h2>
+        <p class="card-sub">※占い師のみスキルを発動できます（初日はサイコキラーを占っても返り討ちは無効）。他の役職は説明文を読んでOKをタップしてください。</p>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">【占い師の表示】占う相手を選択</h2>
+        <label class="vote-option">
+          <span>じろう</span>
+          <input type="radio" name="first-night-seer" value="じろう（人狼）" checked>
+        </label>
+        <label class="vote-option">
+          <span>さぶろう</span>
+          <input type="radio" name="first-night-seer" value="さぶろう（人間）">
+        </label>
+        <button type="button" class="btn btn-secondary" id="btn-first-night-seer">占い結果をその場で確認する</button>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">【市民・その他の役職の表示】</h2>
+        <p class="card-sub">初日の夜です。周囲に役職がバレないよう、説明文を読んで下のOKボタンをタップしてください。</p>
+        <button type="button" class="btn btn-primary" data-go="screen-07">確認OK（1ターン目の朝へ）</button>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         [画面07] 朝のターン①：前夜の追放・夜襲・復活発表画面
+         ========================================== -->
+    <section id="screen-07" class="screen" aria-label="朝のターン：前夜の結果発表画面">
+      <div class="screen-header">
+        <span class="badge badge-turn">ターン 2 / 5</span>
+        <span class="badge badge-alive">朝のターン（残り 05:00）</span>
+      </div>
+
+      <img src="img/banner_morning.svg" alt="朝のターンバナー" class="art-banner" width="600" height="160" loading="lazy">
+
+      <div class="card">
+        <h2 class="card-title">昨晩の追放・夜襲・復活結果の発表</h2>
+        <ul class="player-list">
+          <li class="player-item">
+            <span>⚖️ 投票で追放された人</span>
+            <span class="badge badge-dead">ろくろう</span>
+          </li>
+          <li class="player-item">
+            <span>🐺 夜襲（または返り討ち）の犠牲者</span>
+            <span class="badge badge-dead">はちろう</span>
+          </li>
+          <li class="player-item">
+            <span>💉 復活した人</span>
+            <span class="badge badge-alive">なし</span>
+          </li>
+        </ul>
+        <p class="card-sub">※ここでどちらかの陣営が全滅していた場合、または5ターン終了時は「ゲーム結果発表画面」へ遷移します。</p>
+      </div>
+
+      <button type="button" class="btn btn-primary" data-go="screen-08">本日のタスク発表へ進む</button>
+      <button type="button" class="btn btn-secondary" data-go="screen-14">（決着時ルート：ゲーム結果発表画面へ）</button>
+    </section>
+
+    <!-- ==========================================
+         [画面08] 朝のターン②：本日のタスク＆報酬(または罰)発表画面
+         ========================================== -->
+    <section id="screen-08" class="screen" aria-label="朝のターン：本日のタスク＆報酬発表画面">
+      <div class="screen-header">
+        <span class="badge badge-turn">ステップ9：タスク＆報酬(罰)発表</span>
+        <span class="badge badge-alive">1ゲーム内重複なし抽選</span>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">モック確認用：メリット／デメリット表示切替（1ターン1個抽選）</h2>
+        <div class="switcher-tabs" id="effect-preview-tabs">
+          <button type="button" class="tab-chip is-selected" data-effect-img="img/icon_reward.svg" data-effect-title="【成功報酬（メリット）】全員ナイトスキル付与" data-effect-desc="タスク成功で、今晩市民全員がナイト（護衛）スキルを使えます！（※失敗時は何も起きません）">メリット① 全員ナイト</button>
+          <button type="button" class="tab-chip" data-effect-img="img/icon_reward.svg" data-effect-title="【成功報酬（メリット）】脱落者1名復活投票" data-effect-desc="タスク成功で、今晩の夜ターンに脱落者を1人だけ投票で復活できます！">メリット③ 1名復活</button>
+          <button type="button" class="tab-chip" data-effect-img="img/icon_reward.svg" data-effect-title="【成功報酬（メリット）】夜襲封じ" data-effect-desc="タスク成功で、今晩の人狼による夜襲を完全に封じます！">メリット④ 夜襲封じ</button>
+          <button type="button" class="tab-chip" data-effect-img="img/icon_penalty.svg" data-effect-title="【失敗時の罰（デメリット）】夜襲対象＋1人" data-effect-desc="タスクに失敗すると、今晩の夜襲で襲われる数が1人増えます！（※成功で回避）">デメリット① 夜襲+1</button>
+          <button type="button" class="tab-chip" data-effect-img="img/icon_penalty.svg" data-effect-title="【失敗時の罰（デメリット）】追放投票で2人追放" data-effect-desc="タスクに失敗すると、今晩の追放投票で上位2人が追放されます！（※成功で回避）">デメリット③ 2人追放</button>
+        </div>
+      </div>
+
+      <img id="announce-effect-img" src="img/icon_reward.svg" alt="今回の報酬または罰カード" class="art-card" width="400" height="260" loading="lazy">
+
+      <div class="card">
+        <h2 class="card-title" id="announce-effect-title">【成功報酬（メリット）】全員ナイトスキル付与</h2>
+        <p class="card-sub" id="announce-effect-desc">タスク成功で、今晩市民全員がナイト（護衛）スキルを使えます！（※失敗時は何も起きません）</p>
+      </div>
+
+      <button type="button" class="btn btn-primary" data-go="screen-09">ステップ10：みんなでタスクを開始！</button>
+    </section>
+
+    <!-- ==========================================
+         [画面09] 朝のターン③：タスク（ミニゲーム全5種）実行画面
+         ========================================== -->
+    <section id="screen-09" class="screen" aria-label="朝のターン：ミニゲーム実行画面">
+      <div class="card">
+        <h2 class="card-title">モック確認用：全5種のミニゲーム画面切替</h2>
+        <div class="switcher-tabs" id="minigame-preview-tabs">
+          <button type="button" class="tab-chip is-selected" data-mg="mg-1">① みんなで連打</button>
+          <button type="button" class="tab-chip" data-mg="mg-2">② 気持ちを合わせろ</button>
+          <button type="button" class="tab-chip" data-mg="mg-3">③ かぶっちゃだめよ</button>
+          <button type="button" class="tab-chip" data-mg="mg-4">④ みんな答えろ</button>
+          <button type="button" class="tab-chip" data-mg="mg-5">⑤ 10秒チャレンジ</button>
+        </div>
+      </div>
+
+      <!-- 09-1: みんなで連打 -->
+      <div id="mg-1" class="card mg-panel">
+        <img src="img/task_mash.svg" alt="みんなで連打バナー" class="art-card" width="400" height="260" loading="lazy">
+        <div class="timer-box">
+          <div>残り 42秒 ｜ チーム合計: <strong id="mash-total">742</strong> / 800回</div>
+        </div>
+        <button type="button" class="btn btn-mash" id="btn-mash-tap">TAP!! 連打！（あなた: <span id="mash-my-count">92</span>回）</button>
+      </div>
+
+      <!-- 09-2: 気持ちを合わせろクイズ -->
+      <div id="mg-2" class="card mg-panel" hidden>
+        <img src="img/task_match_quiz.svg" alt="気持ちを合わせろクイズバナー" class="art-card" width="400" height="260" loading="lazy">
+        <h3 class="card-title">お題：「赤い果物」【ひらがなで答えろ】</h3>
+        <p class="card-sub">生存メンバー全員の回答が一致すれば成功！</p>
+        <input type="text" class="text-input" value="りんご" aria-label="気持ちを合わせろクイズの回答">
+      </div>
+
+      <!-- 09-3: かぶっちゃだめよクイズ -->
+      <div id="mg-3" class="card mg-panel" hidden>
+        <img src="img/task_unique_quiz.svg" alt="かぶっちゃだめよクイズバナー" class="art-card" width="400" height="260" loading="lazy">
+        <h3 class="card-title">お題：「果物」【ひらがなで答えろ】</h3>
+        <p class="card-sub">他のメンバーと1人も回答がかぶらなければ成功！</p>
+        <input type="text" class="text-input" value="ますかっと" aria-label="かぶっちゃだめよクイズの回答">
+      </div>
+
+      <!-- 09-4: みんな答えろクイズ -->
+      <div id="mg-4" class="card mg-panel" hidden>
+        <img src="img/task_relay_quiz.svg" alt="みんな答えろクイズバナー" class="art-card" width="400" height="260" loading="lazy">
+        <h3 class="card-title">お題：「都道府県」【漢字で答えろ】（残り 35秒）</h3>
+        <p class="card-sub">既出：北海道 → 青森県 → 東京都 → 福岡県（次はあなたの番です！）</p>
+        <input type="text" class="text-input" value="沖縄県" aria-label="みんな答えろクイズの回答">
+      </div>
+
+      <!-- 09-5: 10秒チャレンジ -->
+      <div id="mg-5" class="card mg-panel" hidden>
+        <img src="img/task_timer10.svg" alt="10秒チャレンジバナー" class="art-card" width="400" height="260" loading="lazy">
+        <h3 class="card-title">10.0秒ぴったりでストップ！（9.5〜10.5秒で成功）</h3>
+        <div class="timer-box">
+          <div class="timer-value" id="stop10-display">??.?? 秒</div>
+        </div>
+        <button type="button" class="btn btn-danger" id="btn-stop10">STOP!（10秒で押す）</button>
+      </div>
+
+      <button type="button" class="btn btn-primary" data-go="screen-10">タスク終了 ➔ 結果＆貢献度発表へ</button>
+    </section>
+
+    <!-- ==========================================
+         [画面10] 朝のターン④：タスク結果＆貢献度発表画面
+         ========================================== -->
+    <section id="screen-10" class="screen" aria-label="タスク結果・貢献度発表画面">
+      <div class="screen-header">
+        <span class="badge badge-turn">ステップ11：タスク結果発表</span>
+        <span class="badge badge-alive">報酬獲得！</span>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">🎉 タスク成功！報酬が発動します</h2>
+        <p class="card-sub">各プレイヤーのタスクへの貢献度（回答・回数・秒数）を公開します。人狼がバレないように足を引っ張っていないか推理しましょう！</p>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">プレイヤー別 タスク貢献度一覧</h2>
+        <ul class="player-list">
+          <li class="player-item"><span>たろう</span><span class="badge badge-alive">118回 / 10.04秒 (成功)</span></li>
+          <li class="player-item"><span>じろう</span><span class="badge badge-alive">105回 / 9.88秒 (成功)</span></li>
+          <li class="player-item"><span>さぶろう</span><span class="badge badge-dead">76回 / 8.92秒 (微妙に未達…)</span></li>
+          <li class="player-item"><span>しろう</span><span class="badge badge-alive">112回 / 10.21秒 (成功)</span></li>
+          <li class="player-item"><span>ごろう</span><span class="badge badge-alive">101回 / 9.65秒 (成功)</span></li>
+        </ul>
+      </div>
+
+      <button type="button" class="btn btn-primary" data-go="screen-11">ステップ12：昼のターン（話し合い）へ</button>
+    </section>
+
+    <!-- ==========================================
+         [画面11] 昼のターン：話し合い画面（5分）
+         ========================================== -->
+    <section id="screen-11" class="screen" aria-label="昼のターン：話し合い画面">
+      <div class="screen-header">
+        <span class="badge badge-turn">ターン 2 / 5</span>
+        <span class="badge badge-alive">昼のターン（議論）</span>
+      </div>
+
+      <img src="img/banner_day.svg" alt="昼のターンバナー" class="art-banner" width="600" height="160" loading="lazy">
+
+      <div class="timer-box">
+        <div>話し合い残り時間</div>
+        <div class="timer-value">04:59</div>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">生存・脱落プレイヤー状況</h2>
+        <ul class="player-list">
+          <li class="player-item"><span>たろう / じろう / さぶろう / しろう / ごろう / ななこ / きゅうた / じゅうべえ</span><span class="badge badge-alive">生存 8名</span></li>
+          <li class="player-item"><span>ろくろう / はちろう</span><span class="badge badge-dead">脱落 2名</span></li>
+        </ul>
+      </div>
+
+      <details class="info-drawer" open>
+        <summary>📊 今朝のタスク貢献度・発生中の報酬／罰を確認</summary>
+        <p class="card-sub">・今朝の貢献度ワースト：さぶろう（76回 / 8.92秒）<br>・本日の適用効果：今晩、市民全員がナイトスキル使用可能</p>
+      </details>
+
+      <button type="button" class="btn btn-primary" data-go="screen-12a">ステップ13：夜のターン（追放投票）へ</button>
+    </section>
+
+    <!-- ==========================================
+         [画面12-1] 夜のターン①：追放投票画面
+         ========================================== -->
+    <section id="screen-12a" class="screen" aria-label="夜のターン：追放投票画面">
+      <div class="screen-header">
+        <span class="badge badge-turn">ステップ13-1：追放投票</span>
+        <span class="badge badge-alive">夜のターン（残り 05:00）</span>
+      </div>
+
+      <img src="img/banner_night.svg" alt="夜のターンバナー" class="art-banner" width="600" height="160" loading="lazy">
+
+      <div class="card">
+        <h2 class="card-title">追放したいプレイヤーを1人選んで投票</h2>
+        <p class="card-sub">※同票の場合はランダムで決定されます。追放結果の全体発表は翌朝のターン冒頭で行われます。</p>
+        <label class="vote-option">
+          <span>さぶろう</span>
+          <input type="radio" name="exile-vote" value="さぶろう" checked>
+        </label>
+        <label class="vote-option">
+          <span>じろう</span>
+          <input type="radio" name="exile-vote" value="じろう">
+        </label>
+        <label class="vote-option">
+          <span>しろう</span>
+          <input type="radio" name="exile-vote" value="しろう">
+        </label>
+      </div>
+
+      <button type="button" class="btn btn-primary" data-go="screen-13">投票完了 ➔ スキル発動ターンへ（通常時）</button>
+      <button type="button" class="btn btn-secondary" data-go="screen-12b">投票完了 ➔ 脱落者復活投票へ（報酬発生時）</button>
+    </section>
+
+    <!-- ==========================================
+         [画面12-2] 夜のターン②：脱落者復活投票画面（報酬時）
+         ========================================== -->
+    <section id="screen-12b" class="screen" aria-label="夜のターン：脱落者復活投票画面">
+      <div class="screen-header">
+        <span class="badge badge-turn">ステップ13-2：復活投票【報酬】</span>
+        <span class="badge badge-alive">脱落者1名復活</span>
+      </div>
+
+      <img src="img/icon_reward.svg" alt="復活報酬バナー" class="art-card" width="400" height="260" loading="lazy">
+
+      <div class="card">
+        <h2 class="card-title">復活させたい脱落者を1人選んで投票</h2>
+        <p class="card-sub">※追放者・夜襲犠牲者全員が対象です（最悪、人狼を復活させてしまう可能性もあります）。</p>
+        <label class="vote-option">
+          <span>ろくろう（脱落者）</span>
+          <input type="radio" name="revive-vote" value="ろくろう" checked>
+        </label>
+        <label class="vote-option">
+          <span>はちろう（脱落者）</span>
+          <input type="radio" name="revive-vote" value="はちろう">
+        </label>
+      </div>
+
+      <button type="button" class="btn btn-primary" data-go="screen-13">復活投票完了 ➔ スキル発動ターンへ</button>
+    </section>
+
+    <!-- ==========================================
+         [画面13] 夜のターン③：スキル発動・夜襲・市民OK・静観画面
+         ========================================== -->
+    <section id="screen-13" class="screen" aria-label="夜のターン：スキル発動・夜襲・静観画面">
+      <div class="card">
+        <h2 class="card-title">モック確認用：役職・状態別の夜画面切替</h2>
+        <div class="switcher-tabs" id="night-view-tabs">
+          <button type="button" class="tab-chip is-selected" data-night-panel="np-seer">13-1 占い師・霊媒師</button>
+          <button type="button" class="tab-chip" data-night-panel="np-wolf">13-2 人狼夜襲・騎士・医者</button>
+          <button type="button" class="tab-chip" data-night-panel="np-citizen">13-3 市民OK・死亡者静観</button>
+        </div>
+      </div>
+
+      <!-- 13-1: 占い師・霊媒師（即時結果表示） -->
+      <div id="np-seer" class="card night-panel">
+        <img src="img/role_seer.svg" alt="占い師・霊媒師スキル画像" class="art-poke-card" width="400" height="560" loading="lazy">
+        <h3 class="card-title">【占い師 / 霊媒師】スキル発動（即時結果確認）</h3>
+        <p class="card-sub">スマホを見る動作で役職がバレないよう、この場ですぐ結果を確認してOKをタップします。</p>
+        <button type="button" class="btn btn-secondary" id="btn-open-seer-modal">🔮 占い結果をその場で表示（モーダル）</button>
+        <button type="button" class="btn btn-secondary" id="btn-open-medium-modal">🕯️ 追放者の霊媒結果をその場で表示（モーダル）</button>
+      </div>
+
+      <!-- 13-2: 人狼（多数決夜襲）・騎士・奇跡の医者 -->
+      <div id="np-wolf" class="card night-panel" hidden>
+        <img src="img/role_werewolf.svg" alt="人狼の夜襲・騎士・医者スキル画像" class="art-poke-card" width="400" height="560" loading="lazy">
+        <h3 class="card-title">【人狼・人狼神】夜襲対象を多数決で決定</h3>
+        <p class="card-sub">仲間の人狼が複数いる場合は多数決（同票時はランダム）で襲撃先が決まります。</p>
+        <label class="vote-option">
+          <span>しろう（仲間「たろう」が選択中）</span>
+          <input type="radio" name="wolf-attack" checked>
+        </label>
+        <label class="vote-option">
+          <span>ごろう</span>
+          <input type="radio" name="wolf-attack">
+        </label>
+        <p class="card-sub">※騎士・コスプレイヤーは護衛対象、奇跡の医者は蘇生対象（ゲーム中1回）を同様に選択します。</p>
+      </div>
+
+      <!-- 13-3: 市民ダミーOK ＆ 死亡者静観 -->
+      <div id="np-citizen" class="card night-panel" hidden>
+        <img src="img/icon_spectator.svg" alt="市民確認・死亡者静観画像" class="art-card" width="400" height="260" loading="lazy">
+        <h3 class="card-title">【市民・狂人・サイコキラー・恋人】</h3>
+        <p class="card-sub">説明文を読んで、他の役職と同じタイミングで下の「OK」をタップしてください。</p>
+        <hr style="border-color: var(--border-subtle); width: 100%;">
+        <h3 class="card-title">【死亡したプレイヤーの画面】</h3>
+        <p class="card-sub">あなたは現在脱落しています。「奇跡の医者」や「タスク報酬」で復活する可能性があるため、ゲーム終了まで静観してください。</p>
+      </div>
+
+      <button type="button" class="btn btn-primary" data-go="screen-07">OK（翌朝のターン［ステップ9］へループ）</button>
+      <button type="button" class="btn btn-secondary" data-go="screen-14">（5ターン終了／全滅時：ゲーム結果発表へ）</button>
+    </section>
+
+    <!-- ==========================================
+         [画面14] ゲーム結果発表画面
+         ========================================== -->
+    <section id="screen-14" class="screen" aria-label="ゲーム結果発表画面">
+      <div class="card">
+        <h2 class="card-title">モック確認用：勝敗結果バナー切替</h2>
+        <div class="switcher-tabs" id="ending-preview-tabs">
+          <button type="button" class="tab-chip is-selected" data-end-img="img/banner_victory_citizen.svg" data-end-title="🏆 市民陣営の勝利！" data-end-sub="人狼陣営が全滅（または5ターン終了時に市民陣営が多数）となりました！">市民陣営 勝利</button>
+          <button type="button" class="tab-chip" data-end-img="img/banner_victory_wolf.svg" data-end-title="🐺 人狼陣営の勝利！" data-end-sub="市民陣営が全滅（または5ターン終了時に人狼陣営が多数）となりました！">人狼陣営 勝利</button>
+          <button type="button" class="tab-chip" data-end-img="img/banner_draw.svg" data-end-title="⚖️ 引き分け（DRAW）" data-end-sub="5ターン終了時点で市民陣営と人狼陣営の生存人数が同数となりました！">引き分け</button>
+        </div>
+      </div>
+
+      <img id="ending-banner-img" src="img/banner_victory_citizen.svg" alt="勝敗結果バナー" class="art-banner" width="600" height="160" loading="lazy">
+
+      <div class="card">
+        <h2 class="card-title" id="ending-title">🏆 市民陣営の勝利！</h2>
+        <p class="card-sub" id="ending-sub">人狼陣営が全滅（または5ターン終了時に市民陣営が多数）となりました！</p>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">全プレイヤーの役職公開</h2>
+        <ul class="player-list">
+          <li class="player-item"><span>たろう</span><span>人狼神（人狼陣営）</span></li>
+          <li class="player-item"><span>じろう</span><span>人狼（人狼陣営）</span></li>
+          <li class="player-item"><span>さぶろう</span><span>サイコキラー（人狼陣営）</span></li>
+          <li class="player-item"><span>しろう</span><span>占い師（市民陣営）</span></li>
+          <li class="player-item"><span>ごろう</span><span>騎士（市民陣営）</span></li>
+          <li class="player-item"><span>ろくろう</span><span>霊媒師（市民陣営）</span></li>
+          <li class="player-item"><span>ななこ・はちろう</span><span>恋人（市民陣営）</span></li>
+          <li class="player-item"><span>きゅうた</span><span>奇跡の医者（市民陣営）</span></li>
+          <li class="player-item"><span>じゅうべえ</span><span>市民（市民陣営）</span></li>
+        </ul>
+      </div>
+
+      <button type="button" class="btn btn-primary" data-go="screen-02">同じメンバーでもう一度遊ぶ（ロビーへ）</button>
+      <button type="button" class="btn btn-secondary" data-go="screen-01">トップ画面へ戻る</button>
+    </section>
+  </main>
+
+  <!-- 占い師・霊媒師の即時結果表示用 ネイティブ Dialog -->
+  <dialog id="skill-result-dialog" aria-labelledby="skill-dialog-title">
+    <h2 class="card-title" id="skill-dialog-title">スキル結果（即時表示）</h2>
+    <p class="card-sub" id="skill-dialog-body">じろう さんは【人狼】でした。</p>
+    <form method="dialog">
+      <button type="submit" value="ok" class="btn btn-primary" autofocus>確認して閉じる（OK）</button>
+    </form>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>

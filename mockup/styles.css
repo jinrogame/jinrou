@@ -1,0 +1,425 @@
+:root {
+  --bg-dark: #0b0f19;
+  --bg-card: #161f33;
+  --bg-card-elevated: #1e293b;
+  --border-subtle: #334155;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --accent-primary: #6366f1;
+  --accent-primary-hover: #4f46e5;
+  --accent-danger: #ef4444;
+  --accent-success: #10b981;
+  --accent-warning: #f59e0b;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hiragino Sans", "Noto Sans JP", sans-serif;
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  line-height: 1.5;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Mockup Preview Toolbar (for quick jumping between all 19 screens) */
+.mockup-nav {
+  width: 100%;
+  max-width: 480px;
+  background: #0f172a;
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 0.5rem 0.75rem;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.mockup-nav-row {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.mockup-nav label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.mockup-select {
+  flex: 1;
+  min-width: 160px;
+  background: var(--bg-card-elevated);
+  color: var(--text-main);
+  border: 1px solid var(--border-subtle);
+  border-radius: 0.5rem;
+  padding: 0.35rem 0.5rem;
+  font-size: 0.8rem;
+}
+
+.mockup-step-btns {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.btn-mini {
+  background: var(--bg-card-elevated);
+  color: var(--text-main);
+  border: 1px solid var(--border-subtle);
+  border-radius: 0.4rem;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.btn-mini:hover {
+  border-color: var(--accent-primary);
+}
+
+/* Smartphone Frame */
+.phone-shell {
+  width: 100%;
+  max-width: 430px;
+  min-height: calc(100dvh - 52px);
+  background: linear-gradient(180deg, #111827 0%, #0b0f19 100%);
+  border-left: 1px solid #1e293b;
+  border-right: 1px solid #1e293b;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.screen {
+  display: none;
+  flex-direction: column;
+  gap: 1rem;
+  flex: 1;
+}
+
+.screen.is-active {
+  display: flex;
+}
+
+/* Responsive Replaceable Images */
+.art-banner,
+.art-card {
+  width: 100%;
+  height: auto;
+  border-radius: 0.85rem;
+  display: block;
+  object-fit: cover;
+  background: var(--bg-card);
+}
+
+/* Pokemon Card Vertical Aspect Ratio (63:88 / 5:7 -> 400x560) */
+.art-poke-card {
+  width: min(100%, 310px);
+  aspect-ratio: 5 / 7;
+  height: auto;
+  margin: 0 auto;
+  border-radius: 1.1rem;
+  display: block;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.65);
+}
+
+/* Headings & Badges */
+.screen-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.screen-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 800;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: var(--bg-card-elevated);
+  border: 1px solid var(--border-subtle);
+}
+
+.badge-turn {
+  background: #312e81;
+  border-color: #6366f1;
+  color: #e0e7ff;
+}
+
+.badge-alive {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: var(--accent-success);
+  color: #6ee7b7;
+}
+
+.badge-dead {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: var(--accent-danger);
+  color: #fca5a5;
+}
+
+/* Cards & Panels */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 0.85rem;
+  padding: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.card-title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #e2e8f0;
+}
+
+.card-sub {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* Forms & Inputs */
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.field-group label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #cbd5e1;
+}
+
+.text-input {
+  width: 100%;
+  padding: 0.7rem 0.85rem;
+  border-radius: 0.6rem;
+  border: 1px solid var(--border-subtle);
+  background: #0f172a;
+  color: var(--text-main);
+  font-size: 1rem;
+}
+
+/* Buttons */
+.btn {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border-radius: 0.75rem;
+  border: none;
+  font-size: 1rem;
+  font-weight: 800;
+  cursor: pointer;
+  text-align: center;
+  transition: transform 0.1s ease, background-color 0.15s ease;
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+.btn-primary {
+  background: var(--accent-primary);
+  color: #ffffff;
+}
+
+.btn-primary:hover {
+  background: var(--accent-primary-hover);
+}
+
+.btn-secondary {
+  background: var(--bg-card-elevated);
+  color: var(--text-main);
+  border: 1px solid var(--border-subtle);
+}
+
+.btn-danger {
+  background: var(--accent-danger);
+  color: #ffffff;
+}
+
+.btn-success {
+  background: var(--accent-success);
+  color: #052e16;
+}
+
+.btn-mash {
+  height: 130px;
+  font-size: 1.75rem;
+  border-radius: 1.25rem;
+  background: linear-gradient(135deg, #f97316, #ef4444);
+  color: #fff;
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.35);
+}
+
+/* Role Config Lists */
+.role-config-list,
+.player-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.role-config-item,
+.player-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.55rem 0.75rem;
+  background: #0f172a;
+  border: 1px solid #1e293b;
+  border-radius: 0.6rem;
+  font-size: 0.9rem;
+}
+
+.counter-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.counter-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 0.4rem;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-card-elevated);
+  color: var(--text-main);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  cursor: pointer;
+}
+
+.checkbox-row input[type="checkbox"] {
+  width: 1.2rem;
+  height: 1.2rem;
+  accent-color: var(--accent-primary);
+}
+
+/* Timer Display */
+.timer-box {
+  text-align: center;
+  padding: 0.75rem;
+  background: #0f172a;
+  border: 1px solid var(--border-subtle);
+  border-radius: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.timer-value {
+  font-size: 2.1rem;
+  font-weight: 900;
+  color: #fde047;
+  letter-spacing: 2px;
+}
+
+/* Radio Selection List for Voting & Skills */
+.vote-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.65rem 0.85rem;
+  background: #0f172a;
+  border: 1px solid var(--border-subtle);
+  border-radius: 0.65rem;
+  cursor: pointer;
+}
+
+.vote-option:has(input:checked) {
+  border-color: var(--accent-primary);
+  background: rgba(99, 102, 241, 0.18);
+}
+
+/* Details Disclosure Drawer */
+details.info-drawer {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 0.75rem;
+  padding: 0.65rem 0.85rem;
+}
+
+details.info-drawer summary {
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  color: #cbd5e1;
+}
+
+details.info-drawer[open] summary {
+  margin-bottom: 0.6rem;
+  color: var(--text-main);
+}
+
+/* Native Modal Dialog (Skill Immediate Result) */
+dialog {
+  background: var(--bg-card);
+  color: var(--text-main);
+  border: 2px solid var(--accent-primary);
+  border-radius: 1rem;
+  padding: 1.25rem;
+  width: min(90vw, 360px);
+}
+
+dialog:modal {
+  overscroll-behavior: contain;
+}
+
+dialog::backdrop {
+  background: rgba(2, 6, 23, 0.82);
+  overflow: hidden;
+  overscroll-behavior: contain;
+}
+
+.switcher-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.tab-chip {
+  background: #0f172a;
+  color: var(--text-muted);
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  padding: 0.25rem 0.65rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.tab-chip.is-selected {
+  background: var(--accent-primary);
+  color: #fff;
+  border-color: var(--accent-primary);
+}

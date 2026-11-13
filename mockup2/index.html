@@ -1,0 +1,467 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>人狼ゲーム モックアップ2（完全ノンスクロール1画面設計）</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- モック操作バー（スマホ画面の外側：画面ジャンプ＆パターン切替） -->
+  <header class="mock-bar">
+    <div class="mock-bar__main">
+      <label for="jump" hidden>画面ジャンプ</label>
+      <button type="button" id="prev" aria-label="前の画面">◀</button>
+      <select id="jump">
+        <option value="s01">01 トップ・顔アイコン＆名前・入室</option>
+        <option value="s02">02 ロビー＆役職設定（オーナー）</option>
+        <option value="s03">03 ロビー待機（メンバー）</option>
+        <option value="s04">04 役職発表（ポケカ縦長比率）</option>
+        <option value="s05">05 自己紹介タイム</option>
+        <option value="s06">06 初日の夜（0ターン目）</option>
+        <option value="s07">07 朝① 前夜の結果発表</option>
+        <option value="s08">08 朝② タスク＆報酬(罰)発表</option>
+        <option value="s09">09 朝③ タスク実行（ミニゲーム5種）</option>
+        <option value="s10">10 朝④ タスク結果＆貢献度</option>
+        <option value="s11">11 昼のターン（話し合い）</option>
+        <option value="s12a">12-1 夜① 追放投票</option>
+        <option value="s12b">12-2 夜② 脱落者復活投票</option>
+        <option value="s13">13 夜③ スキル発動・夜襲・静観</option>
+        <option value="s14">14 ゲーム結果発表</option>
+      </select>
+      <button type="button" id="next" aria-label="次の画面">▶</button>
+    </div>
+    <!-- 画面内のパターン切替用サブバー（スマホ枠内を圧迫しないよう外部配置） -->
+    <div class="mock-bar__sub" id="subBar" hidden></div>
+  </header>
+
+  <main class="stage">
+    <div class="phone" id="phone">
+
+      <!-- ===================== 01 トップ ===================== -->
+      <section class="screen title-screen is-active" id="s01" aria-label="トップ・顔アイコン＆名前・入室" data-phase="night">
+        <div class="screen__bg"><img src="img/bg_title.svg" alt="" width="390" height="844"></div>
+        <div class="screen__body">
+          <img class="title-logo" src="img/logo_title.svg" alt="人狼ゲーム TASK & MYSTERY WEREWOLF" width="400" height="300" fetchpriority="high">
+          <div class="card card--blue">
+            <h2 class="card__title"><span class="dot"></span>プレイヤー情報 ＆ 顔アイコン登録</h2>
+            <div class="selfie-box">
+              <div class="selfie-frame">
+                <img id="selfiePreview" src="img/avatar_01.svg" alt="あなたの顔アイコンプレビュー" width="68" height="68">
+                <video id="selfieVideo" width="68" height="68" muted playsinline aria-hidden="true" hidden></video>
+              </div>
+              <div class="selfie-actions">
+                <button type="button" class="btn btn--cyan btn--sm" id="btnCameraToggle">📷 カメラを起動して顔を撮影</button>
+                <label class="btn btn--ghost btn--sm selfie-upload-label" for="selfieFileInput">📁 標準カメラ / 写真から選ぶ</label>
+                <input id="selfieFileInput" type="file" accept="image/*" capture="user" hidden>
+              </div>
+            </div>
+            <div class="field">
+              <label for="name">プレイヤー名</label>
+              <input id="name" class="input" type="text" value="たろう" placeholder="プレイヤー名を入力" autocomplete="nickname" maxlength="8">
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="row-between">
+              <span style="font-size:12px;font-weight:800;color:var(--muted)">最大ターン数（デフォルト5）</span>
+              <span class="stepper">
+                <button type="button" data-max-turn="-1" aria-label="ターン数を減らす">−</button>
+                <b data-max-turn-val>5</b>
+                <button type="button" data-max-turn="1" aria-label="ターン数を増やす">＋</button>
+                <span style="font-size:11px;font-weight:800;color:var(--muted)">ターン</span>
+              </span>
+            </div>
+            <button type="button" class="btn btn--cyan" data-go="s02">ルーム作成（オーナー）</button>
+            <hr class="divider">
+            <div class="field">
+              <label for="roomid">ルームIDを入力して参加</label>
+              <div class="input-row">
+                <input id="roomid" class="input" type="text" value="AB12" placeholder="ルームID" maxlength="4" autocapitalize="characters">
+                <button type="button" class="btn btn--solid btn--cyan" data-go="s03">入室</button>
+              </div>
+            </div>
+          </div>
+          <p class="hint-line">スマホ・対面でも遠隔でも遊べる 最大10人の人狼ゲーム</p>
+        </div>
+      </section>
+
+      <!-- ===================== 02 ロビー（オーナー） ===================== -->
+      <section class="screen" id="s02" aria-label="ルーム待機・役職設定（オーナー）" data-phase="night">
+        <div class="screen__bg"><img src="img/bg_night.svg" alt="" width="390" height="844"></div>
+        <div class="screen__body">
+          <div class="hdr">
+            <div><div class="roomtag">ルームID</div><div class="big-id">AB12</div></div>
+            <div style="display:flex;gap:5px;align-items:center">
+              <span class="chip chip--accent">全<b data-max-turn-val>5</b>ターン</span>
+              <span class="chip chip--green">10 / 10人</span>
+            </div>
+          </div>
+          <div class="card"><div class="avatar-grid" data-render="avatars" data-mode="lobby"></div></div>
+
+          <div class="card card--red">
+            <h2 class="card__title"><span class="dot"></span>人狼陣営の配分（計 <span id="wolfTotal">3</span>人）</h2>
+            <div class="config-grid-2" data-render="wolfsteppers"></div>
+          </div>
+
+          <div class="card card--blue">
+            <div class="row-between">
+              <h2 class="card__title"><span class="dot"></span>市民特別枠（0 or 1人）</h2>
+              <span class="chip">🏠 市民自動割当: <b id="autoCitizen">1人</b></span>
+            </div>
+            <div class="config-grid-2" data-render="citizenswitches"></div>
+          </div>
+          <div class="total-bar" id="totalBar"><span>配役合計</span><b id="totalVal">10 / 10人</b></div>
+        </div>
+        <div class="screen__footer"><button type="button" class="btn btn--solid btn--red" data-go="s04">ゲーム開始</button></div>
+      </section>
+
+      <!-- ===================== 03 ロビー（メンバー） ===================== -->
+      <section class="screen" id="s03" aria-label="ルーム待機（メンバー）" data-phase="night">
+        <div class="screen__bg"><img src="img/bg_night.svg" alt="" width="390" height="844"></div>
+        <div class="screen__body">
+          <div class="hdr">
+            <div><div class="roomtag">ルームID</div><div class="big-id">AB12</div></div>
+            <div style="display:flex;gap:5px;align-items:center">
+              <span class="chip chip--accent">全<b data-max-turn-val>5</b>ターン</span>
+              <span class="chip chip--green">10 / 10人</span>
+            </div>
+          </div>
+          <div class="card"><div class="avatar-grid" data-render="avatars" data-mode="lobby-member"></div></div>
+          <div class="card card--blue center">
+            <p class="muted" style="color:#dbe5ff;font-weight:800">オーナーが役職を設定中です…<br>しばらくお待ちください</p>
+            <div class="spinner" role="status" aria-label="読み込み中"></div>
+          </div>
+        </div>
+        <div class="screen__footer">
+          <button type="button" class="btn btn--solid btn--cyan" data-go="s04">（オーナーが開始 → 役職発表へ）</button>
+          <button type="button" class="btn btn--ghost" data-go="s01">退室してトップへ</button>
+        </div>
+      </section>
+
+      <!-- ===================== 04 役職発表 ===================== -->
+      <section class="screen" id="s04" aria-label="役職発表" data-phase="night">
+        <div class="screen__bg"><img src="img/bg_night.svg" alt="" width="390" height="844"></div>
+        <div class="screen__body">
+          <h1 class="hdr__title" style="justify-content:center">あなたの役職は…？</h1>
+          <button type="button" class="flip" id="flip" aria-label="カードをタップして役職を確認">
+            <div class="flip__inner">
+              <div class="flip__face"><img src="img/role_card_back.svg" alt="役職カード（裏面）" width="400" height="560"></div>
+              <div class="flip__face flip__front"><img id="roleImg" src="img/role_wolf_god.svg" alt="役職カード" width="400" height="560"></div>
+            </div>
+          </button>
+          <p class="hint-line" id="flipHint">👆 カードをタップしてめくる</p>
+          <div class="card card--glow" id="roleInfo" hidden>
+            <h2 class="card__title"><span class="dot"></span><span id="roleName">人狼神</span><span class="chip chip--red" id="roleFaction" style="margin-left:auto">人狼陣営</span></h2>
+            <p class="muted" id="roleDesc"></p>
+            <div id="roleExtra"></div>
+          </div>
+        </div>
+        <div class="screen__footer"><button type="button" class="btn btn--solid" id="roleOk" data-go="s05" disabled>確認しました（OK）</button></div>
+      </section>
+
+      <!-- ===================== 05 自己紹介 ===================== -->
+      <section class="screen" id="s05" aria-label="自己紹介タイム" data-phase="intro">
+        <div class="screen__bg"><img src="img/bg_day.svg" alt="" width="390" height="844"></div>
+        <div class="screen__body">
+          <div class="hdr"><h1 class="hdr__title">💬 自己紹介タイム</h1><span class="chip chip--accent">ステップ7</span></div>
+          <div class="ring" data-countdown="180" data-total="180"><div class="ring__text"><span data-time>03:00</span><small>目安時間</small></div></div>
+          <div class="bubble">リアルで順番に自己紹介をしましょう！</div>
+          <div class="card"><h2 class="card__title">話す順番（全員の顔アイコン＆名前）</h2><div class="order" data-render="order"></div></div>
+        </div>
+        <div class="screen__footer"><button type="button" class="btn btn--solid" data-go="s06">次へ（初日の夜へ）</button></div>
+      </section>
+
+      <!-- ===================== 06 初日の夜 ===================== -->
+      <section class="screen" id="s06" aria-label="初日の夜" data-phase="night">
+        <div class="screen__bg"><img src="img/bg_night.svg" alt="" width="390" height="844"></div>
+        <div class="screen__body">
+          <div class="hdr"><h1 class="hdr__title">🌙 初日の夜（0ターン目）</h1><span class="chip chip--accent">誰も殺されません</span></div>
+          <div class="card card--violet" data-variant="fn-seer">
+            <h2 class="card__title"><span class="dot"></span>【占い師】占う相手を1人選択（初日返り討ち無効）</h2>
+            <div class="picklist" data-render="picks" data-name="fnseer" data-filter="others"></div>
+            <button type="button" class="btn btn--violet btn--sm" data-skill="seer" data-pick="fnseer">🔮 占う（その場で結果表示）</button>
+          </div>
+          <div class="card card--blue" data-variant="fn-other" hidden>
+            <h2 class="card__title"><span class="dot"></span>お知らせ</h2>
+            <p class="muted" style="color:#dbe5ff">初日の夜です。役職の説明を確認して、OKをタップしてください。</p>
+            <p class="muted">（周囲に役職が分からないよう、全員が同じタイミングで操作します）</p>
+          </div>
+        </div>
+        <div class="screen__footer"><button type="button" class="btn btn--solid btn--violet" data-go="s07">OK（夜の行動完了）</button></div>
+      </section>
+
+      <!-- ===================== 07 朝① ===================== -->
+      <section class="screen" id="s07" aria-label="朝：前夜の結果" data-phase="morning">
+        <div class="screen__bg"><img src="img/bg_morning.svg" alt="" width="390" height="844"></div>
+        <div class="screen__body">
+          <div class="hdr"><h1 class="hdr__title">☀️ 2ターン目の朝</h1><span class="chip chip--accent">ターン 2 / <span data-max-turn-val>5</span></span></div>
+          <div class="hero"><img src="img/hero_morning.svg" alt="" width="600" height="240" fetchpriority="high"></div>
+          <div class="card">
+            <div class="row-between"><b>現在の生存者</b><b class="accent">8人 / 10人</b></div>
+            <div class="stat-bar"><i style="--w:80%"></i></div>
+          </div>
+          <div class="card card--red">
+            <h2 class="card__title"><span class="dot"></span>昨晩の追放・夜襲・復活発表</h2>
+            <div class="events">
+              <div class="event"><img class="avatar" src="img/avatar_07.svg" alt="" width="30" height="30"><div><div class="event__label">⚖️ 追放された人</div><div class="event__val">ろくろう</div></div></div>
+              <div class="event"><img class="avatar" src="img/avatar_09.svg" alt="" width="30" height="30"><div><div class="event__label">🐺 昨晩の犠牲者（夜襲）</div><div class="event__val">はちろう</div></div></div>
+              <div class="event"><div class="event__ico">💫</div><div><div class="event__label">💉 復活した人</div><div class="event__val">なし</div></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="screen__footer">
+          <button type="button" class="btn btn--solid btn--amber" data-go="s08">本日のタスク発表へ</button>
+          <button type="button" class="btn btn--ghost" data-go="s14">（決着時：ゲーム結果発表へ）</button>
+        </div>
+      </section>
+
+      <!-- ===================== 08 朝② ===================== -->
+      <section class="screen" id="s08" aria-label="朝：タスク＆報酬発表" data-phase="morning">
+        <div class="screen__bg"><img src="img/bg_morning.svg" alt="" width="390" height="844"></div>
+        <div class="screen__body">
+          <div class="hdr"><h1 class="hdr__title">🎯 本日のタスク発表！</h1><span class="chip chip--accent">重複なし抽選</span></div>
+          <div class="card card--amber">
+            <h2 class="card__title"><span class="dot"></span>本日のミニゲーム</h2>
+            <div class="art"><img id="taskArt" src="img/task_mash.svg" alt="" width="400" height="260"></div>
+            <p class="big center" id="taskName">みんなで連打！</p>
+            <p class="muted center" id="taskRule">1分間で「生存人数×100回」を連打しよう</p>
+          </div>
+          <div class="card card--glow card--green" id="effectCard">
+            <h2 class="card__title"><span class="dot"></span>今回のタスク効果（1個抽選）<span class="chip chip--green" id="effectBadge" style="margin-left:auto">成功報酬</span></h2>
+            <div class="art"><img id="effectArt" src="img/effect_all_knight.svg" alt="" width="400" height="260"></div>
+            <p style="font-weight:900;font-size:14px;line-height:1.4" id="effectName">今晩、市民全員がナイト（護衛）スキルを使用可能！</p>
+            <p class="muted" id="effectNote">※タスク成功で効果発動 / 失敗時は何も起きません</p>
+          </div>
+        </div>
+        <div class="screen__footer"><button type="button" class="btn btn--solid btn--amber" data-go="s09">タスク開始！</button></div>
+      </section>
+
+      <!-- ===================== 09 朝③ ミニゲーム ===================== -->
+      <section class="screen" id="s09" aria-label="朝：タスク実行" data-phase="morning">
+        <div class="screen__bg"><img src="img/bg_morning.svg" alt="" width="390" height="844"></div>
+        <div class="screen__body">
+          <!-- ① 連打 -->
+          <div data-variant="mg1">
+            <div class="mini-top"><h1 class="hdr__title">👆 みんなで連打</h1>
+              <div class="ring ring--sm" data-countdown="45" data-total="60" style="--c:var(--cyan)"><div class="ring__text"><span data-time>0:45</span></div></div></div>
+            <div class="card">
+              <div class="row-between"><b>全員の合計</b><b><span id="mashTotal">780</span> / 800回</b></div>
+              <div class="gauge"><i id="mashGauge" style="--w:97%"></i></div>
+            </div>
+            <div class="tap-wrap"><button type="button" class="tap" id="tapBtn" aria-label="連打する">TAP!!</button></div>
+            <p class="center" style="font-weight:800">あなたの連打数：<b class="accent" style="font-size:20px" id="mashMine">98</b>回</p>
+          </div>
+
+          <!-- ② 気持ちを合わせろ -->
+          <div data-variant="mg2" hidden>
+            <div class="hdr"><h1 class="hdr__title">🤝 気持ちを合わせろクイズ</h1><span class="chip chip--accent">全員一致で成功</span></div>
+            <div class="art"><img src="img/task_match_quiz.svg" alt="" width="400" height="260" loading="lazy"></div>
+            <div class="topic" style="--glow:var(--cyan)"><b>お題：赤い果物</b><small>【ひらがなで答えろ】</small></div>
+            <div class="field"><label for="a2">あなたの答え</label><input id="a2" class="input" value="りんご"></div>
+            <div class="status-row"><span class="chip chip--accent">全員同じ回答でクリア！</span><span class="chip">回答済み 6 / 8</span></div>
+            <button type="button" class="btn btn--cyan btn--sm">回答決定</button>
+          </div>
+
+          <!-- ③ かぶっちゃだめよ -->
+          <div data-variant="mg3" hidden>
+            <div class="hdr"><h1 class="hdr__title">🚫 かぶっちゃだめよクイズ</h1><span class="chip chip--amber">重複なしで成功</span></div>
+            <div class="art"><img src="img/task_unique_quiz.svg" alt="" width="400" height="260" loading="lazy"></div>
+            <div class="topic" style="--glow:var(--amber)"><b>お題：果物</b><small>【ひらがなで答えろ】</small></div>
+            <div class="field"><label for="a3">あなたの答え</label><input id="a3" class="input" value="ますかっと"></div>
+            <div class="status-row"><span class="chip chip--amber">全員バラバラならクリア！</span><span class="chip">回答済み 5 / 8</span></div>
+            <button type="button" class="btn btn--amber btn--sm">回答決定</button>
+          </div>
+
+          <!-- ④ みんな答えろ -->
+          <div data-variant="mg4" hidden>
+            <div class="mini-top"><h1 class="hdr__title">⏱️ みんな答えろクイズ</h1>
+              <div class="ring ring--sm" data-countdown="32" data-total="60" style="--c:var(--green)"><div class="ring__text"><span data-time>0:32</span></div></div></div>
+            <div class="topic" style="--glow:var(--green)"><b>お題：都道府県</b><small>【漢字で答えろ】</small></div>
+            <div class="card"><b style="font-size:11px;color:var(--muted)">既出の回答（重複不可）</b>
+              <div class="answers"><span class="chip">北海道</span><span class="chip">青森県</span><span class="chip">東京都</span><span class="chip">福岡県</span></div></div>
+            <p class="center accent" style="font-weight:900;font-size:15px">👉 あなたの手番です！</p>
+            <div class="input-row">
+              <input class="input" aria-label="あなたの回答" value="沖縄県">
+              <button type="button" class="btn btn--green">送信</button>
+            </div>
+          </div>
+
+          <!-- ⑤ 10秒 -->
+          <div data-variant="mg5" hidden>
+            <div class="hdr"><h1 class="hdr__title">🔟 10秒チャレンジ</h1><span class="chip chip--amber">±0.5秒で成功</span></div>
+            <div class="art"><img src="img/task_timer10.svg" alt="" width="400" height="260" loading="lazy"></div>
+            <div class="card card--amber center"><p class="big" style="color:var(--amber)">10.0秒ぴったりで止めろ！</p><p class="muted">（9.50〜10.50秒ならクリア）</p></div>
+            <div class="stopbox" id="stopBox"><span id="stopTime">0.00</span><small>秒</small></div>
+            <p class="muted center" id="stopHint">START後、3秒で数字が隠れます。</p>
+            <div class="input-row">
+              <button type="button" class="btn btn--green" id="stopStart">START</button>
+              <button type="button" class="btn btn--solid btn--red" id="stopBtn" disabled>STOP!!</button>
+            </div>
+          </div>
+        </div>
+        <div class="screen__footer"><button type="button" class="btn btn--solid btn--amber" data-go="s10">タスク終了（結果発表へ）</button></div>
+      </section>
+
+      <!-- ===================== 10 朝④ 結果 ===================== -->
+      <section class="screen" id="s10" aria-label="朝：タスク結果＆貢献度" data-phase="morning">
+        <div class="screen__bg"><img src="img/bg_morning.svg" alt="" width="390" height="844"></div>
+        <div class="screen__body">
+          <div class="card card--glow card--amber" data-variant="r-ok">
+            <h2 class="big center">🎉 タスク成功！報酬獲得！</h2>
+            <p class="center" style="font-weight:800;font-size:12px;color:var(--amber)">✨ 今晩、市民全員がナイト（護衛）スキルを使用可能</p>
+          </div>
+          <div class="card card--glow card--red" data-variant="r-ng" hidden>
+            <h2 class="big center">💥 タスク失敗…</h2>
+            <p class="center" style="font-weight:800;font-size:12px;color:var(--red)">（成功報酬は獲得できませんでした）</p>
+          </div>
+          <div class="card">
+            <h2 class="card__title"><span class="dot"></span>タスク貢献度一覧<span class="chip chip--amber" style="margin-left:auto">🏅 MVP：たろう</span></h2>
+            <p class="muted">人狼がバレないように足を引っ張っていないか推理しましょう！</p>
+            <div class="contrib" data-render="contrib"></div>
+          </div>
+        </div>
+        <div class="screen__footer"><button type="button" class="btn btn--solid btn--cyan" data-go="s11">昼のターンへ</button></div>
+      </section>
+
+      <!-- ===================== 11 昼 ===================== -->
+      <section class="screen" id="s11" aria-label="昼のターン" data-phase="day">
+        <div class="screen__bg"><img src="img/bg_day.svg" alt="" width="390" height="844"></div>
+        <div class="screen__body">
+          <div class="hdr"><h1 class="hdr__title">🗣️ 昼のターン：議論中</h1><span class="chip chip--accent">Turn 2 / <span data-max-turn-val>5</span></span></div>
+          <div class="ring" data-countdown="300" data-total="300"><div class="ring__text"><span data-time>05:00</span><small>話し合い</small></div></div>
+          <div class="card">
+            <div class="row-between"><b>プレイヤー状況</b><span class="chip chip--green">生存 8 / 脱落 2</span></div>
+            <div class="avatar-grid" data-render="avatars" data-mode="status"></div>
+          </div>
+          <button type="button" class="btn btn--sm" id="btnOpenDayInfo">📊 今朝のタスク貢献度・発生中の報酬/罰を確認</button>
+        </div>
+        <div class="screen__footer"><button type="button" class="btn btn--solid" data-go="s12a">夜のターンへ（追放投票）</button></div>
+      </section>
+
+      <!-- ===================== 12-1 追放投票 ===================== -->
+      <section class="screen" id="s12a" aria-label="夜：追放投票" data-phase="night">
+        <div class="screen__bg"><img src="img/bg_night.svg" alt="" width="390" height="844"></div>
+        <div class="screen__body">
+          <div class="hdr"><h1 class="hdr__title">🌙 夜のターン：追放投票</h1><span class="chip chip--accent">残り 04:30</span></div>
+          <div class="card card--violet">
+            <h2 class="card__title"><span class="dot"></span>追放したいプレイヤーを1人選択</h2>
+            <p class="muted">※同票はランダム。罰「2人追放」発生時は上位2名が追放されます。</p>
+          </div>
+          <div class="picklist" data-render="picks" data-name="exile" data-filter="alive-others" data-checked="2"></div>
+        </div>
+        <div class="screen__footer">
+          <button type="button" class="btn btn--solid btn--red" data-go="s13">投票する</button>
+          <button type="button" class="btn btn--ghost" data-go="s12b">（報酬「脱落者復活」発生時：復活投票へ）</button>
+        </div>
+      </section>
+
+      <!-- ===================== 12-2 復活投票 ===================== -->
+      <section class="screen" id="s12b" aria-label="夜：脱落者復活投票" data-phase="night">
+        <div class="screen__bg"><img src="img/bg_night.svg" alt="" width="390" height="844"></div>
+        <div class="screen__body" style="--accent:var(--green)">
+          <div class="card card--glow card--green center">
+            <h1 class="big" style="color:var(--green)">✨ 報酬発動：脱落者1名復活投票</h1>
+            <p class="muted">墓地の脱落者から1名を選んで復活させよう！（人狼が復活する可能性もあり）</p>
+          </div>
+          <div class="art"><img src="img/effect_revive.svg" alt="" width="400" height="260" loading="lazy"></div>
+          <div class="picklist" data-render="picks" data-name="revive" data-filter="dead" data-checked="0"></div>
+        </div>
+        <div class="screen__footer"><button type="button" class="btn btn--solid btn--green" data-go="s13">復活に投票する</button></div>
+      </section>
+
+      <!-- ===================== 13 夜③ スキル ===================== -->
+      <section class="screen" id="s13" aria-label="夜：スキル発動" data-phase="night">
+        <div class="screen__bg"><img src="img/bg_night.svg" alt="" width="390" height="844"></div>
+        <div class="screen__body">
+          <div class="hdr"><h1 class="hdr__title">🌙 夜のターン：スキル</h1><span class="chip chip--accent">残り 03:10</span></div>
+
+          <div data-variant="n-seer">
+            <div class="card card--amber">
+              <h2 class="card__title"><span class="dot"></span>🔮【占い師】占う相手を1人選択</h2>
+              <div class="picklist" data-render="picks" data-name="nseer" data-filter="alive-others" data-checked="1"></div>
+              <button type="button" class="btn btn--amber btn--sm" data-skill="seer" data-pick="nseer">占う（その場で結果表示）</button>
+            </div>
+            <div class="card card--violet">
+              <h2 class="card__title"><span class="dot"></span>🕯️【霊媒師】直前の追放者を霊媒</h2>
+              <button type="button" class="btn btn--violet btn--sm" data-skill="medium">霊媒する（その場で結果表示）</button>
+            </div>
+          </div>
+
+          <div data-variant="n-wolf" hidden>
+            <div class="card card--red">
+              <h2 class="card__title"><span class="dot"></span>🐺 人狼の夜襲（仲間と多数決・同票ランダム）</h2>
+              <div class="picklist" data-render="picks" data-name="wolf" data-filter="citizens" data-checked="1" data-sub="wolf"></div>
+            </div>
+          </div>
+
+          <div data-variant="n-knight" hidden>
+            <div class="card card--green">
+              <h2 class="card__title"><span class="dot"></span>🛡️【騎士・コスプレイヤー】護衛対象を選択</h2>
+              <div class="picklist" data-render="picks" data-name="knight" data-filter="alive-others" data-checked="0"></div>
+            </div>
+            <div class="card card--green">
+              <h2 class="card__title"><span class="dot"></span>💉【奇跡の医者】蘇生対象（ゲーム中1回）</h2>
+              <div class="picklist" data-render="picks" data-name="doctor" data-filter="dead" data-checked="0"></div>
+            </div>
+          </div>
+
+          <div data-variant="n-citizen" hidden>
+            <div class="card card--blue center">
+              <h2 class="big">【市民・行動なし役職】</h2>
+              <p class="muted" style="color:#dbe5ff">夜の行動はありません。<br>説明文を読んで、下のOKをタップしてください。</p>
+              <p class="muted">（全員が同じ動作をするので、スマホ操作から役職がバレません）</p>
+            </div>
+          </div>
+
+          <div data-variant="n-dead" hidden>
+            <div class="card card--glow card--red center spectator">
+              <div class="art"><img src="img/icon_spectator.svg" alt="" width="400" height="260" loading="lazy"></div>
+              <h2 class="big">あなたは死亡しています</h2>
+              <p class="muted">奇跡の医者や報酬で復活する可能性があるため、そのまま静観してください。</p>
+            </div>
+          </div>
+        </div>
+        <div class="screen__footer">
+          <button type="button" class="btn btn--solid btn--violet" data-go="s07">OK（夜の行動完了 → 翌朝へ）</button>
+          <button type="button" class="btn btn--ghost" data-go="s14">（5ターン終了／全滅時：結果発表へ）</button>
+        </div>
+      </section>
+
+      <!-- ===================== 14 結果 ===================== -->
+      <section class="screen" id="s14" aria-label="ゲーム結果発表" data-phase="win">
+        <div class="screen__bg"><img src="img/bg_result.svg" alt="" width="390" height="844"></div>
+        <div class="screen__body">
+          <div class="hero"><img id="endImg" src="img/victory_citizen.svg" alt="" width="600" height="300" fetchpriority="high"></div>
+          <div class="row-between">
+            <h1 class="big" id="endTitle">🏆 市民陣営 勝利！</h1>
+            <span class="chip chip--amber">🏅 MVP：たろう</span>
+          </div>
+          <div class="versus"><div class="cit">市民陣営<b id="vsC">4人</b></div><div class="vs">VS</div><div class="wol">人狼陣営<b id="vsW">0人</b></div></div>
+          <div class="card">
+            <h2 class="card__title"><span class="dot"></span>全プレイヤーの役職公開（10名）</h2>
+            <div class="role-grid-10" data-render="roletable"></div>
+          </div>
+        </div>
+        <div class="screen__footer">
+          <button type="button" class="btn btn--solid btn--cyan" data-go="s02">もう一度遊ぶ</button>
+          <button type="button" class="btn btn--ghost" data-go="s01">トップへ戻る</button>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- 占い師・霊媒師の即時結果 ＆ 昼の情報確認モーダル（ネイティブ dialog） -->
+  <dialog class="result" id="resultDialog" aria-labelledby="resTitle">
+    <div class="result__ico" id="resIco">🔮</div>
+    <h2 class="result__title" id="resTitle">占い結果</h2>
+    <div class="result__body" id="resBody"></div>
+    <p class="result__note" id="resNote"></p>
+    <form method="dialog"><button type="submit" class="btn btn--solid btn--violet" autofocus>閉じる（OK）</button></form>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>

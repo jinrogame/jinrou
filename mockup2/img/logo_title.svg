@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+<defs><radialGradient id="m" cx=".5" cy=".5" r=".5"><stop offset="0%" stop-color="#fff7d6"/><stop offset="100%" stop-color="#fcd34d"/></radialGradient>
+<linearGradient id="t" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ffffff"/><stop offset="100%" stop-color="#c7d2fe"/></linearGradient></defs>
+<circle cx="200" cy="100" r="84" fill="#fef3c7" opacity=".1"/><circle cx="200" cy="100" r="68" fill="url(#m)"/>
+<path d="M140 150 L160 96 L170 112 L184 70 L194 104 L210 66 L220 106 L234 92 L248 112 L262 96 L282 150Z" fill="#0b0f19"/>
+<path d="M156 150 L170 128 L184 150Z M226 150 L244 124 L262 150Z" fill="#0b0f19"/>
+<circle cx="174" cy="82" r="3" fill="#fcd34d"/><circle cx="226" cy="78" r="3" fill="#fcd34d"/>
+<text x="200" y="232" text-anchor="middle" fill="url(#t)" stroke="#4338ca" stroke-width="2" paint-order="stroke" font-family="'Hiragino Sans','Noto Sans JP',sans-serif" font-size="60" font-weight="900" letter-spacing="6">人狼ゲーム</text>
+<text x="200" y="266" text-anchor="middle" fill="#a5b4fc" font-family="sans-serif" font-size="15" font-weight="700" letter-spacing="5">TASK &amp; MYSTERY WEREWOLF</text>
+<text x="200" y="290" text-anchor="middle" fill="#fff" fill-opacity=".35" font-family="monospace" font-size="11">img/logo_title.svg</text></svg>

@@ -1,0 +1,14 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 260" width="400" height="260">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#581c87"/>
+      <stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="260" rx="20" fill="url(#g)" stroke="#c084fc" stroke-width="3"/>
+  <circle cx="200" cy="95" r="48" fill="#0f172a" fill-opacity="0.55" stroke="#c084fc" stroke-width="2"/>
+  <text x="200" y="112" text-anchor="middle" fill="#c084fc" font-family="sans-serif" font-size="44" font-weight="900">🚫</text>
+  <text x="200" y="178" text-anchor="middle" fill="#f8fafc" font-family="sans-serif" font-size="26" font-weight="800">かぶっちゃだめよクイズ</text>
+  <text x="200" y="206" text-anchor="middle" fill="#cbd5e1" font-family="sans-serif" font-size="14">お題に対して全員バラバラに回答せよ！</text>
+  <text x="200" y="242" text-anchor="middle" fill="#94a3b8" font-family="monospace" font-size="12">img/task_unique_quiz.svg</text>
+</svg>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#090d18">
+  <title>オリジナル人狼ゲーム - TASK &amp; MYSTERY WEREWOLF</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="stage">
+    <div class="phone" id="phone" aria-live="polite"></div>
+  </main>
+
+  <!-- 占い師・霊媒師の即時結果 / お知らせモーダル（ネイティブ dialog） -->
+  <dialog class="result" id="resultDialog" aria-labelledby="resTitle">
+    <div class="result__ico" id="resIco">🔮</div>
+    <h2 class="result__title" id="resTitle"></h2>
+    <div class="result__body" id="resBody"></div>
+    <p class="result__note" id="resNote"></p>
+    <form method="dialog"><button type="submit" class="btn btn--solid btn--violet" autofocus>閉じる（OK）</button></form>
+  </dialog>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

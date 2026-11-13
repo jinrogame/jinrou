@@ -1,0 +1,14 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 160" width="600" height="160">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#374151"/>
+      <stop offset="100%" stop-color="#111827"/>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="160" rx="18" fill="url(#bg)" stroke="#fbbf24" stroke-width="2.5"/>
+  <circle cx="85" cy="80" r="44" fill="#0f172a" fill-opacity="0.5" stroke="#fbbf24" stroke-width="2"/>
+  <text x="85" y="96" text-anchor="middle" fill="#fbbf24" font-family="sans-serif" font-size="40" font-weight="900">⚖️</text>
+  <text x="155" y="72" fill="#f8fafc" font-family="sans-serif" font-size="28" font-weight="900">引き分け（DRAW）</text>
+  <text x="155" y="104" fill="#e2e8f0" font-family="sans-serif" font-size="15">5ターン終了時・両陣営同数</text>
+  <text x="155" y="138" fill="#94a3b8" font-family="monospace" font-size="12">[差し替え用画像: img/banner_draw.svg]</text>
+</svg>
