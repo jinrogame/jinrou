@@ -531,7 +531,7 @@ button.big-id { font-family: inherit; }
 .spinner { flex: none; }
 
 /* ==========================================================
-   ターン開始カットシーン演出（朝・昼・夜）
+   ターン開始カットシーン動画演出（朝・昼・夜）
    ========================================================== */
 .cutscene {
   position: absolute;
@@ -543,7 +543,8 @@ button.big-id { font-family: inherit; }
   justify-content: center;
   align-items: center;
   user-select: none;
-  animation: cutscene-fade-in .35s ease forwards;
+  background: #000;
+  animation: cutscene-fade-in .3s ease forwards;
 }
 .cutscene.is-leaving {
   animation: cutscene-fade-out .35s ease forwards;
@@ -563,14 +564,74 @@ button.big-id { font-family: inherit; }
   top: 14px;
   right: 14px;
   z-index: 100;
-  background: rgba(0, 0, 0, 0.55);
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  width: auto;
+  min-height: 30px;
+  background: rgba(5, 10, 24, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.35);
   color: #fff;
-  padding: 4px 10px;
+  padding: 4px 12px;
   border-radius: 999px;
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 800;
   cursor: pointer;
+  backdrop-filter: blur(6px);
+}
+
+/* 全画面動画レイヤー */
+.cutscene-video-wrap,
+.cutscene-stage {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+.cutscene__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+}
+.cutscene__vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: linear-gradient(180deg, rgba(0,0,0,0.35) 0%, transparent 35%, rgba(5,8,20,0.88) 92%);
+  pointer-events: none;
+}
+.cutscene__vignette--day {
+  background: linear-gradient(180deg, rgba(2,132,199,0.2) 0%, transparent 40%, rgba(9,13,24,0.92) 90%);
+}
+.cutscene__vignette--night {
+  background: linear-gradient(180deg, rgba(15,23,42,0.25) 0%, transparent 45%, rgba(5,6,15,0.94) 92%);
+}
+
+.cutscene__overlay-bottom {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 22px;
+  z-index: 10;
+  background: rgba(12, 18, 34, 0.82);
+  border: 1.5px solid rgba(255, 255, 255, 0.22);
+  border-radius: 18px;
+  padding: 14px 14px 12px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.75);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+  animation: cutscene-slide-up .5s cubic-bezier(.2, .9, .2, 1) forwards;
+}
+@keyframes cutscene-slide-up {
+  from { opacity: 0; transform: translateY(24px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .cutscene__content {
@@ -586,15 +647,15 @@ button.big-id { font-family: inherit; }
 }
 
 .cutscene__title {
-  font-size: 22px;
+  font-size: 21px;
   font-weight: 900;
   color: #fff;
   letter-spacing: .04em;
-  text-shadow: 0 0 16px rgba(255, 255, 255, 0.4);
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.85), 0 0 18px rgba(255, 255, 255, 0.35);
 }
 .cutscene__title--blood {
   color: #fda4af;
-  text-shadow: 0 0 20px #e11d48, 0 0 40px #e11d48;
+  text-shadow: 0 2px 12px #000, 0 0 22px #e11d48;
 }
 
 .cutscene__sub {
@@ -607,16 +668,18 @@ button.big-id { font-family: inherit; }
 
 .cutscene__card {
   width: 100%;
-  background: rgba(15, 23, 42, 0.88);
-  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  background: rgba(12, 18, 34, 0.9);
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
   border-radius: 16px;
-  padding: 12px 14px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(8px);
+  padding: 13px 14px;
+  box-shadow: 0 10px 34px rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(10px);
   display: flex;
   flex-direction: column;
   align-items: center;
+  text-align: center;
   gap: 6px;
+  animation: cutscene-slide-up .45s cubic-bezier(.2, .9, .2, 1) forwards;
 }
 
 .cutscene__badge {
@@ -626,17 +689,17 @@ button.big-id { font-family: inherit; }
   border-radius: 999px;
 }
 .cutscene__badge--red {
-  background: rgba(225, 29, 72, 0.3);
+  background: rgba(225, 29, 72, 0.35);
   border: 1px solid #fb7185;
   color: #fecdd3;
 }
 .cutscene__badge--green {
-  background: rgba(16, 185, 129, 0.3);
+  background: rgba(16, 185, 129, 0.35);
   border: 1px solid #34d399;
   color: #a7f3d0;
 }
 .cutscene__badge--cyan {
-  background: rgba(6, 182, 212, 0.3);
+  background: rgba(6, 182, 212, 0.35);
   border: 1px solid #22d3ee;
   color: #cffafe;
 }
@@ -648,10 +711,17 @@ button.big-id { font-family: inherit; }
   gap: 6px;
   margin: 4px 0;
 }
+.cutscene__avatar-row {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+}
 .cutscene__avatar {
   border-radius: 50%;
   border: 3px solid #fff;
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.55);
+  object-fit: cover;
   animation: cutscene-pop .4s cubic-bezier(.34, 1.56, .64, 1) forwards;
 }
 @keyframes cutscene-pop {
@@ -660,45 +730,34 @@ button.big-id { font-family: inherit; }
 }
 
 .cutscene__name {
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 900;
   color: #fff;
 }
 .cutscene__name--blood {
   color: #fca5a5;
-  text-shadow: 0 0 12px #ef4444;
+  text-shadow: 0 0 14px #ef4444;
 }
 
 .cutscene__desc {
   font-size: 11px;
-  color: #94a3b8;
+  color: #cbd5e1;
   font-weight: 700;
 }
 
-/* ---------------- 🌅 朝の演出（朝日昇る・追放・爪切り裂き・盾） ---------------- */
+/* ---------------- 🌅 朝の演出（ステージ1：日の出 ➔ ステージ2：夜襲動画 / 盾防御） ---------------- */
 .cutscene-morning {
   position: absolute;
   inset: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background: radial-gradient(circle at 50% 90%, #fdba74 0%, #ea580c 35%, #1e1b4b 85%, #05060f 100%);
-  animation: morning-sky-rise 6.5s ease-out forwards;
+  background: #05060f;
+}
+.cutscene-stage--sunrise {
+  background: radial-gradient(circle at 50% 85%, #fdba74 0%, #ea580c 32%, #1e1b4b 82%, #05060f 100%);
+  animation: morning-sky-rise 2.6s ease-out forwards;
 }
 @keyframes morning-sky-rise {
-  0% {
-    background: radial-gradient(circle at 50% 95%, #7c2d12 0%, #312e81 40%, #030712 100%);
-    filter: brightness(0.65);
-  }
-  30% {
-    background: radial-gradient(circle at 50% 75%, #f97316 0%, #c2410c 35%, #1e1b4b 80%, #05060f 100%);
-    filter: brightness(1.1);
-  }
-  100% {
-    background: radial-gradient(circle at 50% 60%, #fed7aa 0%, #fb923c 25%, #0284c7 70%, #0f172a 100%);
-    filter: brightness(1);
-  }
+  0% { filter: brightness(0.55); }
+  100% { filter: brightness(1.08); }
 }
 
 .cutscene-sun {
@@ -706,24 +765,23 @@ button.big-id { font-family: inherit; }
   bottom: -40px;
   left: 50%;
   transform: translateX(-50%);
-  width: 130px;
-  height: 130px;
+  width: 140px;
+  height: 140px;
   border-radius: 50%;
   background: radial-gradient(circle, #fff 25%, #fef08a 50%, #f97316 85%);
   box-shadow: 0 0 80px #f59e0b, 0 0 140px #f97316;
-  animation: sun-rise 4.5s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+  animation: sun-rise 2.5s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
 }
 @keyframes sun-rise {
   0% { bottom: -60px; transform: translateX(-50%) scale(0.6); opacity: 0.3; }
-  60% { bottom: 120px; transform: translateX(-50%) scale(1.15); opacity: 1; }
-  100% { bottom: 140px; transform: translateX(-50%) scale(1); opacity: 0.85; }
+  100% { bottom: 135px; transform: translateX(-50%) scale(1.1); opacity: 0.95; }
 }
 
 .cutscene-rays {
   position: absolute;
   inset: -100px;
-  background: repeating-conic-gradient(from 0deg at 50% 80%, rgba(254, 240, 138, 0.12) 0deg 15deg, transparent 15deg 30deg);
-  animation: rays-rotate 20s linear infinite;
+  background: repeating-conic-gradient(from 0deg at 50% 80%, rgba(254, 240, 138, 0.14) 0deg 15deg, transparent 15deg 30deg);
+  animation: rays-rotate 18s linear infinite;
   pointer-events: none;
 }
 @keyframes rays-rotate {
@@ -731,252 +789,118 @@ button.big-id { font-family: inherit; }
   to { transform: rotate(360deg); }
 }
 
-.cutscene__step--sunrise {
-  animation: step-fade-1 2.5s ease-out forwards;
+/* ステージ2：夜襲ムービー＆下部発表カード */
+.cutscene-stage--wolf.is-slashed {
+  animation: card-shake .55s ease;
 }
-@keyframes step-fade-1 {
-  0% { opacity: 0; transform: translateY(15px); }
-  25% { opacity: 1; transform: translateY(0); }
-  85% { opacity: 1; }
-  100% { opacity: 0.2; transform: translateY(-5px); }
-}
-
-.cutscene__step--exile {
-  width: 100%;
-  animation: step-appear-exile 6.5s ease forwards;
-}
-@keyframes step-appear-exile {
-  0%, 15% { opacity: 0; transform: scale(0.8); pointer-events: none; }
-  22% { opacity: 1; transform: scale(1); }
-  55% { opacity: 1; }
-  65%, 100% { opacity: 0.75; transform: scale(0.92); }
+@keyframes card-shake {
+  0%, 100% { transform: translateX(0); }
+  15% { transform: translate(-10px, 4px) rotate(-1.5deg); }
+  35% { transform: translate(10px, -4px) rotate(1.5deg); }
+  55% { transform: translate(-7px, 2px); }
+  75% { transform: translate(6px, -2px); }
 }
 
-.cutscene__step--attack {
-  width: 100%;
-  animation: step-appear-attack 6.5s ease forwards;
-}
-@keyframes step-appear-attack {
-  0%, 45% { opacity: 0; transform: translateY(20px); pointer-events: none; }
-  52% { opacity: 1; transform: translateY(0); }
-  100% { opacity: 1; }
-}
-
-/* 爪の切り裂きエフェクト (Claw Slash) */
-.cutscene__slash-fx {
-  position: relative;
-  width: 180px;
-  height: 90px;
-  margin: 0 auto;
-}
-.claw {
+.cutscene__bottom-card {
   position: absolute;
-  top: 10px;
-  width: 170px;
-  height: 8px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, transparent 0%, #fff 25%, #ef4444 60%, transparent 100%);
-  box-shadow: 0 0 16px #ef4444, 0 0 28px #dc2626;
-  opacity: 0;
-  transform-origin: left center;
-}
-.claw--1 {
-  top: 16px;
-  transform: rotate(-22deg) scaleX(0);
-  animation: slash-scratch .45s cubic-bezier(0.1, 0.9, 0.2, 1) 3.2s forwards;
-}
-.claw--2 {
-  top: 38px;
-  transform: rotate(-20deg) scaleX(0);
-  animation: slash-scratch .45s cubic-bezier(0.1, 0.9, 0.2, 1) 3.3s forwards;
-}
-.claw--3 {
-  top: 60px;
-  transform: rotate(-18deg) scaleX(0);
-  animation: slash-scratch .45s cubic-bezier(0.1, 0.9, 0.2, 1) 3.4s forwards;
-}
-@keyframes slash-scratch {
-  0% { transform: scaleX(0) rotate(-22deg); opacity: 0; }
-  30% { opacity: 1; }
-  70% { transform: scaleX(1.1) rotate(-20deg); opacity: 1; filter: drop-shadow(0 0 10px #ff0044); }
-  100% { transform: scaleX(1) rotate(-20deg); opacity: 0.85; }
+  left: 14px;
+  right: 14px;
+  bottom: 24px;
+  z-index: 20;
 }
 
 .cutscene__card--slash {
   border-color: #ef4444;
-  box-shadow: 0 0 24px rgba(239, 68, 68, 0.35);
-  animation: card-shake .5s ease 3.3s;
-}
-@keyframes card-shake {
-  0%, 100% { transform: translateX(0); }
-  20% { transform: translateX(-8px) rotate(-1deg); }
-  40% { transform: translateX(8px) rotate(1deg); }
-  60% { transform: translateX(-5px); }
-  80% { transform: translateX(4px); }
-}
-
-/* 盾の護衛エフェクト (Shield Guard) */
-.cutscene__shield-fx {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.cutscene__shield-icon {
-  font-size: 52px;
-  animation: shield-bounce .7s cubic-bezier(0.34, 1.56, 0.64, 1) 3.1s forwards;
-  transform: scale(0);
-}
-@keyframes shield-bounce {
-  0% { transform: scale(0); }
-  60% { transform: scale(1.3); filter: drop-shadow(0 0 20px #34d399); }
-  100% { transform: scale(1); filter: drop-shadow(0 0 12px #10b981); }
+  box-shadow: 0 0 32px rgba(239, 68, 68, 0.55), 0 12px 36px rgba(0, 0, 0, 0.85);
 }
 .cutscene__card--shield {
-  border-color: #10b981;
-  box-shadow: 0 0 30px rgba(16, 185, 129, 0.4);
+  border-color: #34d399;
+  box-shadow: 0 0 36px rgba(52, 211, 153, 0.65), 0 12px 36px rgba(0, 0, 0, 0.85);
 }
 .cutscene__highlight {
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 900;
   color: #6ee7b7;
 }
 
-/* ---------------- 🗣️ 昼の演出（村人が集まってくる） ---------------- */
-.cutscene-day {
+/* ナイト護衛成功時：飛びかかった狼を弾き返す聖なる盾カットイン */
+.cutscene-stage--wolf.is-shield-blocked .cutscene__video {
+  filter: brightness(0.65) contrast(1.15) hue-rotate(15deg);
+  transform: scale(1.04);
+  transition: filter .25s ease, transform .25s ease;
+}
+.cutscene__shield-intervene {
   position: absolute;
   inset: 0;
+  z-index: 15;
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
-  background: radial-gradient(circle at 50% 30%, #38bdf8 0%, #0284c7 45%, #0f172a 90%);
+  pointer-events: none;
 }
-.cutscene-cloud {
+.shield-flash {
   position: absolute;
-  background: rgba(255, 255, 255, 0.22);
-  border-radius: 999px;
-  filter: blur(4px);
+  inset: 0;
+  background: radial-gradient(circle at 50% 42%, rgba(254, 240, 138, 0.95) 0%, rgba(56, 189, 248, 0.75) 45%, transparent 80%);
+  animation: shield-flash-anim .75s ease-out forwards;
 }
-.cloud--1 { width: 140px; height: 35px; top: 18%; left: -20px; animation: cloud-float 7s linear infinite; }
-.cloud--2 { width: 100px; height: 28px; top: 26%; right: -20px; animation: cloud-float 9s linear infinite reverse; }
-@keyframes cloud-float {
-  from { transform: translateX(-30px); }
-  to { transform: translateX(40px); }
+@keyframes shield-flash-anim {
+  0% { opacity: 1; transform: scale(0.5); }
+  35% { opacity: 1; transform: scale(1.3); }
+  100% { opacity: 0.25; transform: scale(1); }
 }
-
-.cutscene__icon-burst {
-  font-size: 38px;
-  animation: crowd-burst .6s cubic-bezier(0.17, 0.89, 0.32, 1.28);
+.shield-barrier {
+  position: relative;
+  top: -45px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-@keyframes crowd-burst {
-  0% { transform: scale(0.2); opacity: 0; }
+.shield-emblem {
+  filter: drop-shadow(0 0 24px #38bdf8) drop-shadow(0 0 48px #fbbf24);
+  animation: shield-slam .55s cubic-bezier(0.22, 1.4, 0.36, 1) forwards;
+}
+@keyframes shield-slam {
+  0% { transform: scale(2.4); opacity: 0; }
+  55% { transform: scale(0.92); opacity: 1; }
+  75% { transform: scale(1.08); }
   100% { transform: scale(1); opacity: 1; }
 }
+.shield-ring {
+  position: absolute;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  border: 3px solid #fef08a;
+  box-shadow: 0 0 24px #38bdf8, inset 0 0 24px #38bdf8;
+  animation: shield-shockwave 1.1s ease-out infinite;
+}
+.shield-ring--2 {
+  border-color: #38bdf8;
+  animation-delay: .35s;
+}
+@keyframes shield-shockwave {
+  0% { transform: scale(0.6); opacity: 0.95; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
 
+/* 昼の集合アイコン列 */
 .cutscene__crowd {
   display: flex;
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
-  gap: 8px;
-  max-width: 260px;
-  padding: 10px;
-  background: rgba(15, 23, 42, 0.6);
-  border-radius: 18px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  gap: 6px;
+  padding: 4px 8px;
 }
 .cutscene__gather-player {
-  animation: gather-in .5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  animation: gather-in .45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
   animation-delay: var(--d, 0s);
   opacity: 0;
-  transform: translateY(20px) scale(0.6);
+  transform: translateY(14px) scale(0.6);
 }
 @keyframes gather-in {
   to { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-/* ---------------- 🐺 夜の演出（日が暮れオオカミ遠吠え） ---------------- */
-.cutscene-night {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background: radial-gradient(circle at 50% 25%, #4338ca 0%, #1e1b4b 35%, #05060f 85%);
-  animation: night-darken 3.4s ease-out forwards;
-}
-@keyframes night-darken {
-  0% { filter: brightness(1.2); }
-  30% { filter: brightness(0.9); }
-  100% { filter: brightness(0.7); }
-}
-
-.cutscene-night__moon {
-  position: absolute;
-  top: 14%;
-  left: 50%;
-  transform: translateX(-50%);
-}
-.moon-body {
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
-  background: #fef08a;
-  box-shadow: 0 0 35px #fef08a, 0 0 80px rgba(254, 240, 138, 0.45);
-}
-
-.cutscene__wolf-silhouette {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 8px;
-}
-.wolf-icon {
-  font-size: 64px;
-  z-index: 2;
-  filter: drop-shadow(0 0 16px rgba(255, 255, 255, 0.6));
-  animation: wolf-howl-head 2.6s ease-in-out forwards;
-}
-@keyframes wolf-howl-head {
-  0% { transform: scale(0.6) translateY(20px); opacity: 0; }
-  35% { transform: scale(1) translateY(0) rotate(-4deg); opacity: 1; }
-  55% { transform: scale(1.15) translateY(-8px) rotate(8deg); }
-  75% { transform: scale(1.1) translateY(-6px) rotate(6deg); }
-  100% { transform: scale(1) translateY(0) rotate(0deg); opacity: 1; }
-}
-
-.howl-ring {
-  position: absolute;
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  border: 2px solid rgba(253, 164, 175, 0.7);
-  animation: howl-wave 1.6s ease-out infinite;
-  opacity: 0;
-  pointer-events: none;
-}
-.ring-1 { animation-delay: 0.8s; }
-.ring-2 { animation-delay: 1.3s; }
-.ring-3 { animation-delay: 1.8s; }
-@keyframes howl-wave {
-  0% { transform: scale(0.6); opacity: 0.9; border-color: #fda4af; }
-  100% { transform: scale(2.8); opacity: 0; border-color: #f43f5e; }
-}
-
-.cutscene__howl-text {
-  font-size: 19px;
-  font-weight: 900;
-  color: #fca5a5;
-  letter-spacing: .08em;
-  text-shadow: 0 0 15px #e11d48;
-  animation: howl-text-pulse 1.2s ease-in-out infinite alternate;
-}
-@keyframes howl-text-pulse {
-  from { transform: scale(0.95); opacity: 0.75; }
-  to { transform: scale(1.06); opacity: 1; }
 }
 
 /* ==========================================================
