@@ -192,7 +192,7 @@ h1, h2, h3, p { margin: 0; }
   border-radius: 12px;
   overflow: hidden;
   border: 1px solid var(--line);
-  max-height: 13dvh;
+  max-height: 9.5dvh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -350,8 +350,8 @@ h1, h2, h3, p { margin: 0; }
 .order .step { display: inline-flex; align-items: center; gap: 4px; background: var(--panel-dark); border: 1px solid var(--line); border-radius: 999px; padding: 2px 8px 2px 3px; font-size: 11px; font-weight: 700; }
 .order .arrow { color: var(--muted); font-size: 11px; }
 
-.events { display: flex; flex-direction: column; gap: 6px; }
-.event { display: flex; align-items: center; gap: 10px; padding: 7px 10px; border-radius: 11px; background: var(--panel-dark); border: 1px solid var(--line); }
+.events { display: flex; flex-direction: column; gap: 5px; }
+.event { display: flex; align-items: center; gap: 10px; padding: 5px 10px; border-radius: 11px; background: var(--panel-dark); border: 1px solid var(--line); }
 .event__ico { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-size: 16px; background: #ffffff10; flex: none; }
 .event__label { font-size: 11px; color: var(--muted); font-weight: 700; }
 .event__val { font-weight: 900; font-size: 14px; }
@@ -975,14 +975,15 @@ button.big-id { font-family: inherit; }
   letter-spacing: 1px;
 }
 .room-leave-btn {
-  background: #2a121d;
-  border: 1px solid #fb718566;
-  color: #fecdd3;
+  background: #4c1529;
+  border: 1.5px solid var(--red);
+  color: #fff;
   border-radius: 999px;
-  padding: 3px 10px;
+  padding: 4px 11px;
   font-size: 11px;
-  font-weight: 800;
+  font-weight: 900;
   cursor: pointer;
+  box-shadow: 0 0 10px #fb718544;
   transition: all .15s ease;
 }
 .room-leave-btn:hover, .room-leave-btn:active {

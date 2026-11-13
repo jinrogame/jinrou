@@ -24,7 +24,7 @@ export const profile = { name: localStorage.getItem("jinrou.name") || "", avatar
 const roomBar = () => S.roomId && S.room ? `
 <div class="room-bar">
   <span class="room-bar__id">ROOM: <b>${esc(S.roomId)}</b>${S.room.turn ? ` <span>（ターン ${S.room.turn}/${S.room.maxTurns}）</span>` : ""}</span>
-  <button type="button" class="room-leave-btn" data-leave-room>${isHost() ? "🚪 解散・退室" : "🚪 ルームを抜ける"}</button>
+  <button type="button" class="room-leave-btn" data-leave-room>🚪 ルームを抜ける</button>
 </div>` : "";
 
 const shell = ({ phase = "night", bg = "bg_night", body, footer = "" }) => `
