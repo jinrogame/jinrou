@@ -385,7 +385,7 @@ h1, h2, h3, p { margin: 0; }
 /* ---------------- 役職カード（ポケモンカード比率 5:7 縦長・高さ自動フィット） ---------------- */
 .flip {
   perspective: 1200px;
-  height: min(44dvh, 330px);
+  height: min(36dvh, 270px);
   aspect-ratio: 571 / 1024;
   width: auto;
   margin: 0 auto;
@@ -1237,9 +1237,28 @@ dialog.result--warn {
 .debug-tab-pane {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  flex: 1;
+  gap: 10px;
+  flex: 1 1 auto;
   min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding-right: 4px;
+  padding-bottom: 40px;
+}
+.debug-tab-pane::-webkit-scrollbar {
+  width: 5px;
+}
+.debug-tab-pane::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.35);
+  border-radius: 999px;
+}
+.debug-screen .screen__body {
+  justify-content: flex-start !important;
+  overflow: hidden !important;
+  padding: 8px 12px 12px !important;
+  gap: 8px !important;
+  height: 100% !important;
 }
 .debug-tab-pane[hidden] {
   display: none !important;

@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>演出＆役職カード確認プレイヤー - オリジナル人狼ゲーム</title>
-  <link rel="stylesheet" href="styles.css?v=6">
+  <link rel="stylesheet" href="styles.css?v=7">
 </head>
 <body>
   <header class="dev-preview-bar">
@@ -17,7 +17,7 @@
 
   <main class="stage">
     <div class="phone" id="phone">
-      <section class="screen is-active" data-phase="night" id="previewScreen">
+      <section class="screen is-active debug-screen" data-phase="night" id="previewScreen">
         <div class="screen__bg"><img src="img/bg_night.svg" alt="" width="390" height="844"></div>
         <div class="screen__body">
           <div class="hdr">
@@ -39,8 +39,8 @@
               <button type="button" class="btn btn--ghost btn--sm" id="btnFlipToggle" style="width:auto;min-height:30px;padding:4px 10px">🔄 反転切替</button>
             </div>
 
-            <div class="role-reveal-stage" id="previewRoleStage">
-              <button type="button" class="flip" id="previewFlip" style="height:min(34dvh, 260px)" aria-label="カードをタップして反転">
+            <div class="role-reveal-stage" id="previewRoleStage" style="flex:none;margin:2px auto">
+              <button type="button" class="flip" id="previewFlip" style="height:min(30dvh, 220px)" aria-label="カードをタップして反転">
                 <div class="flip__inner">
                   <div class="flip__face"><img src="img/role_card_back.jpg" alt="役職カード裏面" width="571" height="1024"></div>
                   <div class="flip__face flip__front"><img id="previewRoleImg" src="img/role_wolf_god.jpg" alt="役職カード" width="571" height="1024"></div>
@@ -48,7 +48,7 @@
               </button>
             </div>
 
-            <div class="card card--glow" id="previewRoleCard" style="padding:8px 12px;margin-top:8px">
+            <div class="card card--glow" id="previewRoleCard" style="padding:8px 12px;margin-top:4px;flex:none">
               <h2 class="card__title">
                 <span class="dot"></span>
                 <span id="previewRoleName">人狼神</span>
@@ -198,10 +198,10 @@
   </dialog>
 
   <script type="module">
-    import { S } from "./js/state.js?v=6";
-    import { ROLES } from "./js/data.js?v=6";
-    import { playMorningCutscene, playDayCutscene, playNightCutscene, playWolfSlashSound, playShieldClangSound, playDayAmbientSound, playNightAmbientSound } from "./js/cutscenes.js?v=6";
-    import { triggerJudgeEffect, triggerConfetti, bindGhostStamps, triggerDramaticRoleReveal, spawnGhostStamp } from "./js/ui.js?v=6";
+    import { S } from "./js/state.js?v=7";
+    import { ROLES } from "./js/data.js?v=7";
+    import { playMorningCutscene, playDayCutscene, playNightCutscene, playWolfSlashSound, playShieldClangSound, playDayAmbientSound, playNightAmbientSound } from "./js/cutscenes.js?v=7";
+    import { triggerJudgeEffect, triggerConfetti, bindGhostStamps, triggerDramaticRoleReveal, spawnGhostStamp } from "./js/ui.js?v=7";
 
     S.players = {
       p1: { name: "たろう", avatarId: "1", alive: true },
