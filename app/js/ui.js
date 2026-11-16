@@ -765,13 +765,15 @@ SCREENS.task_result = {
 SCREENS.day = {
   build() {
     const es = S.room.effectState;
+    const imAlive = me()?.alive;
     return shell({
       phase: "day", bg: "bg_day",
       body: `
       <div class="hdr"><h1 class="hdr__title">🗣️ 昼のターン：議論中</h1><span class="chip chip--accent">Turn ${Math.min(S.room.turn, S.room.maxTurns)} / ${S.room.maxTurns}</span></div>
       ${ring(TIME.day, "", "var(--accent)")}
       <div class="card"><div class="row-between"><b>プレイヤー状況</b><span class="chip chip--green" id="aliveChip"></span></div><div class="avatar-grid" id="dayAvatars"></div></div>
-      <button type="button" class="btn btn--sm" id="btnDayInfo">📊 タスク貢献度・発生中の報酬/罰を確認</button>`,
+      <button type="button" class="btn btn--sm" id="btnDayInfo">📊 タスク貢献度・発生中の報酬/罰を確認</button>
+      ${!imAlive ? ghostStampBoxHtml() : ""}`,
       footer: okFooter("議論終了（夜のターンへ）"),
     });
   },

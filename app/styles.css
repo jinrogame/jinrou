@@ -545,37 +545,48 @@ dialog.result:modal { overscroll-behavior: contain; }
 }
 .ghost-btn {
   flex: 1;
-  padding: 5px 2px;
+  padding: 8px 3px;
   font-size: 11px;
-  font-weight: 800;
-  background: rgba(30, 41, 59, 0.8);
-  border: 1px solid rgba(148, 163, 184, 0.3);
+  font-weight: 900;
+  background: #1e293b;
+  border: 1.5px solid #64748b;
   border-radius: 8px;
-  color: #f1f5f9;
+  color: #ffffff;
   cursor: pointer;
   transition: all .12s ease;
   white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+.ghost-btn:hover {
+  background: #334155;
+  border-color: #a78bfa;
 }
 .ghost-btn:active {
   transform: scale(0.92);
-  border-color: #a78bfa;
-  background: rgba(139, 92, 246, 0.3);
+  border-color: #c084fc;
+  background: #581c87;
+  color: #fff;
 }
 .ghost-anim-fly {
   position: absolute;
   font-weight: 900;
-  font-size: 18px;
-  color: #e9d5ff;
-  text-shadow: 0 0 12px #a855f7, 0 2px 4px #000;
+  font-size: 20px;
+  color: #f5f3ff;
+  background: rgba(88, 28, 135, 0.75);
+  border: 1.5px solid #c084fc;
+  padding: 4px 10px;
+  border-radius: 999px;
+  box-shadow: 0 0 16px rgba(192, 132, 252, 0.6), 0 4px 10px rgba(0, 0, 0, 0.7);
   pointer-events: none;
-  z-index: 99;
-  animation: ghost-float-up 1.8s cubic-bezier(0.2, 0.8, 0.3, 1) forwards;
+  z-index: 100;
+  white-space: nowrap;
+  animation: ghost-float-up 2.2s cubic-bezier(0.2, 0.8, 0.3, 1) forwards;
 }
 @keyframes ghost-float-up {
   0% { opacity: 0; transform: translate(-50%, 0) scale(0.6) rotate(0deg); }
-  20% { opacity: 1; transform: translate(-50%, -20px) scale(1.15) rotate(var(--r, -5deg)); }
-  80% { opacity: 0.9; }
-  100% { opacity: 0; transform: translate(calc(-50% + var(--drift, 20px)), -130px) scale(1) rotate(calc(var(--r, 5deg) * 2)); }
+  15% { opacity: 1; transform: translate(-50%, -25px) scale(1.1) rotate(var(--r, -5deg)); }
+  75% { opacity: 0.95; }
+  100% { opacity: 0; transform: translate(calc(-50% + var(--drift, 30px)), -220px) scale(0.95) rotate(calc(var(--r, 5deg) * 2)); }
 }
 
 /* ==================== 本実装での追加スタイル ==================== */
