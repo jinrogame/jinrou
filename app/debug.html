@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>演出＆役職カード確認プレイヤー - オリジナル人狼ゲーム</title>
-  <link rel="stylesheet" href="styles.css?v=8">
+  <link rel="stylesheet" href="styles.css?v=9">
 </head>
 <body>
   <header class="dev-preview-bar">
@@ -249,10 +249,10 @@
   </dialog>
 
   <script type="module">
-    import { S } from "./js/state.js?v=8";
-    import { ROLES } from "./js/data.js?v=8";
-    import { playMorningCutscene, playDayCutscene, playNightCutscene, playWolfSlashSound, playShieldClangSound, playDayAmbientSound, playNightAmbientSound, playResultRevealSound } from "./js/cutscenes.js?v=8";
-    import { triggerJudgeEffect, triggerConfetti, bindGhostStamps, triggerDramaticRoleReveal, spawnGhostStamp, showRoleListModal, openMyRoleConfirm } from "./js/ui.js?v=8";
+    import { S } from "./js/state.js";
+    import { ROLES } from "./js/data.js";
+    import { playMorningCutscene, playDayCutscene, playNightCutscene, playWolfSlashSound, playShieldClangSound, playDayAmbientSound, playNightAmbientSound, playResultRevealSound } from "./js/cutscenes.js";
+    import { triggerJudgeEffect, triggerConfetti, bindGhostStamps, triggerDramaticRoleReveal, spawnGhostStamp, showRoleListModal, openMyRoleConfirm } from "./js/ui.js";
 
     S.players = {
       p1: { name: "たろう", avatarId: "1", alive: true },

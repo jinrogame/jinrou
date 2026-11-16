@@ -453,7 +453,7 @@ export function openMyRoleConfirm() {
   if (!dlgEl.open) dlgEl.showModal();
 }
 
-function showMyRoleCard() {
+export function showMyRoleCard() {
   const dlgEl = document.getElementById("myRoleDialog");
   if (!dlgEl) return;
   const confirmStep = dlgEl.querySelector("#myRoleConfirmStep");
@@ -461,8 +461,8 @@ function showMyRoleCard() {
   if (confirmStep) confirmStep.hidden = true;
   if (cardStep) cardStep.hidden = false;
 
-  const roleKey = S.secret?.role;
-  const roleInfo = ROLES[roleKey];
+  const roleKey = S.secret?.role || "werewolf";
+  const roleInfo = ROLES[roleKey] || ROLES.werewolf;
   const content = dlgEl.querySelector("#myRoleCardContent");
   if (content && roleInfo) {
     const isWolf = roleInfo.team === "wolf";
