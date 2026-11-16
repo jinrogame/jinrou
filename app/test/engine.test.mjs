@@ -94,10 +94,18 @@ test("報酬/罰：夜襲封じ・夜襲+1・復活・全員ナイト", () => {
 });
 
 test("勝敗判定", () => {
-  assert.equal(checkWin(["werewolf", "citizen"]), null);
+  // 人狼側と市民側が同数（1 vs 1）の場合は人狼勝利
+  assert.equal(checkWin(["werewolf", "citizen"]), "wolf");
+  // 人狼側が市民側を上回る（2 vs 1）場合も人狼勝利
+  assert.equal(checkWin(["werewolf", "psycho", "citizen"]), "wolf");
+  // 市民側の方が多い（1 vs 2）場合はゲーム継続（null）
+  assert.equal(checkWin(["werewolf", "citizen", "citizen"]), null);
+  // 人狼が全滅した場合は市民勝利
   assert.equal(checkWin(["citizen", "seer"]), "citizen");
+  // 全員人狼陣営
   assert.equal(checkWin(["werewolf", "psycho"]), "wolf");
-  assert.equal(finalWin(["werewolf", "citizen"]), "draw");
+  // 最終ターン終了時判定
+  assert.equal(finalWin(["werewolf", "citizen"]), "wolf");
   assert.equal(finalWin(["werewolf", "citizen", "citizen"]), "citizen");
 });
 

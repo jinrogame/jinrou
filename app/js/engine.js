@@ -82,20 +82,27 @@ export function capabilities(role, effects = {}, ctx = {}) {
   };
 }
 
-/** 勝敗判定（即時決着のみ）。null=継続 */
+/** 勝敗判定（朝・夜明け時点の即時決着判定）。null=継続
+ * ルール:
+ * - 全滅（0 vs 0）: 引き分け
+ * - 人狼が0人: 市民陣営の勝利
+ * - 市民が0人、または 人狼側の人数 >= 市民側の人数: 人狼陣営の勝利
+ */
 export function checkWin(aliveRoles) {
   const w = aliveRoles.filter(isWolfTeam).length;
   const c = aliveRoles.length - w;
   if (w === 0 && c === 0) return "draw";
   if (w === 0) return "citizen";
-  if (c === 0) return "wolf";
+  if (w >= c) return "wolf";
   return null;
 }
 /** 最大ターン終了時の判定 */
 export function finalWin(aliveRoles) {
   const w = aliveRoles.filter(isWolfTeam).length;
   const c = aliveRoles.length - w;
-  return w === c ? "draw" : c > w ? "citizen" : "wolf";
+  if (w === 0) return "citizen";
+  if (w >= c) return "wolf";
+  return c > w ? "citizen" : "wolf";
 }
 
 /**
