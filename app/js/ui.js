@@ -94,7 +94,7 @@ export function showDialog({ ico = "🔮", title = "", body = "", note = "" }) {
   $("#resNote").textContent = note;
   if (!dlg.open) dlg.showModal();
 }
-dlg.addEventListener("click", (e) => { if (e.target === dlg) dlg.close(); });
+dlg?.addEventListener("click", (e) => { if (e.target === dlg) dlg.close(); });
 
 /** ルーム退室・解散の警告確認モーダルを表示 */
 export function confirmLeaveRoom() {
@@ -124,7 +124,7 @@ $("#btnLeaveConfirm")?.addEventListener("click", () => {
   leaveDlg?.close();
   window.dispatchEvent(new CustomEvent("jinrou:leave"));
 });
-phone.addEventListener("click", (e) => {
+phone?.addEventListener("click", (e) => {
   if (e.target.closest("[data-leave-room]")) confirmLeaveRoom();
 });
 

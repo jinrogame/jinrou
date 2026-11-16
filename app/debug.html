@@ -106,6 +106,27 @@
     </div>
   </main>
 
+  <!-- 占い師・霊媒師の即時結果 / お知らせモーダル -->
+  <dialog class="result" id="resultDialog" aria-labelledby="resTitle">
+    <div class="result__ico" id="resIco">🔮</div>
+    <h2 class="result__title" id="resTitle"></h2>
+    <div class="result__body" id="resBody"></div>
+    <p class="result__note" id="resNote"></p>
+    <form method="dialog"><button type="submit" class="btn btn--solid btn--violet" autofocus>閉じる（OK）</button></form>
+  </dialog>
+
+  <!-- ルーム退室・解散の確認警告モーダル -->
+  <dialog class="result result--warn" id="leaveDialog" aria-labelledby="leaveTitle">
+    <div class="result__ico">⚠️</div>
+    <h2 class="result__title" id="leaveTitle">本当にルームを抜けますか？</h2>
+    <div class="result__body" id="leaveBody" style="font-size:14px;font-weight:700"></div>
+    <p class="result__note" id="leaveNote"></p>
+    <div class="leave-dialog__actions">
+      <button type="button" class="btn btn--ghost" id="btnLeaveCancel">キャンセル（戻る）</button>
+      <button type="button" class="btn btn--solid btn--red" id="btnLeaveConfirm">はい、ルームを抜ける</button>
+    </div>
+  </dialog>
+
   <script type="module">
     import { S } from "./js/state.js";
     import { ROLES } from "./js/data.js";
