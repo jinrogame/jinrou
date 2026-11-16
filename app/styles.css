@@ -1662,6 +1662,56 @@ dialog.result--warn {
   100% { opacity: 0; transform: translate(calc(var(--dx) * 1.5), calc(var(--dy) * 1.5 - 20px)) scale(0.2); }
 }
 
+/* ---------------- 参加用 QRコードボックス ---------------- */
+.qr-invite-box {
+  padding: 10px 12px;
+  background: color-mix(in srgb, #6366f1 14%, var(--panel));
+  border: 1.5px solid #818cf8;
+}
+.qr-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+.qr-frame {
+  background: #ffffff;
+  padding: 5px;
+  border-radius: 10px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.qr-img {
+  width: 110px;
+  height: 110px;
+  display: block;
+  border-radius: 6px;
+}
+.qr-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.qr-room-badge {
+  font-size: 13px;
+  font-weight: 900;
+  color: #c7d2fe;
+}
+.qr-room-badge b {
+  color: #ffffff;
+  letter-spacing: 2px;
+  font-size: 16px;
+  margin-left: 4px;
+  background: #4338ca;
+  padding: 1px 7px;
+  border-radius: 6px;
+  border: 1px solid #818cf8;
+}
+
 
 
 

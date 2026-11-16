@@ -400,6 +400,7 @@ SCREENS.title = {
       phase: "night", bg: "bg_title",
       body: `
       <img class="title-logo" src="img/logo_title.svg" alt="人狼ゲーム TASK & MYSTERY WEREWOLF" width="400" height="300" fetchpriority="high">
+      ${qRoom ? `<div style="text-align:center;margin-bottom:8px"><span class="chip chip--accent" style="padding:4px 12px;font-size:12px;font-weight:900">🔗 招待ルーム: ${esc(qRoom.toUpperCase())} に参加準備中</span></div>` : ""}
       <div class="card card--blue">
         <h2 class="card__title"><span class="dot"></span>プレイヤー情報 ＆ 顔アイコン登録</h2>
         <div class="selfie-box">
@@ -517,12 +518,40 @@ SCREENS.lobby = {
       <div class="total-bar" id="totalBar"><span>配役合計</span><b id="totalVal"></b></div>`
       : `<div class="card card--blue center"><p class="muted" style="color:#dbe5ff;font-weight:800">オーナーが役職を設定中です…<br>しばらくお待ちください</p><div class="spinner" role="status" aria-label="読み込み中"></div></div>
          <div class="card"><div class="row-between"><b>ターン数</b><b class="accent" id="turnShow"></b></div><div class="muted">役職配分は開始時に抽選され、本人にだけ表示されます。</div></div>`;
+    const joinUrl = (location.hostname === "localhost" || location.hostname === "127.0.0.1")
+      ? `https://jinrogame.github.io/jinrou/app/index.html?room=${S.roomId}`
+      : `${location.origin}${location.pathname}?room=${S.roomId}`;
+
     return shell({
       body: `
       <div class="hdr">
         <div><div class="roomtag">ルームID（タップで招待リンクをコピー）</div><button type="button" class="big-id" id="roomIdBtn" style="background:none;border:0;padding:0;cursor:pointer;text-align:left">${esc(S.roomId)}</button></div>
         <div style="display:flex;gap:5px;align-items:center"><span class="chip chip--accent">全<b id="turnChip">5</b>ターン</span><span class="chip chip--green" id="cntChip"></span></div>
       </div>
+
+      <!-- 招待用QRコードカード -->
+      <div class="card card--violet qr-invite-box">
+        <div class="row-between">
+          <div style="display:flex;align-items:center;gap:6px">
+            <span style="font-size:16px">📱</span>
+            <b style="font-size:13px;color:#e0e7ff">参加用 QRコード</b>
+          </div>
+          <button type="button" class="btn btn--sm btn--ghost" id="btnToggleQr" style="width:auto;min-height:24px;padding:2px 8px;font-size:10px">QRを閉じる</button>
+        </div>
+        <div class="qr-content" id="qrContent">
+          <div class="qr-frame">
+            <img class="qr-img" id="qrImg" src="https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(joinUrl)}&margin=8&color=090d18&bgcolor=ffffff" onerror="this.src='https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=' + encodeURIComponent(this.dataset.url)" data-url="${joinUrl}" alt="参加用QRコード" width="110" height="110">
+          </div>
+          <div class="qr-info">
+            <div class="qr-room-badge">ROOM: <b>${esc(S.roomId)}</b></div>
+            <p class="muted" style="font-size:11px;line-height:1.4;margin:3px 0 6px">
+              スマホのカメラをかざすと、ID入力なしで即座に入室画面が開きます。
+            </p>
+            <button type="button" class="btn btn--solid btn--cyan btn--sm" id="btnCopyInvite" style="width:100%;padding:5px 8px;font-size:11px;font-weight:900">📋 招待リンクをコピー</button>
+          </div>
+        </div>
+      </div>
+
       <div class="card"><div class="avatar-grid" id="lobbyAvatars"></div></div>
       ${config}`,
       footer: `${host ? `<button type="button" class="btn btn--solid btn--red" id="startBtn">ゲーム開始</button><p class="muted center" id="startErr" style="color:var(--amber)"></p>` : ""}
@@ -530,11 +559,36 @@ SCREENS.lobby = {
     });
   },
   bind(r) {
-    $("#roomIdBtn", r).addEventListener("click", async () => {
-      const url = `${location.origin}${location.pathname}?room=${S.roomId}`;
-      try { await navigator.clipboard.writeText(url); showDialog({ ico: "📋", title: "招待リンクをコピーしました", body: `<span style="font-size:14px">${esc(url)}</span>`, note: "LINEなどで友だちに送ってください" }); }
-      catch { prompt("招待リンク", url); }
+    const joinUrl = (location.hostname === "localhost" || location.hostname === "127.0.0.1")
+      ? `https://jinrogame.github.io/jinrou/app/index.html?room=${S.roomId}`
+      : `${location.origin}${location.pathname}?room=${S.roomId}`;
+
+    const copyUrl = async () => {
+      try {
+        await navigator.clipboard.writeText(joinUrl);
+        showDialog({
+          ico: "📋",
+          title: "招待リンクをコピーしました",
+          body: `<span style="font-size:13px;word-break:break-all">${esc(joinUrl)}</span>`,
+          note: "LINEやSNSで送るか、目の前の人にQRコードを読み取ってもらいましょう！",
+        });
+      } catch {
+        prompt("招待リンク", joinUrl);
+      }
+    };
+
+    $("#roomIdBtn", r).addEventListener("click", copyUrl);
+    $("#btnCopyInvite", r)?.addEventListener("click", copyUrl);
+
+    let qrOpen = true;
+    $("#btnToggleQr", r)?.addEventListener("click", () => {
+      qrOpen = !qrOpen;
+      const content = $("#qrContent", r);
+      if (content) content.hidden = !qrOpen;
+      const btn = $("#btnToggleQr", r);
+      if (btn) btn.textContent = qrOpen ? "QRを閉じる" : "QRを表示";
     });
+
     $("#leaveBtn", r).addEventListener("click", () => confirmLeaveRoom());
     if (!isHost()) return;
     $("#turnMinus", r).addEventListener("click", () => Host.setMaxTurns((S.room.maxTurns || 5) - 1));

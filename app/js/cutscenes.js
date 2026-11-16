@@ -51,12 +51,29 @@ async function safePlayVideo(videoEl, { muteVoice = false } = {}) {
   }
 }
 
-/** ナイトの盾が狼の爪を弾いたときの金属音・バリア効果音（Web Audio API） */
-function playShieldClangSound() {
+/** Web Audio API コンテキストの取得 */
+let cutsceneAudioCtx = null;
+function getCutsceneAudioCtx() {
   try {
     const AudioCtx = window.AudioContext || window.webkitAudioContext;
-    if (!AudioCtx) return;
-    const ctx = new AudioCtx();
+    if (!AudioCtx) return null;
+    if (!cutsceneAudioCtx || cutsceneAudioCtx.state === "closed") {
+      cutsceneAudioCtx = new AudioCtx();
+    }
+    if (cutsceneAudioCtx.state === "suspended") {
+      cutsceneAudioCtx.resume().catch(() => {});
+    }
+    return cutsceneAudioCtx;
+  } catch {
+    return null;
+  }
+}
+
+/** ナイトの盾が狼の爪を弾いたときの金属音・バリア効果音（Web Audio API） */
+export function playShieldClangSound() {
+  const ctx = getCutsceneAudioCtx();
+  if (!ctx) return;
+  try {
     const now = ctx.currentTime;
 
     // 金属のガキン！という高音チャイム＋重低音インパクト
@@ -67,28 +84,33 @@ function playShieldClangSound() {
       osc.frequency.setValueAtTime(freq, now);
       osc.frequency.exponentialRampToValueAtTime(freq * 1.08, now + 0.12);
       osc.frequency.exponentialRampToValueAtTime(freq * 0.92, now + 0.65);
-      gain.gain.setValueAtTime(0.22 / (i + 1), now);
+      gain.gain.setValueAtTime(0.25 / (i + 1), now);
       gain.gain.exponentialRampToValueAtTime(0.001, now + 0.7);
       osc.connect(gain).connect(ctx.destination);
       osc.start(now);
       osc.stop(now + 0.72);
     });
+
+    // 聖なるバリア共鳴音（神聖なサイン波）
+    const holy = ctx.createOscillator();
+    const holyGain = ctx.createGain();
+    holy.type = "sine";
+    holy.frequency.setValueAtTime(880, now);
+    holy.frequency.exponentialRampToValueAtTime(1760, now + 0.2);
+    holy.frequency.exponentialRampToValueAtTime(1320, now + 0.8);
+    holyGain.gain.setValueAtTime(0.18, now);
+    holyGain.gain.exponentialRampToValueAtTime(0.001, now + 0.85);
+    holy.connect(holyGain).connect(ctx.destination);
+    holy.start(now);
+    holy.stop(now + 0.9);
   } catch { /* ignore */ }
 }
 
 /** ルーレット回転中のカチッという効果音＆決定時のドラムロール音（Web Audio API） */
-let rouletteAudioCtx = null;
-function playRouletteSound(isFinal = false) {
+export function playRouletteSound(isFinal = false) {
+  const ctx = getCutsceneAudioCtx();
+  if (!ctx) return;
   try {
-    const AudioCtx = window.AudioContext || window.webkitAudioContext;
-    if (!AudioCtx) return;
-    if (!rouletteAudioCtx || rouletteAudioCtx.state === "closed") {
-      rouletteAudioCtx = new AudioCtx();
-    }
-    if (rouletteAudioCtx.state === "suspended") {
-      rouletteAudioCtx.resume().catch(() => {});
-    }
-    const ctx = rouletteAudioCtx;
     const now = ctx.currentTime;
 
     if (!isFinal) {
@@ -118,6 +140,213 @@ function playRouletteSound(isFinal = false) {
       });
     }
   } catch { /* ignore */ }
+}
+
+/** 朝：人狼の夜襲切り裂き効果音（獣の唸り＋爪撃スラッシュ「ズバァッ！」＋重低音インパクト） */
+export function playWolfSlashSound() {
+  const ctx = getCutsceneAudioCtx();
+  if (!ctx) return;
+  try {
+    const now = ctx.currentTime;
+
+    // 1. 獣の威嚇唸り（低域鋸歯状波のうねり）
+    const growl = ctx.createOscillator();
+    const growlGain = ctx.createGain();
+    growl.type = "sawtooth";
+    growl.frequency.setValueAtTime(95, now);
+    growl.frequency.exponentialRampToValueAtTime(50, now + 0.38);
+    growlGain.gain.setValueAtTime(0.35, now);
+    growlGain.gain.exponentialRampToValueAtTime(0.001, now + 0.42);
+    growl.connect(growlGain).connect(ctx.destination);
+    growl.start(now);
+    growl.stop(now + 0.45);
+
+    // 2. 鋭い爪の切り裂き音（ホワイトノイズ急峻バンドパス：「ズバァッ！」）
+    const bufferSize = ctx.sampleRate * 0.35;
+    const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const output = noiseBuffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      output[i] = Math.random() * 2 - 1;
+    }
+    const whiteNoise = ctx.createBufferSource();
+    whiteNoise.buffer = noiseBuffer;
+
+    const slashFilter = ctx.createBiquadFilter();
+    slashFilter.type = "bandpass";
+    slashFilter.frequency.setValueAtTime(3600, now + 0.04);
+    slashFilter.frequency.exponentialRampToValueAtTime(400, now + 0.28);
+    slashFilter.Q.setValueAtTime(3.8, now);
+
+    const slashGain = ctx.createGain();
+    slashGain.gain.setValueAtTime(0.01, now);
+    slashGain.gain.linearRampToValueAtTime(0.65, now + 0.06);
+    slashGain.gain.exponentialRampToValueAtTime(0.001, now + 0.32);
+
+    whiteNoise.connect(slashFilter).connect(slashGain).connect(ctx.destination);
+    whiteNoise.start(now + 0.04);
+
+    // 2撃目の爪（クロススラッシュ）
+    const whiteNoise2 = ctx.createBufferSource();
+    whiteNoise2.buffer = noiseBuffer;
+    const slashFilter2 = ctx.createBiquadFilter();
+    slashFilter2.type = "bandpass";
+    slashFilter2.frequency.setValueAtTime(4400, now + 0.1);
+    slashFilter2.frequency.exponentialRampToValueAtTime(500, now + 0.36);
+    slashFilter2.Q.setValueAtTime(3.2, now);
+    const slashGain2 = ctx.createGain();
+    slashGain2.gain.setValueAtTime(0.01, now + 0.08);
+    slashGain2.gain.linearRampToValueAtTime(0.55, now + 0.12);
+    slashGain2.gain.exponentialRampToValueAtTime(0.001, now + 0.38);
+
+    whiteNoise2.connect(slashFilter2).connect(slashGain2).connect(ctx.destination);
+    whiteNoise2.start(now + 0.08);
+
+    // 3. ドスッという人体直撃・重低音インパクト
+    const bass = ctx.createOscillator();
+    const bassGain = ctx.createGain();
+    bass.type = "sine";
+    bass.frequency.setValueAtTime(140, now + 0.1);
+    bass.frequency.exponentialRampToValueAtTime(30, now + 0.65);
+    bassGain.gain.setValueAtTime(0.75, now + 0.1);
+    bassGain.gain.exponentialRampToValueAtTime(0.001, now + 0.7);
+    bass.connect(bassGain).connect(ctx.destination);
+    bass.start(now + 0.1);
+    bass.stop(now + 0.72);
+  } catch (err) { console.warn(err); }
+}
+
+/** 昼：村の鐘の音 ＆ 小鳥のさえずり（村人集合シーン） */
+export function playDayAmbientSound() {
+  const ctx = getCutsceneAudioCtx();
+  if (!ctx) return;
+  try {
+    const now = ctx.currentTime;
+
+    // 1. 村の教会の鐘音（コオオォォン...）
+    const bellFrequencies = [523.25, 783.99, 1046.5, 1567.98];
+    bellFrequencies.forEach((freq, idx) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(freq, now + 0.2);
+      osc.frequency.exponentialRampToValueAtTime(freq * 0.998, now + 2.2);
+
+      const amp = 0.24 / (idx + 1);
+      gain.gain.setValueAtTime(0.01, now + 0.2);
+      gain.gain.linearRampToValueAtTime(amp, now + 0.23);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 2.2);
+
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(now + 0.2);
+      osc.stop(now + 2.3);
+    });
+
+    // 2発目の鐘（1.5秒後、少し低音で余韻）
+    bellFrequencies.forEach((freq, idx) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(freq * 0.89, now + 1.5);
+      const amp = 0.19 / (idx + 1);
+      gain.gain.setValueAtTime(0.01, now + 1.5);
+      gain.gain.linearRampToValueAtTime(amp, now + 1.53);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 3.4);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(now + 1.5);
+      osc.stop(now + 3.5);
+    });
+
+    // 2. 小鳥のさえずり（ピピピ、チュンチュン）
+    const birdTimes = [0.4, 0.65, 0.9, 1.8, 2.1, 2.5, 3.0, 3.2];
+    birdTimes.forEach((t, i) => {
+      const bird = ctx.createOscillator();
+      const birdGain = ctx.createGain();
+      bird.type = "sine";
+      const baseFreq = 2600 + (i % 3) * 400;
+      bird.frequency.setValueAtTime(baseFreq, now + t);
+      bird.frequency.linearRampToValueAtTime(baseFreq + 800, now + t + 0.05);
+      bird.frequency.linearRampToValueAtTime(baseFreq + 200, now + t + 0.09);
+
+      birdGain.gain.setValueAtTime(0.01, now + t);
+      birdGain.gain.linearRampToValueAtTime(0.08, now + t + 0.03);
+      birdGain.gain.exponentialRampToValueAtTime(0.001, now + t + 0.1);
+
+      bird.connect(birdGain).connect(ctx.destination);
+      bird.start(now + t);
+      bird.stop(now + t + 0.12);
+    });
+  } catch (err) { console.warn(err); }
+}
+
+/** 夜：真夜中の闇の鐘 ＆ 人狼の遠吠え ＆ 不穏な夜風（夜のターン開始） */
+export function playNightAmbientSound() {
+  const ctx = getCutsceneAudioCtx();
+  if (!ctx) return;
+  try {
+    const now = ctx.currentTime;
+
+    // 1. 真夜中の重低音の鐘（不気味な低音：ゴオオォォン...）
+    [110, 164.8, 220, 330].forEach((freq, idx) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = idx === 0 ? "triangle" : "sine";
+      osc.frequency.setValueAtTime(freq, now + 0.1);
+      osc.frequency.exponentialRampToValueAtTime(freq * 0.99, now + 2.5);
+
+      gain.gain.setValueAtTime(0.01, now + 0.1);
+      gain.gain.linearRampToValueAtTime(0.26 / (idx + 1), now + 0.15);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 2.5);
+
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(now + 0.1);
+      osc.stop(now + 2.6);
+    });
+
+    // 2. 不穏な夜風（ヒュー…という低周波風音）
+    const windBuffer = ctx.createBuffer(1, ctx.sampleRate * 2.5, ctx.sampleRate);
+    const windData = windBuffer.getChannelData(0);
+    for (let i = 0; i < windData.length; i++) {
+      windData[i] = Math.random() * 2 - 1;
+    }
+    const windSource = ctx.createBufferSource();
+    windSource.buffer = windBuffer;
+    const windFilter = ctx.createBiquadFilter();
+    windFilter.type = "bandpass";
+    windFilter.frequency.setValueAtTime(320, now + 0.3);
+    windFilter.frequency.exponentialRampToValueAtTime(650, now + 1.2);
+    windFilter.frequency.exponentialRampToValueAtTime(280, now + 2.5);
+    windFilter.Q.setValueAtTime(4.5, now);
+    const windGain = ctx.createGain();
+    windGain.gain.setValueAtTime(0.01, now + 0.3);
+    windGain.gain.linearRampToValueAtTime(0.18, now + 1.1);
+    windGain.gain.exponentialRampToValueAtTime(0.001, now + 2.5);
+
+    windSource.connect(windFilter).connect(windGain).connect(ctx.destination);
+    windSource.start(now + 0.3);
+
+    // 3. 人狼の遠吠え（アオオオォォン……！）
+    const howl = ctx.createOscillator();
+    const howlGain = ctx.createGain();
+    const howlFilter = ctx.createBiquadFilter();
+
+    howl.type = "sawtooth";
+    howlFilter.type = "lowpass";
+    howlFilter.frequency.setValueAtTime(750, now + 0.8);
+    howlFilter.Q.setValueAtTime(4, now + 0.8);
+
+    howl.frequency.setValueAtTime(260, now + 0.8);
+    howl.frequency.exponentialRampToValueAtTime(480, now + 1.6);
+    howl.frequency.exponentialRampToValueAtTime(380, now + 2.8);
+    howl.frequency.exponentialRampToValueAtTime(220, now + 3.6);
+
+    howlGain.gain.setValueAtTime(0.001, now + 0.8);
+    howlGain.gain.linearRampToValueAtTime(0.18, now + 1.5);
+    howlGain.gain.exponentialRampToValueAtTime(0.001, now + 3.7);
+
+    howl.connect(howlFilter).connect(howlGain).connect(ctx.destination);
+    howl.start(now + 0.8);
+    howl.stop(now + 3.8);
+  } catch (err) { console.warn(err); }
 }
 
 function mountCutscene(html, durationMs, onDone) {
@@ -390,6 +619,7 @@ export function playMorningCutscene(report, turn, onDone) {
       addTimer(() => {
         wolfStage?.classList.add("is-slashed");
         if (attackCard) attackCard.hidden = false;
+        playWolfSlashSound();
       }, 2650);
     }
   }, sunriseDuration);
@@ -430,8 +660,9 @@ export function playDayCutscene(turn, onDone) {
   const mounted = mountCutscene(html, 5000, onDone);
   if (!mounted) return;
   const video = mounted.overlay.querySelector("#csDayVideo");
-  // 昼の動画には英語セリフが入っているため、雰囲気に合うようミュート再生
+  // 昼の動画には英語セリフが入っているためミュート再生し、Web Audioで美しい鐘の音と鳥のさえずりを鳴らす
   safePlayVideo(video, { muteVoice: true });
+  playDayAmbientSound();
 }
 
 /**
@@ -458,4 +689,5 @@ export function playNightCutscene(turn, isFirstNight, onDone) {
   if (!mounted) return;
   const video = mounted.overlay.querySelector("#csNightVideo");
   safePlayVideo(video);
+  playNightAmbientSound();
 }

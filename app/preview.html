@@ -71,12 +71,45 @@
             </div>
 
             <div class="card card--blue">
-              <h2 class="card__title"><span class="dot"></span>🎬 ターン開始動画ムービー</h2>
+              <h2 class="card__title"><span class="dot"></span>🎬 ターン開始動画ムービー（音響強化版）</h2>
               <div class="config-grid-2">
-                <button type="button" class="btn btn--solid btn--red btn--sm" id="pMorningAttack">🌅 朝：夜襲（爪切り裂き）</button>
-                <button type="button" class="btn btn--green btn--sm" id="pMorningShield">🛡️ 朝：ナイト盾防御</button>
-                <button type="button" class="btn btn--cyan btn--sm" id="pDay">🗣️ 昼：村人広場に集合</button>
-                <button type="button" class="btn btn--violet btn--sm" id="pNight">🐺 夜：狼の遠吠え</button>
+                <button type="button" class="btn btn--solid btn--red btn--sm" id="pMorningAttack">🌅 朝：夜襲（爪切り裂き音つき）</button>
+                <button type="button" class="btn btn--green btn--sm" id="pMorningShield">🛡️ 朝：ナイト盾防御（聖盾バリア音）</button>
+                <button type="button" class="btn btn--cyan btn--sm" id="pDay">🗣️ 昼：村人広場（教会の鐘＆小鳥）</button>
+                <button type="button" class="btn btn--violet btn--sm" id="pNight">🐺 夜：狼の遠吠え（闇の鐘＆遠吠え＆夜風）</button>
+              </div>
+            </div>
+
+            <div class="card card--violet" style="margin-top:8px">
+              <h2 class="card__title"><span class="dot"></span>🔊 音響・効果音単体テスト（Web Audio）</h2>
+              <div class="config-grid-2">
+                <button type="button" class="btn btn--solid btn--red btn--sm" id="sfxWolfSlash">🐺 爪撃スラッシュ（ズバァッ！）</button>
+                <button type="button" class="btn btn--solid btn--green btn--sm" id="sfxShieldClang">🛡️ 聖盾バリア反発音</button>
+                <button type="button" class="btn btn--solid btn--cyan btn--sm" id="sfxDayAmbient">☀️ 昼の教会の鐘＆小鳥のさえずり</button>
+                <button type="button" class="btn btn--solid btn--violet btn--sm" id="sfxNightAmbient">🌙 闇の鐘＆狼の遠吠え＆夜風</button>
+              </div>
+            </div>
+
+            <!-- QRコード招待プレビュー -->
+            <div class="card card--violet qr-invite-box" style="margin-top:8px">
+              <div class="row-between">
+                <div style="display:flex;align-items:center;gap:6px">
+                  <span style="font-size:16px">📱</span>
+                  <b style="font-size:13px;color:#e0e7ff">参加用 QRコード（プレビュー）</b>
+                </div>
+                <span class="chip chip--accent" style="font-size:10px">カメラで読み取り</span>
+              </div>
+              <div class="qr-content">
+                <div class="qr-frame">
+                  <img class="qr-img" src="https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=https%3A%2F%2Fjinrogame.github.io%2Fjinrou%2Fapp%2Findex.html%3Froom%3DTEST&margin=8&color=090d18&bgcolor=ffffff" alt="参加用QRコード" width="110" height="110">
+                </div>
+                <div class="qr-info">
+                  <div class="qr-room-badge">ROOM: <b>TEST</b></div>
+                  <p class="muted" style="font-size:11px;line-height:1.4;margin:3px 0 6px">
+                    スマホカメラをかざすと、ID入力なしで即座にルームへ入室できます。
+                  </p>
+                  <button type="button" class="btn btn--solid btn--cyan btn--sm" id="btnTestCopyQr" style="width:100%;padding:5px 8px;font-size:11px;font-weight:900">📋 招待リンクをコピー</button>
+                </div>
               </div>
             </div>
           </div>
@@ -167,7 +200,7 @@
   <script type="module">
     import { S } from "./js/state.js?v=6";
     import { ROLES } from "./js/data.js?v=6";
-    import { playMorningCutscene, playDayCutscene, playNightCutscene } from "./js/cutscenes.js?v=6";
+    import { playMorningCutscene, playDayCutscene, playNightCutscene, playWolfSlashSound, playShieldClangSound, playDayAmbientSound, playNightAmbientSound } from "./js/cutscenes.js?v=6";
     import { triggerJudgeEffect, triggerConfetti, bindGhostStamps, triggerDramaticRoleReveal, spawnGhostStamp } from "./js/ui.js?v=6";
 
     S.players = {
@@ -312,6 +345,20 @@
     });
     document.getElementById("pNight").addEventListener("click", () => {
       playNightCutscene(2, false);
+    });
+
+    document.getElementById("sfxWolfSlash").addEventListener("click", () => playWolfSlashSound());
+    document.getElementById("sfxShieldClang").addEventListener("click", () => playShieldClangSound());
+    document.getElementById("sfxDayAmbient").addEventListener("click", () => playDayAmbientSound());
+    document.getElementById("sfxNightAmbient").addEventListener("click", () => playNightAmbientSound());
+    document.getElementById("btnTestCopyQr")?.addEventListener("click", async () => {
+      const url = "https://jinrogame.github.io/jinrou/app/index.html?room=TEST";
+      try {
+        await navigator.clipboard.writeText(url);
+        alert("招待URLをコピーしました:\n" + url);
+      } catch {
+        prompt("招待URL", url);
+      }
     });
 
     // 新規エフェクト個別テスト配線
