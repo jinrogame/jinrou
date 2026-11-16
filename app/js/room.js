@@ -78,3 +78,14 @@ export async function sendAction(patch) {
 export async function sendTask(v, n) {
   await fb.updateDoc(fb.playerRef(S.roomId, S.uid), { taskSeq: S.room.phaseSeq, taskV: v, taskN: n });
 }
+
+/** 幽霊スタンプ送信（脱落者が議論中や夜にリアクションを飛ばす） */
+export async function sendGhostStamp(text) {
+  try {
+    if (S.roomId && S.uid) {
+      await fb.updateDoc(fb.playerRef(S.roomId, S.uid), { taskV: `ghost:${text}:${Date.now()}` });
+    }
+  } catch (e) {
+    // ローカルテスト等では静かに無視
+  }
+}

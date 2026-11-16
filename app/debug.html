@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>演出＆役職カード確認プレイヤー - オリジナル人狼ゲーム</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=6">
 </head>
 <body>
   <header class="dev-preview-bar">
@@ -34,19 +34,21 @@
 
           <!-- タブ1: 役職カード確認 -->
           <div class="debug-tab-pane" id="tabCard">
-            <div class="row-between" style="padding:0 4px">
-              <span class="muted" style="font-size:11px;font-weight:700">タップまたは右のボタンで裏表反転</span>
-              <button type="button" class="btn btn--ghost btn--sm" id="btnFlipToggle" style="width:auto;min-height:28px;padding:3px 10px">🔄 裏表反転</button>
+            <div class="row-between" style="padding:0 4px;margin-bottom:6px">
+              <button type="button" class="btn btn--solid btn--amber btn--sm" id="btnRevealEffect" style="width:auto;min-height:30px;padding:4px 12px;font-weight:900;box-shadow:0 0 12px rgba(251,191,36,0.6)">✨ どどーん役職発表を再生</button>
+              <button type="button" class="btn btn--ghost btn--sm" id="btnFlipToggle" style="width:auto;min-height:30px;padding:4px 10px">🔄 反転切替</button>
             </div>
 
-            <button type="button" class="flip" id="previewFlip" style="height:min(34dvh, 260px)" aria-label="カードをタップして反転">
-              <div class="flip__inner">
-                <div class="flip__face"><img src="img/role_card_back.jpg" alt="役職カード裏面" width="571" height="1024"></div>
-                <div class="flip__face flip__front"><img id="previewRoleImg" src="img/role_wolf_god.jpg" alt="役職カード" width="571" height="1024"></div>
-              </div>
-            </button>
+            <div class="role-reveal-stage" id="previewRoleStage">
+              <button type="button" class="flip" id="previewFlip" style="height:min(34dvh, 260px)" aria-label="カードをタップして反転">
+                <div class="flip__inner">
+                  <div class="flip__face"><img src="img/role_card_back.jpg" alt="役職カード裏面" width="571" height="1024"></div>
+                  <div class="flip__face flip__front"><img id="previewRoleImg" src="img/role_wolf_god.jpg" alt="役職カード" width="571" height="1024"></div>
+                </div>
+              </button>
+            </div>
 
-            <div class="card card--glow" id="previewRoleCard" style="padding:8px 12px">
+            <div class="card card--glow" id="previewRoleCard" style="padding:8px 12px;margin-top:8px">
               <h2 class="card__title">
                 <span class="dot"></span>
                 <span id="previewRoleName">人狼神</span>
@@ -100,14 +102,17 @@
             <div class="ghost-box">
               <div class="ghost-box__title"><span>🕯️ 墓場リアクション（幽霊スタンプ）</span><span class="chip" style="margin-left:auto;font-size:9px">タップで飛ばす</span></div>
               <div class="ghost-stamps">
-                <button type="button" class="ghost-btn" data-ghost-stamp="👻 無念…">👻 無念…</button>
-                <button type="button" class="ghost-btn" data-ghost-stamp="🙏 頼んだぞ">🙏 頼んだぞ</button>
-                <button type="button" class="ghost-btn" data-ghost-stamp="🕯️ 見守ってる">🕯️ 見守ってる</button>
-                <button type="button" class="ghost-btn" data-ghost-stamp="👀 誰だ…？">👀 誰だ…？</button>
-                <button type="button" class="ghost-btn" data-ghost-stamp="😱 ギャー！">😱 ギャー！</button>
+                <button type="button" class="ghost-btn" data-ghost-stamp="👻 無念…" style="background:#1e293b !important;color:#ffffff !important;border:1.5px solid #a78bfa !important;font-weight:900 !important;">👻 無念…</button>
+                <button type="button" class="ghost-btn" data-ghost-stamp="🙏 頼んだぞ" style="background:#1e293b !important;color:#ffffff !important;border:1.5px solid #a78bfa !important;font-weight:900 !important;">🙏 頼んだぞ</button>
+                <button type="button" class="ghost-btn" data-ghost-stamp="🕯️ 見守ってる" style="background:#1e293b !important;color:#ffffff !important;border:1.5px solid #a78bfa !important;font-weight:900 !important;">🕯️ 見守ってる</button>
+                <button type="button" class="ghost-btn" data-ghost-stamp="👀 誰だ…？" style="background:#1e293b !important;color:#ffffff !important;border:1.5px solid #a78bfa !important;font-weight:900 !important;">👀 誰だ…？</button>
+                <button type="button" class="ghost-btn" data-ghost-stamp="😱 ギャー！" style="background:#1e293b !important;color:#ffffff !important;border:1.5px solid #a78bfa !important;font-weight:900 !important;">😱 ギャー！</button>
               </div>
             </div>
-            <p class="muted center" style="font-size:10px">※ネタバレを防ぎつつ、脱落者も議論中にリアクションを送って参加できます</p>
+            <div style="margin-top:8px">
+              <button type="button" class="btn btn--solid btn--cyan btn--sm" id="btnSimulateGhostIncoming">👻 生存者目線：幽霊スタンプ飛来テスト</button>
+            </div>
+            <p class="muted center" style="font-size:10px;margin-top:4px">※ネタバレを防ぎつつ、脱落者も議論中にリアクションを送って参加できます</p>
           </div>
 
           <!-- タブ4: 新規リッチエフェクト個別テスト -->
@@ -160,10 +165,10 @@
   </dialog>
 
   <script type="module">
-    import { S } from "./js/state.js?v=3";
-    import { ROLES } from "./js/data.js?v=3";
-    import { playMorningCutscene, playDayCutscene, playNightCutscene } from "./js/cutscenes.js?v=3";
-    import { triggerJudgeEffect, triggerConfetti, bindGhostStamps } from "./js/ui.js?v=3";
+    import { S } from "./js/state.js?v=6";
+    import { ROLES } from "./js/data.js?v=6";
+    import { playMorningCutscene, playDayCutscene, playNightCutscene } from "./js/cutscenes.js?v=6";
+    import { triggerJudgeEffect, triggerConfetti, bindGhostStamps, triggerDramaticRoleReveal, spawnGhostStamp } from "./js/ui.js?v=6";
 
     S.players = {
       p1: { name: "たろう", avatarId: "1", alive: true },
@@ -194,7 +199,12 @@
       roleTeam.textContent = isWolf ? "人狼陣営" : "市民陣営";
       roleTeam.className = "chip " + (isWolf ? "chip--red" : "chip--accent");
       screen.style.setProperty("--accent", isWolf ? "var(--red)" : "var(--cyan)");
-      if (flipToFront) flipBtn.classList.add("is-flipped");
+      if (flipToFront) {
+        flipBtn.classList.remove("is-revealing");
+        flipBtn.classList.add("is-flipped");
+        flipBtn.classList.remove("is-wolf", "is-citizen");
+        flipBtn.classList.add("is-revealed", isWolf ? "is-wolf" : "is-citizen");
+      }
       [...roleChips.querySelectorAll(".dev-btn")].forEach((b) => {
         b.style.borderColor = b.dataset.role === key ? "#38bdf8" : "#475569";
         b.style.color = b.dataset.role === key ? "#38bdf8" : "#f1f5f9";
@@ -229,8 +239,49 @@
       });
     });
 
-    flipBtn.addEventListener("click", () => flipBtn.classList.toggle("is-flipped"));
-    document.getElementById("btnFlipToggle").addEventListener("click", () => flipBtn.classList.toggle("is-flipped"));
+    let isRevealing = false;
+    function playDramaticReveal() {
+      if (isRevealing) return;
+      isRevealing = true;
+      const isWolf = roleTeam.textContent.includes("人狼");
+      triggerDramaticRoleReveal({
+        cardEl: flipBtn,
+        isWolf,
+        stageEl: document.getElementById("previewRoleStage"),
+        containerEl: document.getElementById("phone") || screen,
+        onComplete: () => {
+          isRevealing = false;
+        },
+      });
+    }
+
+    flipBtn.addEventListener("click", () => {
+      if (isRevealing) return;
+      if (!flipBtn.classList.contains("is-flipped")) {
+        playDramaticReveal();
+      } else {
+        flipBtn.classList.remove("is-flipped", "is-revealed", "is-wolf", "is-citizen");
+      }
+    });
+
+    document.getElementById("btnRevealEffect").addEventListener("click", () => {
+      if (isRevealing) return;
+      flipBtn.classList.remove("is-flipped", "is-revealed", "is-wolf", "is-citizen");
+      playDramaticReveal();
+    });
+
+    document.getElementById("btnFlipToggle").addEventListener("click", () => {
+      if (isRevealing) return;
+      flipBtn.classList.toggle("is-flipped");
+    });
+
+    const sampleGhostTexts = ["👻 無念…", "🙏 頼んだぞ", "🕯️ 見守ってる", "👀 誰だ…？", "😱 ギャー！"];
+    const sampleGhosts = ["たろう", "はなこ", "じろう", "さぶろう"];
+    document.getElementById("btnSimulateGhostIncoming").addEventListener("click", () => {
+      const gName = sampleGhosts[Math.floor(Math.random() * sampleGhosts.length)];
+      const gText = sampleGhostTexts[Math.floor(Math.random() * sampleGhostTexts.length)];
+      spawnGhostStamp(`${gName}: ${gText}`, document.getElementById("phone"));
+    });
 
     document.getElementById("pRoulette2").addEventListener("click", () => {
       const cands = ["p1", "p2"];

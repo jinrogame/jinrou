@@ -61,9 +61,24 @@ function subscribe(roomId) {
     if (isHost() && !hostSubscribed) subscribeHost(roomId);
     schedule(); Host.onState();
   }, (e) => UI.fatal("ルーム情報を取得できません: " + e.message)));
+  const lastSeenStamp = {};
   unsubs.push(fb.onSnapshot(fb.playersCol(roomId), (snap) => {
     S.players = {};
-    snap.forEach((d) => { S.players[d.id] = d.data(); });
+    snap.forEach((d) => {
+      const p = d.data();
+      S.players[d.id] = p;
+      if (p.taskV && typeof p.taskV === "string" && p.taskV.startsWith("ghost:")) {
+        const parts = p.taskV.split(":");
+        const text = parts[1];
+        const time = parseInt(parts[2], 10);
+        if (time && Date.now() - time < 3500 && time > (lastSeenStamp[d.id] || 0)) {
+          lastSeenStamp[d.id] = time;
+          if (d.id !== S.uid) {
+            UI.spawnGhostStamp(`${p.name}: ${text}`, document.getElementById("phone"));
+          }
+        }
+      }
+    });
     schedule(); Host.onState();
   }, console.error));
   unsubs.push(fb.onSnapshot(fb.secretRef(roomId, S.uid), (snap) => {

@@ -41,7 +41,7 @@ export function ghostStampBoxHtml() {
   <div class="ghost-box">
     <div class="ghost-box__title"><span>🕯️ 墓場リアクション（幽霊スタンプ）</span><span class="chip" style="margin-left:auto;font-size:9px">タップで飛ばす</span></div>
     <div class="ghost-stamps">
-      ${GHOST_STAMPS.map((s) => `<button type="button" class="ghost-btn" data-ghost-stamp="${esc(s)}">${esc(s)}</button>`).join("")}
+      ${GHOST_STAMPS.map((s) => `<button type="button" class="ghost-btn" data-ghost-stamp="${esc(s)}" style="background:#1e293b !important;color:#ffffff !important;border:1.5px solid #a78bfa !important;font-weight:900 !important;">${esc(s)}</button>`).join("")}
     </div>
   </div>`;
 }
@@ -60,7 +60,10 @@ export function bindGhostStamps(r = document) {
     const btn = e.target.closest("[data-ghost-stamp]");
     if (!btn) return;
     const text = btn.dataset.ghostStamp;
-    spawnGhostStamp(text, $("#phone"));
+    spawnGhostStamp(text, $("#phone") || document.getElementById("phone"));
+    if (Room?.sendGhostStamp) {
+      Room.sendGhostStamp(text);
+    }
   });
 }
 
@@ -96,6 +99,196 @@ export function triggerJudgeEffect(targetName) {
   `;
   p.appendChild(overlay);
   setTimeout(() => overlay.remove(), 850);
+}
+
+/* ---------------- 役職発表：光が差し込む＆カードどどーん演出 ---------------- */
+function getAudioCtx() {
+  try {
+    if (!window._jinrouAudioCtx) {
+      window._jinrouAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (window._jinrouAudioCtx.state === "suspended") {
+      window._jinrouAudioCtx.resume();
+    }
+    return window._jinrouAudioCtx;
+  } catch (e) {
+    return null;
+  }
+}
+
+export function playRevealWhooshSound() {
+  const ctx = getAudioCtx();
+  if (!ctx) return;
+  try {
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    const filter = ctx.createBiquadFilter();
+
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(140, now);
+    osc.frequency.exponentialRampToValueAtTime(750, now + 0.38);
+
+    filter.type = "bandpass";
+    filter.frequency.setValueAtTime(420, now);
+    filter.Q.setValueAtTime(2.2, now);
+
+    gain.gain.setValueAtTime(0.01, now);
+    gain.gain.linearRampToValueAtTime(0.35, now + 0.15);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.42);
+
+    osc.connect(filter);
+    filter.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start(now);
+    osc.stop(now + 0.45);
+  } catch (err) { console.warn(err); }
+}
+
+export function playRevealShineSound() {
+  const ctx = getAudioCtx();
+  if (!ctx) return;
+  try {
+    const now = ctx.currentTime;
+    const freqs = [659.25, 830.61, 987.77, 1318.51];
+    freqs.forEach((f, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(f, now + i * 0.04);
+      gain.gain.setValueAtTime(0.01, now + i * 0.04);
+      gain.gain.linearRampToValueAtTime(0.18, now + i * 0.04 + 0.03);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.04 + 0.55);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now + i * 0.04);
+      osc.stop(now + i * 0.04 + 0.6);
+    });
+  } catch (err) { console.warn(err); }
+}
+
+export function playRevealSlamSound(isWolf = false) {
+  const ctx = getAudioCtx();
+  if (!ctx) return;
+  try {
+    const now = ctx.currentTime;
+    // 1. Sub-bass boom
+    const bass = ctx.createOscillator();
+    const bassGain = ctx.createGain();
+    bass.type = "sine";
+    bass.frequency.setValueAtTime(160, now);
+    bass.frequency.exponentialRampToValueAtTime(32, now + 0.48);
+    bassGain.gain.setValueAtTime(0.65, now);
+    bassGain.gain.exponentialRampToValueAtTime(0.001, now + 0.58);
+    bass.connect(bassGain);
+    bassGain.connect(ctx.destination);
+    bass.start(now);
+    bass.stop(now + 0.6);
+
+    // 2. Heavy Gong / Impact body
+    const body = ctx.createOscillator();
+    const bodyGain = ctx.createGain();
+    body.type = isWolf ? "sawtooth" : "triangle";
+    body.frequency.setValueAtTime(isWolf ? 95 : 120, now);
+    body.frequency.exponentialRampToValueAtTime(isWolf ? 42 : 55, now + 0.5);
+    bodyGain.gain.setValueAtTime(0.42, now);
+    bodyGain.gain.exponentialRampToValueAtTime(0.001, now + 0.62);
+    body.connect(bodyGain);
+    bodyGain.connect(ctx.destination);
+    body.start(now);
+    body.stop(now + 0.65);
+
+    // 3. Ring
+    const ring = ctx.createOscillator();
+    const ringGain = ctx.createGain();
+    ring.type = "sine";
+    ring.frequency.setValueAtTime(isWolf ? 220 : 330, now + 0.02);
+    ringGain.gain.setValueAtTime(0.2, now + 0.02);
+    ringGain.gain.exponentialRampToValueAtTime(0.001, now + 0.7);
+    ring.connect(ringGain);
+    ringGain.connect(ctx.destination);
+    ring.start(now + 0.02);
+    ring.stop(now + 0.75);
+  } catch (err) { console.warn(err); }
+}
+
+export function triggerDramaticRoleReveal({ cardEl, isWolf = false, stageEl, containerEl = $("#phone"), onComplete }) {
+  if (!cardEl) return;
+  const stage = stageEl || cardEl.parentElement || containerEl;
+
+  // 1. めくる開始（フリップ開始＋神秘的な風切り音）
+  playRevealWhooshSound();
+  cardEl.classList.remove("is-flipped", "is-revealed", "is-wolf", "is-citizen");
+  cardEl.classList.add("is-revealing");
+
+  // 2. 光が差し込む（約380ms：カードが真横になった瞬間に爆光とゴッドレイが放射）
+  setTimeout(() => {
+    playRevealShineSound();
+
+    const godrays = document.createElement("div");
+    godrays.className = "role-godrays is-active";
+    stage.appendChild(godrays);
+
+    const flash = document.createElement("div");
+    flash.className = "role-flash is-flashing";
+    stage.appendChild(flash);
+
+    setTimeout(() => {
+      godrays.remove();
+      flash.remove();
+    }, 1800);
+  }, 380);
+
+  // 3. カードがどどーんと現れる！（約620ms：カードが表向きになり超ド級ズームSLAM＆衝撃波）
+  setTimeout(() => {
+    playRevealSlamSound(isWolf);
+
+    // 画面シェイク
+    if (containerEl) {
+      containerEl.classList.remove("role-quake");
+      void containerEl.offsetWidth;
+      containerEl.classList.add("role-quake");
+      setTimeout(() => containerEl.classList.remove("role-quake"), 450);
+    }
+
+    // 衝撃波リング
+    const shockwave = document.createElement("div");
+    shockwave.className = "role-shockwave is-burst";
+    shockwave.style.setProperty("--accent", isWolf ? "#ef4444" : "#22d3ee");
+    stage.appendChild(shockwave);
+    setTimeout(() => shockwave.remove(), 750);
+
+    // マンガオノマトペ「ドドォォン！！」
+    const impactText = document.createElement("div");
+    impactText.className = "role-impact-text";
+    impactText.textContent = "ドドォォン！！";
+    impactText.style.setProperty("--accent", isWolf ? "#ef4444" : "#fbbf24");
+    stage.appendChild(impactText);
+    setTimeout(() => impactText.remove(), 850);
+
+    // カードに陣営オーラを付与
+    cardEl.classList.add("is-revealed", isWolf ? "is-wolf" : "is-citizen");
+
+    // キラキラ粒子
+    for (let i = 0; i < 14; i++) {
+      const sp = document.createElement("div");
+      sp.className = "role-sparkle-particle";
+      const rad = (i / 14) * Math.PI * 2 + (Math.random() * 0.4 - 0.2);
+      const dist = 70 + Math.random() * 60;
+      sp.style.setProperty("--dx", `${Math.cos(rad) * dist}px`);
+      sp.style.setProperty("--dy", `${Math.sin(rad) * dist}px`);
+      stage.appendChild(sp);
+      setTimeout(() => sp.remove(), 1250);
+    }
+  }, 620);
+
+  // 4. アニメーション完了・安定状態へ移行
+  setTimeout(() => {
+    cardEl.classList.remove("is-revealing");
+    cardEl.classList.add("is-flipped");
+    onComplete?.();
+  }, 1100);
 }
 
 /* ------------------------------ 共通パーツ ------------------------------ */
@@ -381,16 +574,18 @@ SCREENS.lobby = {
 /* ---- 04 役職発表 ---- */
 SCREENS.role = {
   build() {
-    ctx = { revealed: false };
+    ctx = { revealed: false, revealing: false };
     return shell({
       body: `
       <h1 class="hdr__title" style="justify-content:center">あなたの役職は…？</h1>
-      <button type="button" class="flip" id="flip" aria-label="カードをタップして役職を確認">
-        <div class="flip__inner">
-          <div class="flip__face"><img src="img/role_card_back.jpg" alt="役職カード（裏面）" width="571" height="1024"></div>
-          <div class="flip__face flip__front"><img id="roleImg" src="img/role_card_back.jpg" alt="役職カード" width="571" height="1024"></div>
-        </div>
-      </button>
+      <div class="role-reveal-stage" id="roleRevealStage">
+        <button type="button" class="flip" id="flip" aria-label="カードをタップして役職を確認">
+          <div class="flip__inner">
+            <div class="flip__face"><img src="img/role_card_back.jpg" alt="役職カード（裏面）" width="571" height="1024"></div>
+            <div class="flip__face flip__front"><img id="roleImg" src="img/role_card_back.jpg" alt="役職カード" width="571" height="1024"></div>
+          </div>
+        </button>
+      </div>
       <p class="hint-line" id="flipHint">👆 カードをタップしてめくる（他の人に見えないように！）</p>
       <div class="card card--glow" id="roleInfo" hidden>
         <h2 class="card__title"><span class="dot"></span><span id="roleName"></span><span class="chip" id="roleFaction" style="margin-left:auto"></span></h2>
@@ -402,14 +597,33 @@ SCREENS.role = {
   bind(r) {
     bindCommon(r);
     $("#flip", r).addEventListener("click", () => {
-      if (!S.secret) return;
-      ctx.revealed = true;
-      r.removeAttribute("data-role-unrevealed");
-      SCREENS.role.update(r);
+      if (!S.secret || ctx.revealing) return;
+      if (!ctx.revealed) {
+        ctx.revealing = true;
+        r.removeAttribute("data-role-unrevealed");
+        $("#flipHint", r).hidden = true;
+        const isWolf = ROLES[S.secret.role]?.team === "wolf";
+        triggerDramaticRoleReveal({
+          cardEl: $("#flip", r),
+          isWolf,
+          stageEl: $("#roleRevealStage", r),
+          containerEl: $("#phone") || r,
+          onComplete: () => {
+            ctx.revealed = true;
+            ctx.revealing = false;
+            SCREENS.role.update(r);
+          },
+        });
+      } else {
+        // すでに確認済みの場合、タップで再度反転可能
+        ctx.revealed = false;
+        $("#flip", r).classList.remove("is-flipped", "is-revealed", "is-wolf", "is-citizen");
+        SCREENS.role.update(r);
+      }
     });
   },
   update(r) {
-    if (!ctx.revealed) {
+    if (!ctx.revealed && !ctx.revealing) {
       r.setAttribute("data-role-unrevealed", "");
     } else {
       r.removeAttribute("data-role-unrevealed");
@@ -430,9 +644,11 @@ SCREENS.role = {
       if (s.partner) extra = `<div class="muted" style="font-size:11px;color:#f9a8d4">💕 相方：${esc(nameOf(s.partner))} さん</div>`;
       $("#roleExtra", r).innerHTML = extra;
     }
-    $("#flip", r).classList.toggle("is-flipped", ctx.revealed);
+    if (!ctx.revealing) {
+      $("#flip", r).classList.toggle("is-flipped", ctx.revealed);
+    }
     $("#roleInfo", r).hidden = !ctx.revealed;
-    $("#flipHint", r).hidden = ctx.revealed;
+    $("#flipHint", r).hidden = ctx.revealed || ctx.revealing;
     syncOk(r, playerList(), "確認しました（OK）", ctx.revealed);
   },
 };
