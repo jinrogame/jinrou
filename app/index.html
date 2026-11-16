@@ -43,6 +43,39 @@
     </div>
   </dialog>
 
+  <!-- 役職配分＆役職説明モーダル（入室後いつでも確認可能） -->
+  <dialog class="result result--config" id="roleListDialog" aria-labelledby="roleListTitle">
+    <div class="result__ico">📜</div>
+    <h2 class="result__title" id="roleListTitle">設定されている役職一覧</h2>
+    <div class="config-modal-scroll" id="roleListContent"></div>
+    <div style="margin-top:10px">
+      <button type="button" class="btn btn--solid btn--cyan" id="btnCloseRoleList">閉じる</button>
+    </div>
+  </dialog>
+
+  <!-- 自分の役職確認ダイアログ（誤タップ防止確認付き） -->
+  <dialog class="result result--config" id="myRoleDialog" aria-labelledby="myRoleTitle">
+    <div id="myRoleConfirmStep">
+      <div class="result__ico">⚠️</div>
+      <h2 class="result__title" id="myRoleTitle">役職を確認しますか？</h2>
+      <p class="muted center" style="margin:12px 0 18px;font-size:13px;line-height:1.6">
+        周囲のプレイヤーに画面が見られないようご注意ください。<br>本当にあなたの役職を表示しますか？
+      </p>
+      <div style="display:flex;gap:10px">
+        <button type="button" class="btn btn--ghost" id="btnCancelMyRole">キャンセル</button>
+        <button type="button" class="btn btn--solid btn--amber" id="btnShowMyRole">表示する</button>
+      </div>
+    </div>
+    <div id="myRoleCardStep" hidden>
+      <div class="result__ico" id="myRoleCardIco">🃏</div>
+      <h2 class="result__title" id="myRoleCardTitle">あなたの役職</h2>
+      <div class="config-modal-scroll" id="myRoleCardContent" style="text-align:center"></div>
+      <div style="margin-top:10px">
+        <button type="button" class="btn btn--solid btn--cyan" id="btnCloseMyRole">閉じて隠す</button>
+      </div>
+    </div>
+  </dialog>
+
   <script type="module" src="js/main.js?v=8"></script>
 </body>
 </html>

@@ -4,6 +4,7 @@ import * as fb from "./firebase.js";
 import * as Room from "./room.js";
 import * as Host from "./host.js";
 import * as UI from "./ui.js";
+import { preloadCutsceneVideos } from "./cutscenes.js";
 
 let unsubs = [];
 let hostSubscribed = false;
@@ -55,6 +56,7 @@ function subscribe(roomId) {
   Room.saveSession(roomId);
   UI.resetView();
   schedule();
+  preloadCutsceneVideos();
   unsubs.push(fb.onSnapshot(fb.roomRef(roomId), (snap) => {
     if (!snap.exists()) { leaveToTitle("ルームが解散されました"); return; }
     S.room = snap.data();

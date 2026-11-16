@@ -1,11 +1,11 @@
 // 画面描画（フェーズごとに画面を1回だけ構築し、スナップショットのたびに update() で差分反映）
 import { S, isHost, me, playerList, aliveList, nameOf, avatarOf, sortedPlayers } from "./state.js";
-import { ROLES, WOLF_CONFIG, CITIZEN_CONFIG, TASKS, EFFECTS, TIME, MAX_PLAYERS } from "./data.js";
+import { ROLES, WOLF_CONFIG, CITIZEN_CONFIG, DEFAULT_ROLE_CONFIG, TASKS, EFFECTS, TIME, MAX_PLAYERS } from "./data.js";
 import { roleCounts, capabilities, isWolfTeam, checkWin } from "./engine.js";
 import * as Host from "./host.js";
 import * as Room from "./room.js";
 import * as fb from "./firebase.js";
-import { playMorningCutscene, playDayCutscene, playNightCutscene, clearCutscene } from "./cutscenes.js";
+import { playMorningCutscene, playDayCutscene, playNightCutscene, clearCutscene, playResultRevealSound } from "./cutscenes.js";
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -295,7 +295,10 @@ export function triggerDramaticRoleReveal({ cardEl, isWolf = false, stageEl, con
 const roomBar = () => S.roomId && S.room ? `
 <div class="room-bar">
   <span class="room-bar__id">ROOM: <b>${esc(S.roomId)}</b>${S.room.turn ? ` <span>（ターン ${S.room.turn}/${S.room.maxTurns}）</span>` : ""}</span>
-  <button type="button" class="room-leave-btn" data-leave-room>🚪 ルームを抜ける</button>
+  <div style="display:flex;gap:6px;align-items:center">
+    <button type="button" class="room-bar__btn" data-open-role-list title="設定されている役職一覧を確認">📜 役職一覧</button>
+    <button type="button" class="room-leave-btn" data-leave-room>🚪 抜ける</button>
+  </div>
 </div>` : "";
 
 const shell = ({ phase = "night", bg = "bg_night", body, footer = "" }) => `
@@ -351,6 +354,156 @@ export function confirmLeaveRoom() {
   $("#btnLeaveConfirm").textContent = host ? "はい、解散して抜ける" : "はい、ルームを抜ける";
   if (!leaveDlg.open) leaveDlg.showModal();
 }
+/** 設定役職一覧モーダルを表示（配分・人数・役職説明） */
+export function showRoleListModal() {
+  const dlgEl = document.getElementById("roleListDialog");
+  if (!dlgEl) return;
+  const cfg = S.room?.roleConfig || DEFAULT_ROLE_CONFIG;
+  const totalPlayers = playerList().length;
+
+  let wolfCount = 0;
+  const wolfItems = WOLF_CONFIG.map((w) => {
+    const cnt = Number(cfg[w.id]) || 0;
+    wolfCount += cnt;
+    if (cnt <= 0) return "";
+    const info = ROLES[w.id];
+    return `
+      <div class="role-info-card is-wolf">
+        <div class="role-info-hdr">
+          <span>${w.e}</span>
+          <b class="wolf">${esc(info?.name || w.id)}</b>
+          <span class="role-count wolf">${cnt}人</span>
+        </div>
+        <p class="role-info-desc">${esc(info?.desc || "")}</p>
+      </div>`;
+  }).filter(Boolean);
+
+  let specialCitizenCount = 0;
+  const specialCitizenItems = CITIZEN_CONFIG.map((c) => {
+    const on = !!cfg[c.id];
+    if (!on) return "";
+    const cnt = c.slots || 1;
+    specialCitizenCount += cnt;
+    const info = ROLES[c.id];
+    return `
+      <div class="role-info-card is-citizen">
+        <div class="role-info-hdr">
+          <span>${c.e}</span>
+          <b class="human">${esc(info?.name || c.id)}</b>
+          <span class="role-count human">${cnt}人</span>
+        </div>
+        <p class="role-info-desc">${esc(info?.desc || "")}</p>
+      </div>`;
+  }).filter(Boolean);
+
+  const autoCitizenCount = Math.max(0, totalPlayers - wolfCount - specialCitizenCount);
+  const citizenInfo = ROLES.citizen;
+
+  const content = dlgEl.querySelector("#roleListContent");
+  if (content) {
+    content.innerHTML = `
+      <div class="card" style="margin-bottom:12px;padding:8px 12px;background:rgba(255,255,255,0.06)">
+        <div class="row-between">
+          <span style="font-size:12px;color:var(--muted)">参加人数 / 最大ターン</span>
+          <b>${totalPlayers}人 ／ 全${S.room?.maxTurns || 5}ターン</b>
+        </div>
+        <div class="row-between" style="margin-top:4px">
+          <span style="font-size:12px;color:var(--muted)">配分サマリー</span>
+          <b><span class="wolf">人狼陣営 ${wolfCount}人</span> ＋ <span class="human">市民陣営 ${specialCitizenCount + autoCitizenCount}人</span></b>
+        </div>
+      </div>
+
+      <h3 style="font-size:13px;color:#f87171;margin:10px 0 6px;display:flex;align-items:center;gap:4px">
+        <span>🐺</span> 人狼陣営の役職（計 ${wolfCount}人）
+      </h3>
+      ${wolfItems.length ? wolfItems.join("") : `<p class="muted" style="font-size:12px;margin:4px 0 8px">人狼役職なし</p>`}
+
+      <h3 style="font-size:13px;color:#38bdf8;margin:14px 0 6px;display:flex;align-items:center;gap:4px">
+        <span>🛡️</span> 市民陣営の役職（計 ${specialCitizenCount + autoCitizenCount}人）
+      </h3>
+      ${specialCitizenItems.join("")}
+      <div class="role-info-card is-citizen">
+        <div class="role-info-hdr">
+          <span>🧑</span>
+          <b class="human">市民（村人）</b>
+          <span class="role-count human">${autoCitizenCount}人</span>
+        </div>
+        <p class="role-info-desc">${esc(citizenInfo?.desc || "特殊能力なし。議論・タスク貢献度・投票で人狼を追放しよう。")}</p>
+      </div>
+    `;
+  }
+  if (!dlgEl.open) dlgEl.showModal();
+}
+document.getElementById("roleListDialog")?.addEventListener("click", (e) => {
+  const dlgEl = document.getElementById("roleListDialog");
+  if (e.target === dlgEl) dlgEl.close();
+});
+document.getElementById("btnCloseRoleList")?.addEventListener("click", () => {
+  document.getElementById("roleListDialog")?.close();
+});
+
+/** 自分の役職確認ダイアログ（誤タップ防止ステップ付き） */
+export function openMyRoleConfirm() {
+  const dlgEl = document.getElementById("myRoleDialog");
+  if (!dlgEl) return;
+  const confirmStep = dlgEl.querySelector("#myRoleConfirmStep");
+  const cardStep = dlgEl.querySelector("#myRoleCardStep");
+  if (confirmStep) confirmStep.hidden = false;
+  if (cardStep) cardStep.hidden = true;
+  if (!dlgEl.open) dlgEl.showModal();
+}
+
+function showMyRoleCard() {
+  const dlgEl = document.getElementById("myRoleDialog");
+  if (!dlgEl) return;
+  const confirmStep = dlgEl.querySelector("#myRoleConfirmStep");
+  const cardStep = dlgEl.querySelector("#myRoleCardStep");
+  if (confirmStep) confirmStep.hidden = true;
+  if (cardStep) cardStep.hidden = false;
+
+  const roleKey = S.secret?.role;
+  const roleInfo = ROLES[roleKey];
+  const content = dlgEl.querySelector("#myRoleCardContent");
+  if (content && roleInfo) {
+    const isWolf = roleInfo.team === "wolf";
+    const mates = S.secret?.mates || [];
+    const lovers = S.secret?.lovers || [];
+    content.innerHTML = `
+      <div style="display:flex;justify-content:center;margin:8px 0 12px">
+        <div class="flip is-flipped ${isWolf ? "is-wolf" : "is-citizen"}" style="cursor:default;pointer-events:none">
+          <div class="flip__inner">
+            <div class="flip__face"><img src="img/role_card_back.jpg" alt="" width="571" height="1024"></div>
+            <div class="flip__face flip__front"><img src="${roleInfo.img}" alt="${esc(roleInfo.name)}" width="571" height="1024"></div>
+          </div>
+        </div>
+      </div>
+      <div class="card ${isWolf ? "card--red" : "card--blue"}" style="text-align:left;padding:10px 14px">
+        <h3 style="font-size:16px;margin:0 0 4px;display:flex;align-items:center;gap:6px">
+          <b>${esc(roleInfo.name)}</b>
+          <span class="chip ${isWolf ? "chip--red" : "chip--cyan"}" style="margin-left:auto">${isWolf ? "人狼陣営" : "市民陣営"}</span>
+        </h3>
+        <p class="muted" style="font-size:12px;margin:0 0 6px;line-height:1.5">${esc(roleInfo.desc)}</p>
+        ${mates.length ? `<div style="font-size:12px;color:#fca5a5;font-weight:700">🐺 仲間：${mates.map((u) => esc(nameOf(u))).join("・")}</div>` : ""}
+        ${lovers.length ? `<div style="font-size:12px;color:#f472b6;font-weight:700">💕 恋人パートナー：${lovers.map((u) => esc(nameOf(u))).join("・")}</div>` : ""}
+      </div>
+    `;
+  }
+}
+
+document.getElementById("btnCancelMyRole")?.addEventListener("click", () => {
+  document.getElementById("myRoleDialog")?.close();
+});
+document.getElementById("btnShowMyRole")?.addEventListener("click", () => {
+  showMyRoleCard();
+});
+document.getElementById("btnCloseMyRole")?.addEventListener("click", () => {
+  document.getElementById("myRoleDialog")?.close();
+});
+document.getElementById("myRoleDialog")?.addEventListener("click", (e) => {
+  const dlgEl = document.getElementById("myRoleDialog");
+  if (e.target === dlgEl) dlgEl.close();
+});
+
 leaveDlg?.addEventListener("click", (e) => { if (e.target === leaveDlg) leaveDlg.close(); });
 $("#btnLeaveCancel")?.addEventListener("click", () => leaveDlg?.close());
 $("#btnLeaveConfirm")?.addEventListener("click", () => {
@@ -359,6 +512,8 @@ $("#btnLeaveConfirm")?.addEventListener("click", () => {
 });
 phone?.addEventListener("click", (e) => {
   if (e.target.closest("[data-leave-room]")) confirmLeaveRoom();
+  if (e.target.closest("[data-open-role-list]")) showRoleListModal();
+  if (e.target.closest("[data-check-my-role]")) openMyRoleConfirm();
 });
 
 function syncOk(r, required, label, canOk = true) {
@@ -881,8 +1036,9 @@ function buildNight(night0) {
       ${S.secret?.mates?.length ? `<div class="card card--red"><p class="muted">🐺 仲間：${S.secret.mates.map((u) => esc(nameOf(u))).join("・")}</p></div>` : ""}`;
   } else body = cards.join("");
   const eff = !night0 && S.room.effectState?.applied ? `<span class="chip chip--${S.room.effectState.type === "reward" ? "green" : "red"}">${esc(EFFECTS.find((e) => e.id === S.room.effectState.id)?.short ?? "")}</span>` : "";
+  const roleCheckBtn = `<button type="button" class="chip chip--amber" data-check-my-role style="cursor:pointer;font-weight:800;border:1px solid #fbbf24">🃏 役職確認</button>`;
   return shell({
-    body: `<div class="hdr"><h1 class="hdr__title">🌙 ${night0 ? "初日の夜（0ターン目）" : "夜：スキル"}</h1><div style="display:flex;gap:4px;align-items:center">${eff}${night0 ? "" : ring(TIME.skill)}</div></div>${body}`,
+    body: `<div class="hdr"><h1 class="hdr__title">🌙 ${night0 ? "初日の夜（0ターン目）" : "夜：スキル"}</h1><div style="display:flex;gap:4px;align-items:center">${roleCheckBtn}${eff}${night0 ? "" : ring(TIME.skill)}</div></div>${body}`,
     footer: okFooter("OK（夜の行動完了）", "btn--violet"),
   });
 }
@@ -944,7 +1100,13 @@ SCREENS.morning_report = {
     return shell({
       phase: "morning", bg: "bg_morning",
       body: `
-      <div class="hdr"><h1 class="hdr__title">${final ? "🌅 最終ターン終了" : `☀️ ${r0.turn}ターン目の朝`}</h1><span class="chip chip--accent">ターン ${Math.min(r0.turn, r0.maxTurns)} / ${r0.maxTurns}</span></div>
+      <div class="hdr">
+        <h1 class="hdr__title">${final ? "🌅 最終ターン終了" : `☀️ ${r0.turn}ターン目の朝`}</h1>
+        <div style="display:flex;gap:4px;align-items:center">
+          <button type="button" class="chip chip--amber" data-check-my-role style="cursor:pointer;font-weight:800;border:1px solid #fbbf24">🃏 役職確認</button>
+          <span class="chip chip--accent">ターン ${Math.min(r0.turn, r0.maxTurns)} / ${r0.maxTurns}</span>
+        </div>
+      </div>
       <div class="hero"><img src="img/hero_morning.svg" alt="" width="600" height="240" fetchpriority="high"></div>
       <div class="card"><div class="row-between"><b>現在の生存者</b><b class="accent">${alive}人 / ${total}人</b></div><div class="stat-bar"><i style="--w:${Math.round((alive / total) * 100)}%"></i></div></div>
       <div class="card card--red"><h2 class="card__title"><span class="dot"></span>${r0.turn === 1 && !rep.exiled.length && !rep.victims.length ? "初日の夜は誰も犠牲になりませんでした" : "昨晩の追放・夜襲・復活発表"}</h2>
@@ -966,7 +1128,13 @@ SCREENS.task_announce = {
     return shell({
       phase: "morning", bg: "bg_morning",
       body: `
-      <div class="hdr"><h1 class="hdr__title">🎯 本日のタスク発表！</h1><span class="chip chip--accent">重複なし抽選</span></div>
+      <div class="hdr">
+        <h1 class="hdr__title">🎯 本日のタスク発表！</h1>
+        <div style="display:flex;gap:4px;align-items:center">
+          <button type="button" class="chip chip--amber" data-check-my-role style="cursor:pointer;font-weight:800;border:1px solid #fbbf24">🃏 役職確認</button>
+          <span class="chip chip--accent">重複なし抽選</span>
+        </div>
+      </div>
       <div class="card card--amber"><h2 class="card__title"><span class="dot"></span>本日のミニゲーム</h2>
         <div class="art"><img src="${task.img}" alt="" width="400" height="260"></div>
         <p class="big center">${task.name}</p><p class="muted center">${task.rule.replace("生存人数×100", `生存人数×100＝${t.target}`)}</p>${topic}</div>
@@ -1280,6 +1448,9 @@ export function render() {
       playNightCutscene(0, true);
     } else if (id === "vote") {
       playNightCutscene(S.room?.turn || 1, false);
+    } else if (id === "finished") {
+      clearCutscene();
+      playResultRevealSound(S.room?.winner || "citizen");
     } else {
       clearCutscene();
     }

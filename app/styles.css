@@ -385,7 +385,7 @@ h1, h2, h3, p { margin: 0; }
 /* ---------------- 役職カード（ポケモンカード比率 5:7 縦長・高さ自動フィット） ---------------- */
 .flip {
   perspective: 1200px;
-  height: min(36dvh, 270px);
+  height: min(44dvh, 325px);
   aspect-ratio: 571 / 1024;
   width: auto;
   margin: 0 auto;
@@ -1062,6 +1062,64 @@ button.big-id { font-family: inherit; }
   color: #fff;
 }
 
+.room-bar__btn {
+  background: #1e293b;
+  border: 1.5px solid var(--cyan);
+  color: #e2e8f0;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.25);
+  transition: all .15s ease;
+  white-space: nowrap;
+}
+.room-bar__btn:hover, .room-bar__btn:active {
+  background: #0284c7;
+  color: #fff;
+  border-color: #38bdf8;
+}
+
+.role-info-card {
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+}
+.role-info-card.is-wolf {
+  border-color: rgba(248, 113, 113, 0.4);
+  background: rgba(69, 10, 10, 0.45);
+}
+.role-info-card.is-citizen {
+  border-color: rgba(56, 189, 248, 0.4);
+  background: rgba(12, 74, 110, 0.35);
+}
+.role-info-hdr {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+.role-info-hdr b {
+  font-size: 14px;
+}
+.role-info-hdr .role-count {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.15);
+}
+.role-info-desc {
+  font-size: 12px;
+  color: #cbd5e1;
+  line-height: 1.45;
+  margin: 0;
+}
+
 /* ---------------- 退室確認警告モーダル ---------------- */
 dialog.result--warn {
   border-color: var(--red);
@@ -1412,6 +1470,25 @@ dialog.result--warn {
 .screen[data-phase="win"] {
   position: relative;
   overflow: hidden;
+  animation: result-reveal-fade 2.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes result-reveal-fade {
+  0% {
+    filter: brightness(0);
+    opacity: 0;
+  }
+  20% {
+    filter: brightness(0.1);
+    opacity: 0.3;
+  }
+  60% {
+    filter: brightness(1.35);
+    opacity: 1;
+  }
+  100% {
+    filter: brightness(1);
+    opacity: 1;
+  }
 }
 .win-fx-citizen {
   position: absolute;

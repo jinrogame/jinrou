@@ -148,7 +148,8 @@ async function startTaskAnnounce() {
   if (!poolE.length) { usedE = []; poolE = [...EFFECTS]; }
   const eff = pickOne(poolE);
   const topic = task.id === "relay" ? pickOne(RELAY_TOPICS) : task.id === "match" || task.id === "unique" ? pickOne(QUIZ_TOPICS) : null;
-  const currentTask = { id: task.id, text: topic?.text ?? "", kind: topic?.kind ?? "", target: aliveList().length * 100 };
+  const targetPerPerson = task.id === "mash" ? 500 : 100;
+  const currentTask = { id: task.id, text: topic?.text ?? "", kind: topic?.kind ?? "", target: aliveList().length * targetPerPerson };
   await setPhase("task_announce", {
     usedTasks: [...usedT, task.id], usedEffects: [...usedE, eff.id], currentTask,
     effectState: { id: eff.id, type: eff.type, applied: false, wolfAlive: null }, taskResult: null,

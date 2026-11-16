@@ -117,8 +117,8 @@ test("tallyTop / tallyTopWithTie: 多数決・スキップ・同票ルーレッ�
 
 test("ミニゲーム評価", () => {
   const e = (...v) => v.map((x, i) => ({ uid: `u${i}`, v: x }));
-  assert.equal(evalTask("mash", e(300, 300, 200), {}).success, true);
-  assert.equal(evalTask("mash", e(100, 100, 99), {}).success, false);
+  assert.equal(evalTask("mash", e(1500, 1500, 1000), {}).success, true);
+  assert.equal(evalTask("mash", e(500, 500, 499), {}).success, false);
   assert.equal(evalTask("match", e("りんご", "リンゴ", "りんご"), { kind: "hira" }).success, true);
   assert.equal(evalTask("match", e("りんご", "みかん"), { kind: "hira" }).success, false);
   assert.equal(evalTask("unique", e("a", "b", "c"), { kind: "kanji" }).success, true);

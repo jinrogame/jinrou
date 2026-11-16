@@ -41,7 +41,7 @@ export const DEFAULT_ROLE_CONFIG = {
 
 // ミニゲーム
 export const TASKS = [
-  { id: "mash", name: "みんなで連打！", rule: "1分間で「生存人数×100回」を全員で連打しよう", img: "img/task_mash.svg", title: "👆 みんなで連打" },
+  { id: "mash", name: "みんなで連打！", rule: "1分間で「生存人数×500回」を全員で連打しよう", img: "img/task_mash.svg", title: "👆 みんなで連打" },
   { id: "match", name: "気持ちを合わせろクイズ！", rule: "お題に全員が同じ回答を揃えよう", img: "img/task_match_quiz.svg", title: "🤝 気持ちを合わせろクイズ" },
   { id: "unique", name: "かぶっちゃだめよクイズ！", rule: "お題に全員バラバラの回答をしよう", img: "img/task_unique_quiz.svg", title: "🚫 かぶっちゃだめよクイズ" },
   { id: "relay", name: "みんな答えろクイズ！", rule: "1分以内に順番にかぶらず回答しよう", img: "img/task_relay_quiz.svg", title: "⏱️ みんな答えろクイズ" },

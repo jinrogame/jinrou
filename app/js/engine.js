@@ -211,7 +211,8 @@ export function evalTask(id, entries, ctx = {}) {
   const done = entries.filter((e) => e.v !== undefined && e.v !== null && e.v !== "");
   if (id === "mash") {
     const total = done.reduce((a, e) => a + Number(e.v), 0);
-    return { success: total >= n * 100, summary: `${total} / ${n * 100}回`, contrib: entries.map((e) => ({ uid: e.uid, text: `${Number(e.v) || 0}回`, ok: (Number(e.v) || 0) >= 100, score: Number(e.v) || 0 })) };
+    const goal = n * 500;
+    return { success: total >= goal, summary: `${total} / ${goal}回`, contrib: entries.map((e) => ({ uid: e.uid, text: `${Number(e.v) || 0}回`, ok: (Number(e.v) || 0) >= 500, score: Number(e.v) || 0 })) };
   }
   if (id === "match" || id === "unique") {
     const norm = entries.map((e) => (e.v ? normalizeAnswer(e.v, ctx.kind) : ""));

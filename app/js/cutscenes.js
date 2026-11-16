@@ -31,6 +31,32 @@ export function clearCutscene() {
   }
 }
 
+// 動画の事前プリロード（ロビーや入室時に呼び出してブラウザにキャッシュさせる）
+const PRELOAD_VIDEOS = ["movies/morning_attack.mp4", "movies/day_gather.mp4", "movies/night_howl.mp4"];
+let preloadedElements = null;
+
+export function preloadCutsceneVideos() {
+  if (preloadedElements) return;
+  preloadedElements = PRELOAD_VIDEOS.map((src) => {
+    const v = document.createElement("video");
+    v.preload = "auto";
+    v.muted = true;
+    v.playsInline = true;
+    v.src = src;
+    v.style.position = "fixed";
+    v.style.width = "1px";
+    v.style.height = "1px";
+    v.style.opacity = "0.01";
+    v.style.pointerEvents = "none";
+    v.style.zIndex = "-999";
+    try {
+      document.body.appendChild(v);
+      v.load();
+    } catch { /* ignore */ }
+    return v;
+  });
+}
+
 /** 音声付き再生を試み、ブラウザの自動再生制限に引っかかった場合はミュート再生へフォールバック */
 async function safePlayVideo(videoEl, { muteVoice = false } = {}) {
   if (!videoEl) return;
@@ -67,6 +93,59 @@ function getCutsceneAudioCtx() {
   } catch {
     return null;
   }
+}
+
+/** 最終結果発表：勝利ファンファーレ / 敗北の鐘（Web Audio API） */
+export function playResultRevealSound(winner = "citizen") {
+  const ctx = getCutsceneAudioCtx();
+  if (!ctx) return;
+  try {
+    const now = ctx.currentTime;
+    if (winner === "citizen") {
+      // 市民勝利：聖なる光のファンファーレ和音 (C Major 9th)
+      const freqs = [261.63, 329.63, 392.00, 523.25, 659.25, 783.99, 1046.50];
+      freqs.forEach((f, idx) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = idx % 2 === 0 ? "triangle" : "sine";
+        osc.frequency.setValueAtTime(f, now + idx * 0.08);
+        gain.gain.setValueAtTime(0.001, now + idx * 0.08);
+        gain.gain.linearRampToValueAtTime(0.18 / (idx + 1), now + idx * 0.08 + 0.15);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 3.2);
+        osc.connect(gain).connect(ctx.destination);
+        osc.start(now + idx * 0.08);
+        osc.stop(now + 3.3);
+      });
+    } else if (winner === "wolf") {
+      // 人狼勝利：禍々しい低音ゴングと不協和音
+      const freqs = [65.41, 98.00, 116.54, 138.59, 164.81];
+      freqs.forEach((f, idx) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sawtooth";
+        osc.frequency.setValueAtTime(f, now);
+        osc.frequency.exponentialRampToValueAtTime(f * 0.94, now + 2.5);
+        gain.gain.setValueAtTime(0.2 / (idx + 1), now);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 3.0);
+        osc.connect(gain).connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + 3.1);
+      });
+    } else {
+      // 引き分け
+      [220, 330, 440].forEach((f, idx) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(f, now);
+        gain.gain.setValueAtTime(0.15, now);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 2.0);
+        osc.connect(gain).connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + 2.1);
+      });
+    }
+  } catch { /* ignore */ }
 }
 
 /** ナイトの盾が狼の爪を弾いたときの金属音・バリア効果音（Web Audio API） */

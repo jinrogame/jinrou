@@ -167,6 +167,14 @@
                 <button type="button" class="btn btn--solid btn--red btn--sm" id="fxWinWolf">🐺 人狼勝利（深紅の瘴気）</button>
               </div>
             </div>
+
+            <div class="card card--amber">
+              <h2 class="card__title"><span class="dot"></span>📜 ポップアップ機能テスト</h2>
+              <div class="config-grid-2">
+                <button type="button" class="btn btn--solid btn--cyan btn--sm" id="btnTestRoleList">📜 設定役職一覧＆説明</button>
+                <button type="button" class="btn btn--solid btn--amber btn--sm" id="btnTestMyRole">🃏 自分の役職確認（確認画面つき）</button>
+              </div>
+            </div>
           </div>
         </div>
         <div class="screen__footer">
@@ -207,11 +215,44 @@
     </div>
   </dialog>
 
+  <!-- 役職配分＆役職説明モーダル（入室後いつでも確認可能） -->
+  <dialog class="result result--config" id="roleListDialog" aria-labelledby="roleListTitle">
+    <div class="result__ico">📜</div>
+    <h2 class="result__title" id="roleListTitle">設定されている役職一覧</h2>
+    <div class="config-modal-scroll" id="roleListContent"></div>
+    <div style="margin-top:10px">
+      <button type="button" class="btn btn--solid btn--cyan" id="btnCloseRoleList">閉じる</button>
+    </div>
+  </dialog>
+
+  <!-- 自分の役職確認ダイアログ（誤タップ防止確認付き） -->
+  <dialog class="result result--config" id="myRoleDialog" aria-labelledby="myRoleTitle">
+    <div id="myRoleConfirmStep">
+      <div class="result__ico">⚠️</div>
+      <h2 class="result__title" id="myRoleTitle">役職を確認しますか？</h2>
+      <p class="muted center" style="margin:12px 0 18px;font-size:13px;line-height:1.6">
+        周囲のプレイヤーに画面が見られないようご注意ください。<br>本当にあなたの役職を表示しますか？
+      </p>
+      <div style="display:flex;gap:10px">
+        <button type="button" class="btn btn--ghost" id="btnCancelMyRole">キャンセル</button>
+        <button type="button" class="btn btn--solid btn--amber" id="btnShowMyRole">表示する</button>
+      </div>
+    </div>
+    <div id="myRoleCardStep" hidden>
+      <div class="result__ico" id="myRoleCardIco">🃏</div>
+      <h2 class="result__title" id="myRoleCardTitle">あなたの役職</h2>
+      <div class="config-modal-scroll" id="myRoleCardContent" style="text-align:center"></div>
+      <div style="margin-top:10px">
+        <button type="button" class="btn btn--solid btn--cyan" id="btnCloseMyRole">閉じて隠す</button>
+      </div>
+    </div>
+  </dialog>
+
   <script type="module">
     import { S } from "./js/state.js?v=8";
     import { ROLES } from "./js/data.js?v=8";
-    import { playMorningCutscene, playDayCutscene, playNightCutscene, playWolfSlashSound, playShieldClangSound, playDayAmbientSound, playNightAmbientSound } from "./js/cutscenes.js?v=8";
-    import { triggerJudgeEffect, triggerConfetti, bindGhostStamps, triggerDramaticRoleReveal, spawnGhostStamp } from "./js/ui.js?v=8";
+    import { playMorningCutscene, playDayCutscene, playNightCutscene, playWolfSlashSound, playShieldClangSound, playDayAmbientSound, playNightAmbientSound, playResultRevealSound } from "./js/cutscenes.js?v=8";
+    import { triggerJudgeEffect, triggerConfetti, bindGhostStamps, triggerDramaticRoleReveal, spawnGhostStamp, showRoleListModal, openMyRoleConfirm } from "./js/ui.js?v=8";
 
     S.players = {
       p1: { name: "たろう", avatarId: "1", alive: true },
@@ -411,6 +452,7 @@
       const fx = document.createElement("div");
       fx.className = "win-fx-citizen";
       screen.appendChild(fx);
+      playResultRevealSound("citizen");
       setTimeout(() => fx.remove(), 4000);
     });
 
@@ -420,7 +462,17 @@
       const fx = document.createElement("div");
       fx.className = "win-fx-wolf";
       screen.appendChild(fx);
+      playResultRevealSound("wolf");
       setTimeout(() => fx.remove(), 4000);
+    });
+
+    document.getElementById("btnTestRoleList")?.addEventListener("click", () => {
+      showRoleListModal();
+    });
+
+    document.getElementById("btnTestMyRole")?.addEventListener("click", () => {
+      S.secret = { role: "werewolf", mates: ["p2"] };
+      openMyRoleConfirm();
     });
 
     bindGhostStamps(document.getElementById("tabDead"));
