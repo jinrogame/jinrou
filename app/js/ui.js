@@ -20,6 +20,50 @@ let root = null, lastKey = null, ctx = {}, cleanups = [];
 export const addCleanup = (f) => cleanups.push(f);
 export const profile = { name: localStorage.getItem("jinrou.name") || "", avatar: localStorage.getItem("jinrou.avatar") || "" };
 
+/* ---------------- 幽霊スタンプ演出（脱落者お墓参り） ---------------- */
+export function spawnGhostStamp(text, container = $("#phone")) {
+  if (!container) return;
+  const el = document.createElement("div");
+  el.className = "ghost-anim-fly";
+  el.textContent = text;
+  el.style.left = `${30 + Math.random() * 40}%`;
+  el.style.bottom = `${80 + Math.random() * 40}px`;
+  el.style.setProperty("--r", `${Math.random() * 20 - 10}deg`);
+  el.style.setProperty("--drift", `${Math.random() * 60 - 30}px`);
+  container.appendChild(el);
+  setTimeout(() => el.remove(), 1900);
+}
+
+export const GHOST_STAMPS = ["👻 無念…", "🙏 頼んだぞ", "🕯️ 見守ってる", "👀 誰だ…？", "😱 ギャー！"];
+
+export function ghostStampBoxHtml() {
+  return `
+  <div class="ghost-box">
+    <div class="ghost-box__title"><span>🕯️ 墓場リアクション（幽霊スタンプ）</span><span class="chip" style="margin-left:auto;font-size:9px">タップで飛ばす</span></div>
+    <div class="ghost-stamps">
+      ${GHOST_STAMPS.map((s) => `<button type="button" class="ghost-btn" data-ghost-stamp="${esc(s)}">${esc(s)}</button>`).join("")}
+    </div>
+  </div>`;
+}
+
+export function spectatorHtml(text = "奇跡の医者や報酬で復活する可能性があるため、そのまま静観してください。") {
+  return `
+  <div class="card card--glow card--red center spectator">
+    <div class="art"><img src="img/icon_spectator.svg" alt="" width="400" height="260"></div>
+    <h2 class="big">あなたは死亡しています</h2><p class="muted">${text}</p>
+  </div>
+  ${ghostStampBoxHtml()}`;
+}
+
+export function bindGhostStamps(r = document) {
+  r.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-ghost-stamp]");
+    if (!btn) return;
+    const text = btn.dataset.ghostStamp;
+    spawnGhostStamp(text, $("#phone"));
+  });
+}
+
 export function triggerConfetti(container = $("#phone")) {
   if (!container) return;
   const wrap = document.createElement("div");
@@ -74,11 +118,7 @@ const okFooter = (label, color = "") => `<button type="button" class="btn btn--s
 const ring = (total, cls = "ring--sm", c = "var(--accent)") =>
   `<div class="ring ${cls}" data-ring="${total}" style="--c:${c}"><div class="ring__text"><span data-time>--</span></div></div>`;
 const avImg = (uid, cls = "avatar", size = 30) => `<img class="${cls}" src="${avatarOf(uid)}" alt="" width="${size}" height="${size}">`;
-const spectator = (text = "奇跡の医者や報酬で復活する可能性があるため、そのまま静観してください。") => `
-<div class="card card--glow card--red center spectator">
-  <div class="art"><img src="img/icon_spectator.svg" alt="" width="400" height="260"></div>
-  <h2 class="big">あなたは死亡しています</h2><p class="muted">${text}</p>
-</div>`;
+const spectator = (text = "奇跡の医者や報酬で復活する可能性があるため、そのまま静観してください。") => spectatorHtml(text);
 const picksHtml = (name, list, cls = "", { allowSkip = false } = {}) => `<div class="picklist ${cls}">${list.map((p) => `
   <label class="pick${p.alive ? "" : " is-dead"}"><input type="radio" name="${name}" value="${p.uid}"><span class="radio" aria-hidden="true"></span>
   ${avImg(p.uid, "avatar", 28)}<span class="pick__name">${esc(p.name)}</span></label>`).join("")}${allowSkip ? `
@@ -143,6 +183,7 @@ function syncOk(r, required, label, canOk = true) {
   btn.textContent = done ? `みんなを待っています…（${n}/${required.length}）` : label;
 }
 function bindCommon(r, before) {
+  bindGhostStamps(r);
   $("#okBtn", r)?.addEventListener("click", async (e) => {
     e.currentTarget.disabled = true;
     try { await before?.(); await Room.markReady(); } catch (err) { alert("通信エラー: " + err.message); }

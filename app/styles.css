@@ -519,6 +519,65 @@ dialog.result:modal { overscroll-behavior: contain; }
 .roomtag { font-size: 10px; color: var(--muted); font-weight: 800; }
 .spectator { filter: grayscale(.6); }
 
+/* ---------------- 幽霊スタンプ・墓場リアクション（脱落者お墓参り） ---------------- */
+.ghost-box {
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(167, 139, 250, 0.3);
+  border-radius: var(--radius);
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: 0 0 16px rgba(167, 139, 250, 0.15);
+}
+.ghost-box__title {
+  font-size: 11px;
+  font-weight: 800;
+  color: #c4b5fd;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.ghost-stamps {
+  display: flex;
+  gap: 5px;
+  justify-content: space-between;
+}
+.ghost-btn {
+  flex: 1;
+  padding: 5px 2px;
+  font-size: 11px;
+  font-weight: 800;
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 8px;
+  color: #f1f5f9;
+  cursor: pointer;
+  transition: all .12s ease;
+  white-space: nowrap;
+}
+.ghost-btn:active {
+  transform: scale(0.92);
+  border-color: #a78bfa;
+  background: rgba(139, 92, 246, 0.3);
+}
+.ghost-anim-fly {
+  position: absolute;
+  font-weight: 900;
+  font-size: 18px;
+  color: #e9d5ff;
+  text-shadow: 0 0 12px #a855f7, 0 2px 4px #000;
+  pointer-events: none;
+  z-index: 99;
+  animation: ghost-float-up 1.8s cubic-bezier(0.2, 0.8, 0.3, 1) forwards;
+}
+@keyframes ghost-float-up {
+  0% { opacity: 0; transform: translate(-50%, 0) scale(0.6) rotate(0deg); }
+  20% { opacity: 1; transform: translate(-50%, -20px) scale(1.15) rotate(var(--r, -5deg)); }
+  80% { opacity: 0.9; }
+  100% { opacity: 0; transform: translate(calc(-50% + var(--drift, 20px)), -130px) scale(1) rotate(calc(var(--r, 5deg) * 2)); }
+}
+
 /* ==================== 本実装での追加スタイル ==================== */
 .picklist--3 { grid-template-columns: repeat(3, 1fr); gap: 5px; }
 .picklist--3 .pick { padding: 5px 6px; gap: 5px; }

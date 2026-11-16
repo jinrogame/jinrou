@@ -28,6 +28,7 @@
           <nav class="debug-tabs" role="tablist">
             <button type="button" class="debug-tab-btn is-active" data-tab="tabCard">🃏 役職カード</button>
             <button type="button" class="debug-tab-btn" data-tab="tabCutscene">🎬 動画＆ルーレット</button>
+            <button type="button" class="debug-tab-btn" data-tab="tabDead">👻 死亡者画面</button>
             <button type="button" class="debug-tab-btn" data-tab="tabEffects">✨ 個別エフェクト</button>
           </nav>
 
@@ -78,7 +79,29 @@
             </div>
           </div>
 
-          <!-- タブ3: 新規リッチエフェクト個別テスト -->
+          <!-- タブ3: 死亡者（脱落者）画面確認 -->
+          <div class="debug-tab-pane" id="tabDead" hidden>
+            <div class="card card--glow card--red center spectator">
+              <div class="art"><img src="img/icon_spectator.svg" alt="" width="400" height="260"></div>
+              <h2 class="big">あなたは死亡しています</h2>
+              <p class="muted">奇跡の医者や報酬で復活する可能性があるため、そのまま静観してください。</p>
+            </div>
+
+            <!-- 脱落者用お墓参り・幽霊スタンプ -->
+            <div class="ghost-box">
+              <div class="ghost-box__title"><span>🕯️ 墓場リアクション（幽霊スタンプ）</span><span class="chip" style="margin-left:auto;font-size:9px">タップで飛ばす</span></div>
+              <div class="ghost-stamps">
+                <button type="button" class="ghost-btn" data-ghost-stamp="👻 無念…">👻 無念…</button>
+                <button type="button" class="ghost-btn" data-ghost-stamp="🙏 頼んだぞ">🙏 頼んだぞ</button>
+                <button type="button" class="ghost-btn" data-ghost-stamp="🕯️ 見守ってる">🕯️ 見守ってる</button>
+                <button type="button" class="ghost-btn" data-ghost-stamp="👀 誰だ…？">👀 誰だ…？</button>
+                <button type="button" class="ghost-btn" data-ghost-stamp="😱 ギャー！">😱 ギャー！</button>
+              </div>
+            </div>
+            <p class="muted center" style="font-size:10px">※ネタバレを防ぎつつ、脱落者同士で幽霊リアクションを飛ばし合えます</p>
+          </div>
+
+          <!-- タブ4: 新規リッチエフェクト個別テスト -->
           <div class="debug-tab-pane" id="tabEffects" hidden>
             <div class="card card--red">
               <h2 class="card__title"><span class="dot"></span>💓 緊迫感・判定エフェクト</h2>
@@ -128,10 +151,10 @@
   </dialog>
 
   <script type="module">
-    import { S } from "./js/state.js?v=2";
-    import { ROLES } from "./js/data.js?v=2";
-    import { playMorningCutscene, playDayCutscene, playNightCutscene } from "./js/cutscenes.js?v=2";
-    import { triggerJudgeEffect, triggerConfetti } from "./js/ui.js?v=2";
+    import { S } from "./js/state.js?v=3";
+    import { ROLES } from "./js/data.js?v=3";
+    import { playMorningCutscene, playDayCutscene, playNightCutscene } from "./js/cutscenes.js?v=3";
+    import { triggerJudgeEffect, triggerConfetti, bindGhostStamps } from "./js/ui.js?v=3";
 
     S.players = {
       p1: { name: "たろう", avatarId: "1", alive: true },
@@ -282,6 +305,8 @@
       screen.appendChild(fx);
       setTimeout(() => fx.remove(), 4000);
     });
+
+    bindGhostStamps(document.getElementById("tabDead"));
   </script>
 </body>
 </html>
