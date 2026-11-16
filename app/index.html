@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#090d18">
   <title>オリジナル人狼ゲーム - TASK &amp; MYSTERY WEREWOLF</title>
-  <link rel="stylesheet" href="styles.css?v=7">
+  <link rel="stylesheet" href="styles.css?v=8">
 </head>
 <body>
   <main class="stage">
@@ -33,6 +33,16 @@
     </div>
   </dialog>
 
-  <script type="module" src="js/main.js?v=7"></script>
+  <!-- ルール・役職設定モーダル（ポップアップ） -->
+  <dialog class="result result--config" id="ruleConfigDialog" aria-labelledby="ruleConfigTitle">
+    <div class="result__ico">⚙️</div>
+    <h2 class="result__title" id="ruleConfigTitle">ゲームルール・役職設定</h2>
+    <div class="config-modal-scroll" id="ruleConfigContent"></div>
+    <div style="margin-top:10px">
+      <button type="button" class="btn btn--solid btn--cyan" id="btnCloseRuleConfig">設定を完了して戻る</button>
+    </div>
+  </dialog>
+
+  <script type="module" src="js/main.js?v=8"></script>
 </body>
 </html>

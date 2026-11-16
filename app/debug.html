@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>演出＆役職カード確認プレイヤー - オリジナル人狼ゲーム</title>
-  <link rel="stylesheet" href="styles.css?v=7">
+  <link rel="stylesheet" href="styles.css?v=8">
 </head>
 <body>
   <header class="dev-preview-bar">
@@ -197,11 +197,21 @@
     </div>
   </dialog>
 
+  <!-- ルール・役職設定モーダル（ポップアップ） -->
+  <dialog class="result result--config" id="ruleConfigDialog" aria-labelledby="ruleConfigTitle">
+    <div class="result__ico">⚙️</div>
+    <h2 class="result__title" id="ruleConfigTitle">ゲームルール・役職設定</h2>
+    <div class="config-modal-scroll" id="ruleConfigContent"></div>
+    <div style="margin-top:10px">
+      <button type="button" class="btn btn--solid btn--cyan" id="btnCloseRuleConfig">設定を完了して閉じる</button>
+    </div>
+  </dialog>
+
   <script type="module">
-    import { S } from "./js/state.js?v=7";
-    import { ROLES } from "./js/data.js?v=7";
-    import { playMorningCutscene, playDayCutscene, playNightCutscene, playWolfSlashSound, playShieldClangSound, playDayAmbientSound, playNightAmbientSound } from "./js/cutscenes.js?v=7";
-    import { triggerJudgeEffect, triggerConfetti, bindGhostStamps, triggerDramaticRoleReveal, spawnGhostStamp } from "./js/ui.js?v=7";
+    import { S } from "./js/state.js?v=8";
+    import { ROLES } from "./js/data.js?v=8";
+    import { playMorningCutscene, playDayCutscene, playNightCutscene, playWolfSlashSound, playShieldClangSound, playDayAmbientSound, playNightAmbientSound } from "./js/cutscenes.js?v=8";
+    import { triggerJudgeEffect, triggerConfetti, bindGhostStamps, triggerDramaticRoleReveal, spawnGhostStamp } from "./js/ui.js?v=8";
 
     S.players = {
       p1: { name: "たろう", avatarId: "1", alive: true },

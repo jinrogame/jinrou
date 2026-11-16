@@ -499,44 +499,107 @@ SCREENS.title = {
 };
 
 /* ---- 02/03 ロビー ---- */
+function updateConfigModalFields(dlg) {
+  const room = S.room;
+  if (!room) return;
+  const cfg = room.roleConfig || {};
+  const turnVal = dlg.querySelector("#cfgTurnVal");
+  if (turnVal) turnVal.textContent = room.maxTurns || 5;
+
+  let wolfTotal = 0;
+  WOLF_CONFIG.forEach((w) => {
+    const v = Number(cfg[w.id]) || 0;
+    wolfTotal += v;
+    const el = dlg.querySelector(`#cfg-wc-${w.id}`);
+    if (el) el.textContent = v;
+  });
+  const wt = dlg.querySelector("#cfgWolfTotal");
+  if (wt) wt.textContent = wolfTotal;
+
+  let citSpecial = 0;
+  CITIZEN_CONFIG.forEach((c) => {
+    if (cfg[c.id]) citSpecial++;
+    const el = dlg.querySelector(`[data-cfg-cit="${c.id}"]`);
+    if (el) el.checked = !!cfg[c.id];
+  });
+
+  const totalAssigned = wolfTotal + citSpecial;
+  const list = sortedPlayers();
+  const autoCit = Math.max(0, list.length - totalAssigned);
+  const autoEl = dlg.querySelector("#cfgAutoCitizen");
+  if (autoEl) autoEl.textContent = `${autoCit}人`;
+
+  const totalBar = dlg.querySelector("#cfgTotalBar");
+  const totalVal = dlg.querySelector("#cfgTotalVal");
+  if (totalBar && totalVal) {
+    const isBad = autoCit < 0 || wolfTotal < 1;
+    totalBar.classList.toggle("is-bad", isBad);
+    totalVal.textContent = autoCit < 0
+      ? `${totalAssigned} / ${list.length}人（超過）`
+      : wolfTotal < 1
+      ? "人狼陣営が0人です"
+      : `${totalAssigned}人配役（残り市民${autoCit}人）`;
+  }
+}
+
 SCREENS.lobby = {
   build() {
     const host = isHost();
-    const config = host ? `
-      <div class="card card--red">
-        <div class="row-between"><h2 class="card__title"><span class="dot"></span>人狼陣営の配分（計 <span id="wolfTotal">0</span>人）</h2>
-        <span class="stepper"><button type="button" id="turnMinus" aria-label="ターン数を減らす">−</button><b id="turnVal">5</b><button type="button" id="turnPlus" aria-label="ターン数を増やす">＋</button><small style="font-weight:800;color:var(--muted)">ターン</small></span></div>
-        <div class="config-grid-2">${WOLF_CONFIG.map((w) => `
-          <div class="switch" style="cursor:default"><span class="nm">${w.e} ${ROLES[w.id].name}</span>
-          <span class="stepper"><button type="button" data-wolf="${w.id}" data-d="-1" aria-label="${ROLES[w.id].name}を減らす">−</button><b id="wc-${w.id}">0</b><button type="button" data-wolf="${w.id}" data-d="1" aria-label="${ROLES[w.id].name}を増やす">＋</button></span></div>`).join("")}</div>
-      </div>
-      <div class="card card--blue">
-        <div class="row-between"><h2 class="card__title"><span class="dot"></span>市民特別枠（0 or 1人）</h2><span class="chip">🏠 市民自動割当: <b id="autoCitizen">0人</b></span></div>
-        <div class="config-grid-2">${CITIZEN_CONFIG.map((c) => `
-          <label class="switch"><span class="nm">${c.e} ${ROLES[c.id].name}${c.sub ? `<small>${c.sub}</small>` : ""}</span><input type="checkbox" data-cit="${c.id}" aria-label="${ROLES[c.id].name}"></label>`).join("")}</div>
-      </div>
-      <div class="total-bar" id="totalBar"><span>配役合計</span><b id="totalVal"></b></div>`
-      : `<div class="card card--blue center"><p class="muted" style="color:#dbe5ff;font-weight:800">オーナーが役職を設定中です…<br>しばらくお待ちください</p><div class="spinner" role="status" aria-label="読み込み中"></div></div>
-         <div class="card"><div class="row-between"><b>ターン数</b><b class="accent" id="turnShow"></b></div><div class="muted">役職配分は開始時に抽選され、本人にだけ表示されます。</div></div>`;
+    const joinUrl = (location.hostname === "localhost" || location.hostname === "127.0.0.1")
+      ? `https://jinrogame.github.io/jinrou/app/index.html?room=${S.roomId}`
+      : `${location.origin}${location.pathname}?room=${S.roomId}`;
 
     return shell({
       body: `
       <div class="hdr">
         <div>
           <div class="roomtag">ルームID</div>
-          <div style="display:flex;align-items:center;gap:6px;margin-top:2px">
-            <span class="big-id" id="roomIdBtn" style="font-size:20px;letter-spacing:2px;color:#38bdf8;cursor:pointer">${esc(S.roomId)}</span>
-            <button type="button" class="chip chip--accent" id="btnShowQr" style="cursor:pointer;padding:3px 8px;font-size:11px;font-weight:900;border:1px solid #38bdf8">📱 QR表示</button>
-            <button type="button" class="chip" id="btnCopyInvite" style="cursor:pointer;padding:3px 7px;font-size:11px;font-weight:700">📋 コピー</button>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:2px">
+            <span class="big-id" id="roomIdBtn" style="font-size:24px;letter-spacing:3px;color:#38bdf8;cursor:pointer" title="タップで招待リンクをコピー">${esc(S.roomId)}</span>
+            <button type="button" class="chip" id="btnCopyInvite" style="cursor:pointer;padding:3px 8px;font-size:11px;font-weight:700">📋 コピー</button>
           </div>
         </div>
         <div style="display:flex;gap:4px;flex-direction:column;align-items:flex-end">
-          <span class="chip chip--accent">全<b id="turnChip">5</b>ターン</span>
-          <span class="chip chip--green" id="cntChip"></span>
+          <span class="chip chip--accent" id="turnChip">全5ターン</span>
+          <span class="chip chip--green" id="cntChip">1 / 10人</span>
         </div>
       </div>
-      <div class="card"><div class="avatar-grid" id="lobbyAvatars"></div></div>
-      ${config}`,
+
+      <!-- 📱 参加用 QRコード（メイン表示） -->
+      <div class="card card--violet lobby-qr-card">
+        <div class="lobby-qr-frame">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=${encodeURIComponent(joinUrl)}&margin=8&color=090d18&bgcolor=ffffff" onerror="this.src='https://chart.googleapis.com/chart?chs=220x220&cht=qr&chl=' + encodeURIComponent('${joinUrl}')" alt="参加用QRコード" class="lobby-qr-img">
+        </div>
+        <div class="lobby-qr-text">
+          <div style="font-size:13px;font-weight:900;color:#e0e7ff">📱 スマホカメラをかざして入室</div>
+          <p class="muted" style="font-size:11px;margin:2px 0 0">友達にこの画面を見せて読み取ってもらいましょう！</p>
+        </div>
+      </div>
+
+      <!-- 参加プレイヤー一覧 -->
+      <div class="card lobby-players-card">
+        <div class="row-between" style="margin-bottom:4px">
+          <span style="font-size:11px;font-weight:800;color:var(--muted)">参加プレイヤー</span>
+          <span style="font-size:10px;color:#c4b5fd" id="playerSummaryText"></span>
+        </div>
+        <div class="avatar-grid" id="lobbyAvatars"></div>
+      </div>
+
+      <!-- 役職・ルール設定ボタン（ポップアップで設定） -->
+      ${host ? `
+      <button type="button" class="btn btn--solid btn--violet lobby-config-btn" id="btnOpenRuleConfig">
+        <div style="display:flex;align-items:center;justify-content:space-between;width:100%">
+          <span style="display:flex;align-items:center;gap:6px">⚙️ <b>ルール・役職設定</b></span>
+          <span class="chip" id="ruleSummaryChip" style="background:#4c1d95;color:#f5f3ff;font-size:10px">設定する ➔</span>
+        </div>
+      </button>
+      ` : `
+      <div class="card card--blue center" style="padding:8px 10px">
+        <p class="muted" style="color:#dbe5ff;font-weight:800;font-size:11px">
+          👑 オーナーがルール・役職を設定中です…<br>メンバーが揃うまでお待ちください
+        </p>
+      </div>
+      `}`,
       footer: `${host ? `<button type="button" class="btn btn--solid btn--red" id="startBtn">ゲーム開始</button><p class="muted center" id="startErr" style="color:var(--amber)"></p>` : ""}
         <button type="button" class="btn btn--ghost" id="leaveBtn">${host ? "ルームを解散してトップへ" : "退室してトップへ"}</button>`,
     });
@@ -563,64 +626,115 @@ SCREENS.lobby = {
     $("#roomIdBtn", r)?.addEventListener("click", copyUrl);
     $("#btnCopyInvite", r)?.addEventListener("click", copyUrl);
 
-    $("#btnShowQr", r)?.addEventListener("click", () => {
-      showDialog({
-        ico: "📱",
-        title: `ルーム ${S.roomId} 参加用QR`,
-        body: `
-          <div style="display:flex;flex-direction:column;align-items:center;gap:10px;margin:4px 0">
-            <div style="background:#fff;padding:8px;border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,0.5)">
-              <img src="https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=${encodeURIComponent(joinUrl)}&margin=8&color=090d18&bgcolor=ffffff" onerror="this.src='https://chart.googleapis.com/chart?chs=220x220&cht=qr&chl=' + encodeURIComponent('${joinUrl}')" alt="参加用QRコード" width="160" height="160" style="display:block;border-radius:6px">
+    // ルール・役職設定ポップアップモーダルのバインド
+    const configDlg = document.getElementById("ruleConfigDialog");
+    $("#btnOpenRuleConfig", r)?.addEventListener("click", () => {
+      if (!configDlg) return;
+      const content = configDlg.querySelector("#ruleConfigContent");
+      if (content) {
+        content.innerHTML = `
+          <div class="card" style="padding:10px">
+            <div class="row-between">
+              <b style="font-size:13px">最大ターン数</b>
+              <span class="stepper">
+                <button type="button" id="cfgTurnMinus" aria-label="ターン数を減らす">−</button>
+                <b id="cfgTurnVal">${S.room?.maxTurns || 5}</b>
+                <button type="button" id="cfgTurnPlus" aria-label="ターン数を増やす">＋</button>
+                <small style="font-weight:800;color:var(--muted)">ターン</small>
+              </span>
             </div>
-            <div style="font-size:13px;font-weight:900;color:#c7d2fe">ROOM: <b style="font-size:18px;letter-spacing:2px;color:#fff">${esc(S.roomId)}</b></div>
-            <p style="font-size:11px;color:#94a3c4;margin:0;line-height:1.4">スマホカメラをかざすと、ID入力不要で即座に入室画面が開きます。</p>
-            <button type="button" class="btn btn--solid btn--cyan btn--sm" id="btnModalCopyInvite" style="width:100%;font-size:12px;padding:6px 12px;font-weight:900">📋 招待リンクをコピー</button>
           </div>
-        `,
-        note: "※画面をそのまま見せて友だちに読み取ってもらってください",
-      });
-      setTimeout(() => {
-        document.getElementById("btnModalCopyInvite")?.addEventListener("click", async () => {
-          try {
-            await navigator.clipboard.writeText(joinUrl);
-            alert("招待リンクをコピーしました:\n" + joinUrl);
-          } catch {
-            prompt("招待リンク", joinUrl);
+
+          <div class="card card--red" style="padding:10px">
+            <div class="row-between">
+              <h2 class="card__title" style="font-size:13px"><span class="dot"></span>人狼陣営の配分（計 <span id="cfgWolfTotal">0</span>人）</h2>
+            </div>
+            <div class="config-grid-2">
+              ${WOLF_CONFIG.map((w) => `
+                <div class="switch" style="cursor:default">
+                  <span class="nm" style="font-size:12px">${w.e} ${ROLES[w.id].name}</span>
+                  <span class="stepper">
+                    <button type="button" data-cfg-wolf="${w.id}" data-d="-1">−</button>
+                    <b id="cfg-wc-${w.id}">${S.room?.roleConfig?.[w.id] || 0}</b>
+                    <button type="button" data-cfg-wolf="${w.id}" data-d="1">＋</button>
+                  </span>
+                </div>
+              `).join("")}
+            </div>
+          </div>
+
+          <div class="card card--blue" style="padding:10px">
+            <div class="row-between">
+              <h2 class="card__title" style="font-size:13px"><span class="dot"></span>市民特別枠（0 or 1人）</h2>
+              <span class="chip" style="font-size:10px">🏠 市民自動割当: <b id="cfgAutoCitizen">0人</b></span>
+            </div>
+            <div class="config-grid-2">
+              ${CITIZEN_CONFIG.map((c) => `
+                <label class="switch">
+                  <span class="nm" style="font-size:12px">${c.e} ${ROLES[c.id].name}${c.sub ? `<small>${c.sub}</small>` : ""}</span>
+                  <input type="checkbox" data-cfg-cit="${c.id}" ${S.room?.roleConfig?.[c.id] ? "checked" : ""}>
+                </label>
+              `).join("")}
+            </div>
+          </div>
+
+          <div class="total-bar" id="cfgTotalBar" style="padding:6px 10px">
+            <span>配役合計</span><b id="cfgTotalVal"></b>
+          </div>
+        `;
+
+        content.querySelector("#cfgTurnMinus")?.addEventListener("click", () => Host.setMaxTurns((S.room.maxTurns || 5) - 1));
+        content.querySelector("#cfgTurnPlus")?.addEventListener("click", () => Host.setMaxTurns((S.room.maxTurns || 5) + 1));
+        content.addEventListener("click", (e) => {
+          const b = e.target.closest("[data-cfg-wolf]");
+          if (!b) return;
+          const id = b.dataset.cfgWolf;
+          Host.updateConfig({ [id]: Math.max(0, Math.min(4, (Number(S.room.roleConfig?.[id]) || 0) + Number(b.dataset.d))) });
+        });
+        content.addEventListener("change", (e) => {
+          if (e.target.dataset.cfgCit) {
+            Host.updateConfig({ [e.target.dataset.cfgCit]: e.target.checked });
           }
         });
-      }, 100);
+        updateConfigModalFields(configDlg);
+      }
+      configDlg.showModal();
+    });
+
+    configDlg?.querySelector("#btnCloseRuleConfig")?.addEventListener("click", () => {
+      configDlg.close();
     });
 
     $("#leaveBtn", r).addEventListener("click", () => confirmLeaveRoom());
-    if (!isHost()) return;
-    $("#turnMinus", r).addEventListener("click", () => Host.setMaxTurns((S.room.maxTurns || 5) - 1));
-    $("#turnPlus", r).addEventListener("click", () => Host.setMaxTurns((S.room.maxTurns || 5) + 1));
-    r.addEventListener("click", (e) => {
-      const b = e.target.closest("[data-wolf]");
-      if (!b) return;
-      const id = b.dataset.wolf;
-      Host.updateConfig({ [id]: Math.max(0, Math.min(4, (Number(S.room.roleConfig[id]) || 0) + Number(b.dataset.d))) });
-    });
-    r.addEventListener("change", (e) => { if (e.target.dataset.cit) Host.updateConfig({ [e.target.dataset.cit]: e.target.checked }); });
-    $("#startBtn", r).addEventListener("click", async (e) => {
+    $("#startBtn", r)?.addEventListener("click", async (e) => {
       e.currentTarget.disabled = true;
       try { await Host.startGame(); } catch (err) { $("#startErr", r).textContent = err.message; e.currentTarget.disabled = false; }
     });
   },
   update(r) {
     const room = S.room, list = sortedPlayers();
-    $("#turnChip", r).textContent = room.maxTurns;
+    $("#turnChip", r).textContent = `全${room.maxTurns || 5}ターン`;
     $("#cntChip", r).textContent = `${list.length} / ${MAX_PLAYERS}人`;
+    $("#playerSummaryText", r).textContent = `${list.length}人参加中`;
     $("#lobbyAvatars", r).innerHTML = list.map((p) => `<div class="av${p.uid === room.hostUid ? " is-owner" : ""}${p.uid === S.uid ? " is-me" : ""}">${avImg(p.uid, "avatar", 38)}<span>${esc(p.name)}</span></div>`).join("");
-    if (!isHost()) { $("#turnShow", r).textContent = `${room.maxTurns}ターン`; return; }
-    $("#turnVal", r).textContent = room.maxTurns;
-    const cfg = room.roleConfig, c = roleCounts(cfg, list.length);
-    WOLF_CONFIG.forEach((w) => { $(`#wc-${w.id}`, r).textContent = cfg[w.id] || 0; });
-    $$("[data-cit]", r).forEach((el) => { el.checked = !!cfg[el.dataset.cit]; });
-    $("#wolfTotal", r).textContent = c.wolf;
-    $("#autoCitizen", r).textContent = `${Math.max(c.auto, 0)}人`;
-    $("#totalBar", r).classList.toggle("is-bad", c.auto < 0 || c.wolf < 1);
-    $("#totalVal", r).textContent = c.auto < 0 ? `${c.wolf + c.special} / ${list.length}人（超過）` : c.wolf < 1 ? "人狼陣営が0人です" : `${list.length} / ${list.length}人`;
+
+    // ルール要約チップの更新
+    let wolfTotal = 0;
+    WOLF_CONFIG.forEach((w) => { wolfTotal += Number(room.roleConfig?.[w.id]) || 0; });
+    let citTotal = 0;
+    CITIZEN_CONFIG.forEach((c) => { if (room.roleConfig?.[c.id]) citTotal++; });
+    const summaryChip = $("#ruleSummaryChip", r);
+    if (summaryChip) {
+      summaryChip.textContent = `人狼${wolfTotal}人・特別${citTotal}人 ➔`;
+    }
+
+    // モーダルが開いていればリアルタイム同期
+    const configDlg = document.getElementById("ruleConfigDialog");
+    if (configDlg && configDlg.open) {
+      updateConfigModalFields(configDlg);
+    }
+
+    if (!isHost()) return;
     const err = Host.validateStart();
     $("#startBtn", r).disabled = !!err;
     $("#startErr", r).textContent = err || "";
