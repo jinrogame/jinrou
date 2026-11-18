@@ -29,7 +29,7 @@
       --text-sub: #475569;
       --text-muted: #64748b;
       --shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
-      --shadow-lg: 0 10px 30px rgba(15, 23, 42, 0.1);
+      --shadow-lg: 0 10px 28px rgba(15, 23, 42, 0.1);
       --font-display: 'Chakra Petch', sans-serif;
       --font-body: 'Noto Sans JP', sans-serif;
     }
@@ -52,7 +52,6 @@
       line-height: 1.6;
     }
 
-    /* 全体コンテナ */
     .deck-container {
       display: flex;
       flex-direction: column;
@@ -61,7 +60,7 @@
       overflow: hidden;
     }
 
-    /* トップヘッダーバー */
+    /* 上部ヘッダー */
     .top-bar {
       display: flex;
       align-items: center;
@@ -137,7 +136,7 @@
       color: #ffffff;
     }
 
-    /* スライド表示領域 */
+    /* スライド領域 */
     .slides-viewport {
       position: relative;
       flex: 1;
@@ -170,7 +169,7 @@
       transform: translateX(-30px);
     }
 
-    /* ボトムナビゲーションバー */
+    /* 下部バー */
     .bottom-bar {
       display: flex;
       align-items: center;
@@ -266,10 +265,8 @@
       color: var(--text);
     }
 
-    /* スライド内ヘッダー */
-    .slide-header {
-      flex-shrink: 0;
-    }
+    /* スライド共通ヘッダー */
+    .slide-header { flex-shrink: 0; }
     .slide-badge {
       display: inline-block;
       padding: 2px 10px;
@@ -279,7 +276,6 @@
       font-family: var(--font-display);
       font-size: 11px;
       font-weight: 700;
-      letter-spacing: 0.5px;
       margin-bottom: 4px;
     }
     .slide-title {
@@ -294,24 +290,22 @@
       margin-top: 3px;
     }
 
-    /* カード・グリッド共通 */
     .panel {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 20px;
+      padding: 18px;
       box-shadow: var(--shadow);
     }
 
-    /* SLIDE 1: タイトル */
+    /* SLIDE 1 */
     .slide-hero {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       text-align: center;
-      height: 100%;
-      min-height: 400px;
+      min-height: 420px;
       gap: 16px;
     }
     .hero-title {
@@ -333,7 +327,7 @@
       gap: 12px;
       width: 100%;
       max-width: 800px;
-      margin-top: 10px;
+      margin-top: 8px;
     }
     .spec-item {
       background: var(--surface);
@@ -346,7 +340,7 @@
     .spec-item .label { font-size: 11.5px; color: var(--text-muted); font-weight: 700; }
     .spec-item .val { font-size: 14.5px; font-weight: 800; color: var(--text); margin-top: 2px; }
 
-    /* SLIDE 2: 特徴 */
+    /* SLIDE 2 */
     .grid-3 {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -376,7 +370,7 @@
     .feature-name { font-size: 16px; font-weight: 800; color: var(--text); }
     .feature-desc { font-size: 13px; color: var(--text-sub); line-height: 1.6; }
 
-    /* SLIDE 3: 勝利条件 */
+    /* SLIDE 3 */
     .vs-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -394,7 +388,6 @@
       gap: 12px;
     }
     .win-card--wolf { border-top-color: var(--wolf); }
-    .win-header { display: flex; align-items: center; gap: 10px; }
     .win-title { font-size: 18px; font-weight: 900; }
     .win-cond-box {
       background: var(--surface-sub);
@@ -417,130 +410,82 @@
       line-height: 1.55;
     }
 
-    /* SLIDE 4 & 5: 実機画面シミュレーター付きレイアウト */
-    .split-layout {
+    /* SLIDE 4: 実画面動画＆実画面スクショ */
+    .video-demo-layout {
       display: grid;
-      grid-template-columns: 1fr 340px;
+      grid-template-columns: 280px 1fr;
       gap: 24px;
       width: 100%;
       align-items: start;
     }
-    .flow-steps {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
+    .phone-video-frame {
+      width: 270px;
+      height: 520px;
+      background: #000;
+      border: 6px solid #1e293b;
+      border-radius: 32px;
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+      position: relative;
     }
-    .flow-step-item {
+    .phone-video-frame video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .screenshots-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .screenshot-card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 10px;
-      padding: 14px 16px;
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      cursor: pointer;
-      transition: all 0.2s;
+      padding: 12px;
       box-shadow: var(--shadow);
-    }
-    .flow-step-item.is-active {
-      border-color: var(--primary);
-      background: var(--primary-light);
-      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.15);
-    }
-    .flow-num {
-      width: 28px;
-      height: 28px;
-      border-radius: 6px;
-      background: var(--primary);
-      color: #fff;
-      font-family: var(--font-display);
-      font-size: 14px;
-      font-weight: 800;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-    .flow-step-item h4 { font-size: 15px; font-weight: 800; color: var(--text); }
-    .flow-step-item p { font-size: 12.5px; color: var(--text-sub); margin-top: 2px; line-height: 1.5; }
-
-    /* スマホ実画面シミュレーター（実ゲームCSSと共通仕様） */
-    .phone-simulator {
-      background: #0f172a;
-      border: 6px solid #1e293b;
-      border-radius: 28px;
-      width: 320px;
-      height: 480px;
-      margin: 0 auto;
-      position: relative;
-      overflow: hidden;
-      box-shadow: var(--shadow-lg);
       display: flex;
       flex-direction: column;
+      gap: 6px;
     }
-    .phone-notch {
-      width: 90px;
-      height: 16px;
-      background: #020617;
-      border-radius: 999px;
-      margin: 6px auto 0;
-      flex-shrink: 0;
-      z-index: 10;
-    }
-    .phone-screen-area {
-      flex: 1;
-      position: relative;
-      overflow-y: auto;
-      overflow-x: hidden;
-      background: #090d18;
-      color: #fff;
-      font-size: 13px;
-    }
-    .sim-view {
-      display: none;
-      padding: 14px;
-      flex-direction: column;
-      gap: 10px;
-      min-height: 100%;
-    }
-    .sim-view.is-active {
-      display: flex;
-    }
-    .sim-card {
-      background: rgba(255, 255, 255, 0.07);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 8px;
-      padding: 10px 12px;
-    }
-    .sim-btn {
-      display: block;
+    .screenshot-thumb {
       width: 100%;
-      padding: 8px;
+      height: 220px;
       border-radius: 6px;
-      border: none;
-      font-size: 12px;
-      font-weight: 800;
-      text-align: center;
-      cursor: pointer;
+      overflow: hidden;
+      background: #0f172a;
+      border: 1px solid var(--border);
     }
-    .sim-btn--cyan { background: #00ffcc; color: #0a0e17; }
-    .sim-btn--amber { background: #f59e0b; color: #000; }
-    .sim-btn--red { background: #ef4444; color: #fff; }
+    .screenshot-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top;
+    }
+    .screenshot-card h5 { font-size: 13px; font-weight: 800; color: var(--text); }
+    .screenshot-card p { font-size: 11.5px; color: var(--text-sub); line-height: 1.45; }
 
-    /* SLIDE 6: 1日のサイクル */
-    .cycle-grid {
+    /* SLIDE 5: 役職確認（実画面スクショ＆反転カード） */
+    .reveal-layout {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 18px;
+      grid-template-columns: 1fr 280px;
+      gap: 24px;
       width: 100%;
       align-items: start;
     }
-    .phase-timeline {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
+
+    /* SLIDE 6: 1日のゲームサイクル（朝タスク・昼・夜 ＆ 実画面動画切り替え） */
+    .cycle-layout-new {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      width: 100%;
+      align-items: start;
     }
-    .phase-card {
+    .phase-tab-btn {
+      width: 100%;
+      text-align: left;
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 10px;
@@ -548,19 +493,20 @@
       cursor: pointer;
       transition: all 0.2s;
       box-shadow: var(--shadow);
+      margin-bottom: 10px;
     }
-    .phase-card.is-active {
+    .phase-tab-btn.is-active {
       border-color: var(--primary);
       background: var(--primary-light);
     }
-    .phase-card-title {
+    .phase-tab-title {
       font-size: 15px;
       font-weight: 800;
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
-    .phase-badge {
+    .phase-tab-badge {
       font-size: 11px;
       padding: 2px 8px;
       border-radius: 999px;
@@ -568,15 +514,52 @@
       color: var(--text-sub);
       font-weight: 700;
     }
-    .phase-card.is-active .phase-badge {
+    .phase-tab-btn.is-active .phase-tab-badge {
       background: var(--primary);
       color: #fff;
     }
-    .phase-card p {
+    .phase-tab-btn p {
       font-size: 12.5px;
       color: var(--text-sub);
       margin-top: 4px;
       line-height: 1.5;
+    }
+
+    .phase-media-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .phase-screen-img {
+      width: 100%;
+      height: 240px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: #0f172a;
+    }
+    .phase-screen-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top;
+    }
+    .phase-movie-wrap {
+      width: 100%;
+      height: 160px;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #000;
+    }
+    .phase-movie-wrap video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
 
     /* SLIDE 7: テーブル */
@@ -615,7 +598,7 @@
     .badge--reward { background: var(--green-light); color: var(--green); }
     .badge--penalty { background: var(--wolf-light); color: var(--wolf); }
 
-    /* SLIDE 8 & 9: 役職カタログ（カード表示） */
+    /* SLIDE 8 & 9 */
     .role-grid-wolf {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -695,9 +678,9 @@
       margin-top: 2px;
     }
     .role-catalog-desc b { color: var(--text); }
-    .role-catalog-desc .warn-txt { color: #b45309; font-weight: 700; display: block; margin-top: 2px; }
+    .warn-txt { color: #b45309; font-weight: 700; display: block; margin-top: 2px; }
 
-    /* SLIDE 10: 注意点＆案内 */
+    /* SLIDE 10 */
     .finish-layout {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -760,16 +743,15 @@
       cursor: pointer;
     }
 
-    /* レスポンシブ */
     @media (max-width: 900px) {
-      .grid-3, .vs-grid, .split-layout, .cycle-grid, .tables-layout, .finish-layout {
+      .grid-3, .vs-grid, .video-demo-layout, .reveal-layout, .cycle-layout-new, .tables-layout, .finish-layout {
         grid-template-columns: 1fr;
       }
       .role-grid-wolf { grid-template-columns: repeat(2, 1fr); }
       .role-grid-citizen { grid-template-columns: repeat(2, 1fr); }
       .slide { padding: 16px 16px 24px; }
       .kbd-guide, .brand__sub { display: none; }
-      .phone-simulator { width: 100%; max-width: 320px; }
+      .phone-video-frame { margin: 0 auto; }
     }
   </style>
 </head>
@@ -864,15 +846,8 @@
           <p class="slide-desc">毎朝の犠牲者発表直後に自動判定されます。狂人・サイコキラーのカウント方法にご注意ください。</p>
         </div>
         <div class="vs-grid">
-          <!-- 人狼陣営 -->
           <div class="win-card win-card--wolf">
-            <div class="win-header">
-              <span style="font-size:24px">🐺</span>
-              <div>
-                <h3 class="win-title" style="color:var(--wolf)">人狼陣営の勝利</h3>
-                <span style="font-size:11px;color:var(--text-muted)">WOLF TEAM</span>
-              </div>
-            </div>
+            <div class="win-title" style="color:var(--wolf)">🐺 人狼陣営の勝利</div>
             <div class="win-cond-box">
               朝の判定で「人狼本体の生存数 ≧ 非人狼の生存数」となった時点で即勝利
             </div>
@@ -885,15 +860,8 @@
             </div>
           </div>
 
-          <!-- 市民陣営 -->
           <div class="win-card win-card--citizen">
-            <div class="win-header">
-              <span style="font-size:24px">🛡️</span>
-              <div>
-                <h3 class="win-title" style="color:var(--primary-dark)">市民陣営の勝利</h3>
-                <span style="font-size:11px;color:var(--text-muted)">CITIZEN TEAM</span>
-              </div>
-            </div>
+            <div class="win-title" style="color:var(--primary-dark)">🛡️ 市民陣営の勝利</div>
             <div class="win-cond-box">
               すべての人狼本体（人狼神・人狼）を追放または壊滅させること
             </div>
@@ -908,92 +876,51 @@
         </div>
       </section>
 
-      <!-- SLIDE 4: ゲームの始め方 ①（参加・アバター登録） -->
+      <!-- SLIDE 4: ゲームの始め方 ①（縦型スマホ実画面操作動画 ＆ 実際のスクショ） -->
       <section class="slide" data-index="4">
         <div class="slide-header">
           <span class="slide-badge">GETTING STARTED 1</span>
-          <h2 class="slide-title">ゲームの始め方 ①：参加とアバター登録</h2>
-          <p class="slide-desc">右側のスマホ実画面シミュレーターで、実際の登録から入室までの流れを確認できます。</p>
+          <h2 class="slide-title">ゲームの始め方 ①：参加・アバター登録・ロビー集合</h2>
+          <p class="slide-desc">左側の縦長スマホ動画で、名前入力から顔写真撮影、ロビー集合までの実際の操作画面を確認できます。</p>
         </div>
-        <div class="split-layout">
-          <div class="flow-steps">
-            <div class="flow-step-item is-active" id="stepItem0" onclick="showSimView(0)">
-              <div class="flow-num">1</div>
-              <div>
-                <h4>QRコードをスキャンして開く</h4>
-                <p>ホスト画面に表示されたQRコードをスマホの標準カメラで読み取ります。招待リンクから即座に入室画面が開きます。</p>
-              </div>
+        <div class="video-demo-layout">
+          <!-- 縦型スマホ実画面操作動画 -->
+          <div>
+            <div class="phone-video-frame">
+              <video src="movies/screen_onboarding.webm" autoplay loop muted playsinline controls></video>
             </div>
-
-            <div class="flow-step-item" id="stepItem1" onclick="showSimView(1)">
-              <div class="flow-num">2</div>
-              <div>
-                <h4>プレイヤー名入力 ＆ 自撮り顔写真撮影</h4>
-                <p>名前を入力し、カメラを起動して顔写真を撮影します。この写真がゲーム内の生存者リストや投票画面のアイコンになります。</p>
-              </div>
-            </div>
-
-            <div class="flow-step-item" id="stepItem2" onclick="showSimView(2)">
-              <div class="flow-num">3</div>
-              <div>
-                <h4>ロビーで待機 ➔ ホストがゲーム開始</h4>
-                <p>参加者全員の写真がロビーに並びます。ホストが人数と役職の内訳を確認し、「ゲーム開始」ボタンを押すと開始します。</p>
-              </div>
+            <div style="font-size:11.5px;color:var(--primary-dark);font-weight:700;text-align:center;margin-top:6px">
+              🎬 実画面操作動画（自動ループ再生）
             </div>
           </div>
 
-          <!-- 実機画面シミュレーター（実際の画面UI） -->
-          <div class="phone-simulator">
-            <div class="phone-notch"></div>
-            <div class="phone-screen-area">
-              <!-- View 0: トップ画面（実画面） -->
-              <div class="sim-view is-active" id="simView0">
-                <div style="text-align:center;padding:10px 0 4px">
-                  <span style="font-size:28px">🐺</span>
-                  <div style="font-size:11px;font-weight:900;color:#38bdf8">TASK & MYSTERY WEREWOLF</div>
+          <!-- 右側：実際の画面スクリーンショットと解説 -->
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <div class="panel" style="padding:14px">
+              <h4 style="font-size:14px;font-weight:800;color:var(--text);margin-bottom:4px">参加手順（所要時間：約10秒）</h4>
+              <p style="font-size:12.5px;color:var(--text-sub);line-height:1.6">
+                1. ホスト画面に表示されたQRコードをスマホの標準カメラでスキャンします。<br>
+                2. 名前を入力し、インカメラで自分の顔写真をパシャリと撮影します。<br>
+                3. 「入室する」ボタンを押すと、全員のアイコンがロビーに並びます。
+              </p>
+            </div>
+
+            <!-- 実際の画面スクリーンショット -->
+            <div class="screenshots-row">
+              <div class="screenshot-card">
+                <div class="screenshot-thumb">
+                  <img src="img/actual_screen_title.png" alt="実際の登録画面スクリーンショット">
                 </div>
-                <div class="sim-card">
-                  <div style="font-size:11px;color:#94a3b8;margin-bottom:4px">参加ルーム</div>
-                  <div style="font-size:15px;font-weight:800;color:#facc15">ROOM: ABCD</div>
-                </div>
-                <div class="sim-card" style="text-align:center">
-                  <div style="font-size:11px;color:#cbd5e1;margin-bottom:6px">名前とアイコンを設定してください</div>
-                  <button type="button" class="sim-btn sim-btn--cyan" onclick="showSimView(1)">次へ：顔アイコン撮影 ➔</button>
-                </div>
+                <h5>① 実際の登録画面</h5>
+                <p>名前入力とカメラ起動ボタン。顔写真は自動で丸型アイコンにトリミングされます。</p>
               </div>
 
-              <!-- View 1: 自撮り・名前登録（実画面） -->
-              <div class="sim-view" id="simView1">
-                <div class="sim-card">
-                  <div style="font-size:12px;font-weight:800;color:#38bdf8;margin-bottom:6px">プレイヤー情報登録</div>
-                  <input type="text" value="たろう" readonly style="width:100%;padding:6px;background:#1e293b;border:1px solid #475569;border-radius:6px;color:#fff;font-size:12px;margin-bottom:8px">
-                  <div style="width:72px;height:72px;border-radius:50%;border:2px solid #38bdf8;margin:8px auto;display:flex;align-items:center;justify-content:center;background:#0284c7;font-size:32px">
-                    😄
-                  </div>
-                  <div style="font-size:10px;text-align:center;color:#94a3b8;margin-bottom:8px">顔写真アイコン登録完了</div>
-                  <button type="button" class="sim-btn sim-btn--cyan" onclick="showSimView(2)">ロビーへ入室する ➔</button>
+              <div class="screenshot-card">
+                <div class="screenshot-thumb">
+                  <img src="img/actual_screen_lobby.png" alt="実際のロビー画面スクリーンショット">
                 </div>
-              </div>
-
-              <!-- View 2: ロビー画面（実画面） -->
-              <div class="sim-view" id="simView2">
-                <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
-                  <b style="color:#38bdf8;font-size:12px">LOBBY (5人参加中)</b>
-                  <span style="font-size:10px;background:#1e293b;padding:2px 6px;border-radius:4px">ROOM: ABCD</span>
-                </div>
-                <div class="sim-card">
-                  <div style="font-size:11px;color:#94a3b8;margin-bottom:6px">参加プレイヤー</div>
-                  <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:6px;text-align:center;font-size:10px">
-                    <div><div style="font-size:18px">👩</div>はなこ</div>
-                    <div><div style="font-size:18px">👨</div>けんじ</div>
-                    <div><div style="font-size:18px">🧑</div>そうた</div>
-                    <div><div style="font-size:18px">👧</div>みく</div>
-                    <div style="color:#38bdf8"><div style="font-size:18px">😄</div>たろう</div>
-                  </div>
-                </div>
-                <button type="button" class="sim-btn sim-btn--amber" style="margin-top:auto" onclick="goToSlide(5)">
-                  ▶ ゲーム開始（役職発表へ）
-                </button>
+                <h5>② 実際のロビー画面</h5>
+                <p>参加メンバーの写真が一覧表示されます。ホストが「ゲーム開始」を押すと開始します。</p>
               </div>
             </div>
           </div>
@@ -1007,177 +934,96 @@
           <h2 class="slide-title">ゲームの始め方 ②：役職確認と自己紹介</h2>
           <p class="slide-desc">手元のカードをタップして反転。周囲に画面が見られないよう注意しながら確認します。</p>
         </div>
-        <div class="split-layout">
-          <div class="flow-steps">
+        <div class="reveal-layout">
+          <div style="display:flex;flex-direction:column;gap:14px">
             <div class="panel" style="padding:16px">
-              <h4 style="font-size:15px;font-weight:800;color:var(--text);margin-bottom:6px">🃏 秘密の役職カード配布</h4>
+              <h4 style="font-size:14.5px;font-weight:800;color:var(--text);margin-bottom:6px">🃏 秘密の役職カード配布</h4>
               <p style="font-size:13px;color:var(--text-sub);line-height:1.6">
                 ゲーム開始と同時に、各プレイヤーの手元に役職カードが裏向きで配布されます。画面をタップするとカードが反転し、あなたの役職と能力が表示されます。
               </p>
             </div>
             <div class="panel" style="padding:16px">
-              <h4 style="font-size:15px;font-weight:800;color:var(--text);margin-bottom:6px">🙈 閉じて隠す＆いつでも再確認</h4>
+              <h4 style="font-size:14.5px;font-weight:800;color:var(--text);margin-bottom:6px">🙈 閉じて隠す＆いつでも再確認</h4>
               <p style="font-size:13px;color:var(--text-sub);line-height:1.6">
                 確認した後は「閉じて隠す」ボタンを押して画面を裏面に戻せます。ゲーム進行中も、右上の役職アイコンからいつでも安全に自分の能力を再確認できます。
               </p>
             </div>
             <div class="panel" style="padding:16px">
-              <h4 style="font-size:15px;font-weight:800;color:var(--text);margin-bottom:6px">🗣️ 自己紹介タイム（3分）</h4>
+              <h4 style="font-size:14.5px;font-weight:800;color:var(--text);margin-bottom:6px">🗣️ 自己紹介タイム（3分）</h4>
               <p style="font-size:13px;color:var(--text-sub);line-height:1.6">
                 役職確認後、全員で順番に自己紹介を行います。役職を引いた瞬間のリアクションで周囲に悟られないようポーカーフェイスを保ちましょう。
               </p>
             </div>
           </div>
 
-          <!-- 実機カード画面シミュレーター -->
-          <div class="phone-simulator">
-            <div class="phone-notch"></div>
-            <div class="phone-screen-area" style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;text-align:center">
-              <div style="font-size:11px;color:#94a3b8;margin-bottom:8px">あなたの手元画面（タップで反転）</div>
-              <div style="width:160px;height:230px;position:relative;cursor:pointer;perspective:800px" onclick="toggleSimRoleCard()">
-                <div id="simRoleInner" style="width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform 0.5s ease;border-radius:10px;box-shadow:0 8px 20px rgba(0,0,0,0.6)">
-                  <!-- 裏面 -->
-                  <div style="position:absolute;inset:0;backface-visibility:hidden;border-radius:10px;overflow:hidden;border:2px solid #38bdf8">
-                    <img src="img/role_card_back.jpg" alt="カード裏面" style="width:100%;height:100%;object-fit:cover">
-                  </div>
-                  <!-- 表面 -->
-                  <div style="position:absolute;inset:0;backface-visibility:hidden;transform:rotateY(180deg);border-radius:10px;overflow:hidden;border:2px solid #ef4444">
-                    <img src="img/role_wolf_god.jpg" alt="人狼神" id="simRoleImg" style="width:100%;height:100%;object-fit:cover">
-                  </div>
-                </div>
-              </div>
-              <div style="margin-top:12px;width:100%">
-                <div id="simRoleLabel" style="font-size:12px;font-weight:800;color:#f87171;margin-bottom:6px">
-                  タップしてカードを開示
-                </div>
-                <button type="button" class="sim-btn sim-btn--cyan" onclick="toggleSimRoleCard()">
-                  カードを反転切替
-                </button>
-              </div>
+          <!-- 実際の役職確認画面スクリーンショット -->
+          <div class="screenshot-card" style="padding:14px">
+            <div class="screenshot-thumb" style="height:380px">
+              <img src="img/actual_screen_card_reveal.png" alt="実際の役職確認画面スクリーンショット">
             </div>
+            <h5>実際の役職確認画面</h5>
+            <p>画面中央に巨大な役職カードが表示され、下に能力と所属陣営が開示されます。</p>
           </div>
         </div>
       </section>
 
-      <!-- SLIDE 6: 1日のゲームサイクル（朝・昼・夜） -->
+      <!-- SLIDE 6: 1日のゲームサイクル（朝・昼・夜 ＆ 実画面・動画連動） -->
       <section class="slide" data-index="6">
         <div class="slide-header">
           <span class="slide-badge">GAME CYCLE</span>
           <h2 class="slide-title">1日のゲームサイクル（朝 ➔ 昼 ➔ 夜）</h2>
-          <p class="slide-desc">朝フェーズでタスク（ミニゲーム）を実行し、昼に話し合い、夜に追放投票とスキルを行います。</p>
+          <p class="slide-desc">タスク（ミニゲーム）は「朝」のターンに実行します。左のフェーズを選択すると右側の実画面と演出動画が連動します。</p>
         </div>
-        <div class="cycle-grid">
-          <div class="phase-timeline">
-            <!-- 朝 -->
-            <div class="phase-card is-active" id="phaseCard0" onclick="showPhaseView(0)">
-              <div class="phase-card-title">
+        <div class="cycle-layout-new">
+          <!-- フェーズ切り替えボタン群 -->
+          <div>
+            <div class="phase-tab-btn is-active" id="phaseBtn0" onclick="switchPhaseMedia(0)">
+              <div class="phase-tab-title">
                 <span>🌅 ① 朝のターン（制限時間：5分）</span>
-                <span class="phase-badge">タスク実行</span>
+                <span class="phase-tab-badge">タスク実行</span>
               </div>
               <p>
-                <b>昨晩の結果発表</b>（追放者・犠牲者・復活者）と勝敗判定 ➔ <b>本日のタスク発表</b> ➔ <b>ミニゲーム実行</b> ➔ <b>タスク成否＆貢献度開示</b>。
+                <b>昨晩の結果発表</b>（追放者・夜襲犠牲者）＆勝敗判定 ➔ <b>本日のタスク発表</b> ➔ <b>全員でミニゲーム実行</b> ➔ <b>貢献度開示</b>。
               </p>
             </div>
 
-            <!-- 昼 -->
-            <div class="phase-card" id="phaseCard1" onclick="showPhaseView(1)">
-              <div class="phase-card-title">
+            <div class="phase-tab-btn" id="phaseBtn1" onclick="switchPhaseMedia(1)">
+              <div class="phase-tab-title">
                 <span>☀️ ② 昼のターン（制限時間：5分）</span>
-                <span class="phase-badge">話し合い</span>
+                <span class="phase-tab-badge">話し合い</span>
               </div>
               <p>
                 生存者全員で話し合い。朝のタスク貢献度ランキングや、占い師・霊媒師の情報をもとに人狼を推理します。
               </p>
             </div>
 
-            <!-- 夜 -->
-            <div class="phase-card" id="phaseCard2" onclick="showPhaseView(2)">
-              <div class="phase-card-title">
+            <div class="phase-tab-btn" id="phaseBtn2" onclick="switchPhaseMedia(2)">
+              <div class="phase-tab-title">
                 <span>🌙 ③ 夜のターン（制限時間：5分）</span>
-                <span class="phase-badge">投票＆スキル</span>
+                <span class="phase-tab-badge">投票＆スキル</span>
               </div>
               <p>
-                <b>追放投票</b> ➔ （脱落者復活投票） ➔ <b>役職スキル発動</b>（占い・護衛・夜襲・蘇生）。占い師と霊媒師の結果はその場ですぐに画面に表示されます。
+                <b>追放投票</b> ➔ （脱落者復活投票） ➔ <b>役職スキル発動</b>（占い・護衛・夜襲・蘇生）。占い・霊媒の結果は画面に即時表示されます。
               </p>
             </div>
           </div>
 
-          <!-- 各フェーズの実画面表示シミュレーター -->
-          <div class="phone-simulator">
-            <div class="phone-notch"></div>
-            <div class="phone-screen-area">
-              <!-- Phase 0: 朝（実画面：タスク連打中） -->
-              <div class="sim-view is-active" id="phaseSim0">
-                <div style="display:flex;justify-content:space-between;align-items:center">
-                  <span style="font-size:11px;font-weight:800;color:#facc15">🌅 朝のターン（タスク実行）</span>
-                  <span style="font-size:10px;background:#1e293b;padding:2px 6px;border-radius:4px">残り 0:45</span>
-                </div>
-                <div class="sim-card">
-                  <div style="font-size:11px;font-weight:800;color:#38bdf8">本日のタスク：みんなで連打！</div>
-                  <div style="font-size:10px;color:#cbd5e1">1分間で全員合計 2,500回 を目指せ！</div>
-                  <div style="background:#1e293b;height:8px;border-radius:4px;overflow:hidden;margin:6px 0">
-                    <div style="background:#22c55e;width:68%;height:100%"></div>
-                  </div>
-                  <div style="font-size:12px;font-weight:800;text-align:right;color:#22c55e">現在：1,720 / 2,500 回</div>
-                </div>
-                <button type="button" class="sim-btn sim-btn--amber" style="padding:18px;font-size:15px;font-weight:900">
-                  👆 ここを連打！（MASH!!）
-                </button>
-                <div class="sim-card" style="font-size:10.5px">
-                  <b style="color:#22c55e">🎁 成功報酬：全員ナイト</b><br>
-                  今晩、市民全員が護衛能力を使えるようになります。
-                </div>
-              </div>
+          <!-- 右側：選択中フェーズの実際の画面スクリーンショット ＆ 演出動画 -->
+          <div class="phase-media-box">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <b style="font-size:13px;color:var(--text)" id="phaseMediaLabel">🌅 朝の実際の画面（タスク連打＆貢献度）</b>
+              <span class="badge badge--reward" id="phaseTypeBadge">実画面スクショ</span>
+            </div>
 
-              <!-- Phase 1: 昼（実画面：話し合い） -->
-              <div class="sim-view" id="phaseSim1">
-                <div style="display:flex;justify-content:space-between;align-items:center">
-                  <span style="font-size:11px;font-weight:800;color:#38bdf8">☀️ 昼のターン（話し合い）</span>
-                  <span style="font-size:10px;background:#1e293b;padding:2px 6px;border-radius:4px">残り 4:12</span>
-                </div>
-                <div class="sim-card">
-                  <div style="font-size:11px;color:#94a3b8;margin-bottom:4px">生存者一覧（5名生存）</div>
-                  <div style="display:grid;grid-template-columns:repeat(5, 1fr);gap:4px;text-align:center;font-size:9.5px">
-                    <div>👩<br>はなこ</div>
-                    <div>👨<br>けんじ</div>
-                    <div>🧑<br>そうた</div>
-                    <div>👧<br>みく</div>
-                    <div style="color:#38bdf8">😄<br>たろう</div>
-                  </div>
-                </div>
-                <div class="sim-card" style="font-size:11px">
-                  <div style="font-weight:800;color:#facc15;margin-bottom:4px">朝のタスク貢献度ランキング</div>
-                  <div>1位：けんじ（580回）</div>
-                  <div>2位：たろう（520回）</div>
-                  <div>3位：みく（410回）</div>
-                  <div style="color:#f87171">4位：そうた（120回）※怪しい？</div>
-                </div>
-                <div style="font-size:11px;color:#94a3b8;text-align:center;margin-top:auto">
-                  タスク貢献度や占い結果を手がかりに議論を進めてください
-                </div>
-              </div>
+            <div class="phase-screen-img">
+              <img id="phaseImg" src="img/actual_screen_morning_task.png" alt="実際のゲーム画面">
+            </div>
 
-              <!-- Phase 2: 夜（実画面：追放投票とスキル） -->
-              <div class="sim-view" id="phaseSim2">
-                <div style="display:flex;justify-content:space-between;align-items:center">
-                  <span style="font-size:11px;font-weight:800;color:#c084fc">🌙 夜のターン（追放投票＆スキル）</span>
-                  <span style="font-size:10px;background:#1e293b;padding:2px 6px;border-radius:4px">残り 1:30</span>
-                </div>
-                <div class="sim-card">
-                  <div style="font-size:11px;font-weight:800;color:#f87171;margin-bottom:6px">追放したいプレイヤーを選択</div>
-                  <div style="display:flex;flex-direction:column;gap:4px;font-size:11px">
-                    <label style="display:flex;align-items:center;gap:6px"><input type="radio" name="simVote"> 👩 はなこ</label>
-                    <label style="display:flex;align-items:center;gap:6px"><input type="radio" name="simVote"> 👨 けんじ</label>
-                    <label style="display:flex;align-items:center;gap:6px"><input type="radio" name="simVote" checked> 🧑 そうた</label>
-                    <label style="display:flex;align-items:center;gap:6px"><input type="radio" name="simVote"> 👧 みく</label>
-                  </div>
-                  <button type="button" class="sim-btn sim-btn--red" style="margin-top:8px">投票を確定する</button>
-                </div>
-                <div class="sim-card" style="font-size:10.5px">
-                  <b style="color:#38bdf8">🔮 占い師・霊媒師の即時結果</b><br>
-                  占い・霊媒を実行すると、結果（人間 or 人狼）がその場ですぐに画面にポップアップ表示されます。
-                </div>
-              </div>
+            <div style="font-size:12px;color:var(--text-muted);font-weight:700">
+              🎬 ターン開始演出動画（自動ループ再生）
+            </div>
+            <div class="phase-movie-wrap">
+              <video id="phaseVideo" src="movies/morning_attack.mp4" autoplay loop muted playsinline controls></video>
             </div>
           </div>
         </div>
@@ -1447,7 +1293,7 @@
         <button type="button" class="dot-btn is-active" data-slide="1" title="1. 概要">1</button>
         <button type="button" class="dot-btn" data-slide="2" title="2. 特徴">2</button>
         <button type="button" class="dot-btn" data-slide="3" title="3. 勝利条件">3</button>
-        <button type="button" class="dot-btn" data-slide="4" title="4. 始め方①（実画面）">4</button>
+        <button type="button" class="dot-btn" data-slide="4" title="4. 始め方①（実画面動画）">4</button>
         <button type="button" class="dot-btn" data-slide="5" title="5. 始め方②（役職確認）">5</button>
         <button type="button" class="dot-btn" data-slide="6" title="6. サイクル（朝昼夜）">6</button>
         <button type="button" class="dot-btn" data-slide="7" title="7. タスク＆効果">7</button>
@@ -1549,30 +1395,38 @@
       btnFullscreen.innerHTML = document.fullscreenElement ? '<span>✕</span> 解除' : '<span>⛶</span> 全画面';
     });
 
-    // Slide 4: 実画面シミュレーター切替
-    function showSimView(stepIdx) {
-      for (let i = 0; i < 3; i++) {
-        document.getElementById('simView' + i).classList.toggle('is-active', i === stepIdx);
-        document.getElementById('stepItem' + i).classList.toggle('is-active', i === stepIdx);
+    // Slide 6: フェーズメディア切替（実画面スクショ ＆ 演出動画）
+    const phaseMediaData = [
+      {
+        label: '🌅 朝の実際の画面（タスク連打＆貢献度）',
+        img: 'img/actual_screen_morning_task.png',
+        video: 'movies/morning_attack.mp4'
+      },
+      {
+        label: '☀️ 昼の実際の画面（話し合い＆生存者一覧）',
+        img: 'img/actual_screen_day_discuss.png',
+        video: 'movies/day_gather.mp4'
+      },
+      {
+        label: '🌙 夜の実際の画面（追放投票＆占い即時表示）',
+        img: 'img/actual_screen_night_vote.png',
+        video: 'movies/night_howl.mp4'
       }
-    }
+    ];
 
-    // Slide 5: 役職カード反転
-    let isRoleFlipped = false;
-    const simRoleInner = document.getElementById('simRoleInner');
-    const simRoleLabel = document.getElementById('simRoleLabel');
-    function toggleSimRoleCard() {
-      isRoleFlipped = !isRoleFlipped;
-      simRoleInner.style.transform = isRoleFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)';
-      simRoleLabel.textContent = isRoleFlipped ? '開示中：🐺 人狼神（人狼陣営）' : 'タップしてカードを開示';
-    }
+    function switchPhaseMedia(idx) {
+      const data = phaseMediaData[idx];
+      if (!data) return;
 
-    // Slide 6: 1日サイクル実画面切替
-    function showPhaseView(idx) {
       for (let i = 0; i < 3; i++) {
-        document.getElementById('phaseSim' + i).classList.toggle('is-active', i === idx);
-        document.getElementById('phaseCard' + i).classList.toggle('is-active', i === idx);
+        document.getElementById('phaseBtn' + i).classList.toggle('is-active', i === idx);
       }
+
+      document.getElementById('phaseMediaLabel').textContent = data.label;
+      document.getElementById('phaseImg').src = data.img;
+      const v = document.getElementById('phaseVideo');
+      v.src = data.video;
+      v.play().catch(() => {});
     }
 
     updateSlide(1);
