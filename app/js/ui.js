@@ -1153,6 +1153,14 @@ SCREENS.lobby = {
         </div>
       </button>
 
+      <!-- 🖥️ 解説スライドボタン（プロジェクター・投影用） -->
+      <a href="slides.html" target="_blank" rel="noopener" class="btn btn--solid btn--amber lobby-config-btn" style="margin-bottom:5px;text-decoration:none;box-shadow:0 0 12px rgba(251,191,36,0.3)">
+        <div style="display:flex;align-items:center;justify-content:space-between;width:100%">
+          <span style="display:flex;align-items:center;gap:6px">🖥️ <b>ルール解説スライド（動画あり）</b></span>
+          <span class="chip" style="background:#78350f;color:#fef3c7;font-size:10px">投影・閲覧 ➔</span>
+        </div>
+      </a>
+
       <!-- 役職・ルール設定ボタン（ポップアップで設定） -->
       ${host ? `
       <button type="button" class="btn btn--solid btn--violet lobby-config-btn" id="btnOpenRuleConfig">
