@@ -40,7 +40,7 @@
             </div>
 
             <div class="role-reveal-stage" id="previewRoleStage" style="flex:none;margin:2px auto">
-              <button type="button" class="flip" id="previewFlip" style="height:min(30dvh, 220px)" aria-label="カードをタップして反転">
+              <button type="button" class="flip flip--huge" id="previewFlip" aria-label="カードをタップして反転">
                 <div class="flip__inner">
                   <div class="flip__face"><img src="img/role_card_back.jpg" alt="役職カード裏面" width="571" height="1024"></div>
                   <div class="flip__face flip__front"><img id="previewRoleImg" src="img/role_wolf_god.jpg" alt="役職カード" width="571" height="1024"></div>
@@ -252,7 +252,7 @@
     import { S } from "./js/state.js";
     import { ROLES } from "./js/data.js";
     import { playMorningCutscene, playDayCutscene, playNightCutscene, playWolfSlashSound, playShieldClangSound, playDayAmbientSound, playNightAmbientSound, playResultRevealSound } from "./js/cutscenes.js";
-    import { triggerJudgeEffect, triggerConfetti, bindGhostStamps, triggerDramaticRoleReveal, spawnGhostStamp, showRoleListModal, openMyRoleConfirm } from "./js/ui.js";
+    import { triggerJudgeEffect, triggerConfetti, bindGhostStamps, triggerDramaticRoleReveal, spawnGhostStamp, showRoleListModal, openMyRoleConfirm, triggerDramaticResultReveal } from "./js/ui.js";
 
     S.players = {
       p1: { name: "たろう", avatarId: "1", alive: true },
@@ -447,23 +447,11 @@
     });
 
     document.getElementById("fxWinCit").addEventListener("click", () => {
-      const old = screen.querySelector(".win-fx-citizen, .win-fx-wolf");
-      old?.remove();
-      const fx = document.createElement("div");
-      fx.className = "win-fx-citizen";
-      screen.appendChild(fx);
-      playResultRevealSound("citizen");
-      setTimeout(() => fx.remove(), 4000);
+      triggerDramaticResultReveal(screen, "citizen");
     });
 
     document.getElementById("fxWinWolf").addEventListener("click", () => {
-      const old = screen.querySelector(".win-fx-citizen, .win-fx-wolf");
-      old?.remove();
-      const fx = document.createElement("div");
-      fx.className = "win-fx-wolf";
-      screen.appendChild(fx);
-      playResultRevealSound("wolf");
-      setTimeout(() => fx.remove(), 4000);
+      triggerDramaticResultReveal(screen, "wolf");
     });
 
     document.getElementById("btnTestRoleList")?.addEventListener("click", () => {

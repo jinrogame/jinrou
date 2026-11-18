@@ -5,7 +5,7 @@ import { roleCounts, capabilities, isWolfTeam, checkWin } from "./engine.js";
 import * as Host from "./host.js";
 import * as Room from "./room.js";
 import * as fb from "./firebase.js";
-import { playMorningCutscene, playDayCutscene, playNightCutscene, clearCutscene, playResultRevealSound } from "./cutscenes.js";
+import { playMorningCutscene, playDayCutscene, playNightCutscene, clearCutscene, playResultRevealSound, playHeartbeatSound, playTensionDrumrollSound } from "./cutscenes.js";
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -289,6 +289,91 @@ export function triggerDramaticRoleReveal({ cardEl, isWolf = false, stageEl, con
     cardEl.classList.add("is-flipped");
     onComplete?.();
   }, 1100);
+}
+
+/* ---------------- 最終結果発表：もったいぶり＆ド派手スプラッシュ（案A） ---------------- */
+export function triggerDramaticResultReveal(screenEl, winner = "citizen") {
+  if (!screenEl) return;
+  const isWolf = winner === "wolf";
+  const isDraw = winner === "draw";
+
+  // もったいぶり演出用ステージをオーバーレイとして挿入
+  const stage = document.createElement("div");
+  stage.className = "result-cinematic-stage";
+  stage.innerHTML = `
+    <div class="result-vignette" id="resVignette"></div>
+    <div class="result-suspense-wrap">
+      <div class="result-suspense-title" id="resSuspenseTitle">運命の時……</div>
+      <div class="result-suspense-sub" id="resSuspenseSub">勝敗が決しました</div>
+    </div>
+    <div class="result-banner-slam" id="resBannerSlam">
+      <div class="result-banner-text ${isWolf ? "is-wolf" : isDraw ? "" : "is-cit"}">
+        ${isWolf ? "🐺 人狼陣営 勝利！" : isDraw ? "⚖️ 引き分け" : "🏆 市民陣営 勝利！"}
+      </div>
+    </div>
+  `;
+  screenEl.appendChild(stage);
+
+  const vig = stage.querySelector("#resVignette");
+  const sub = stage.querySelector("#resSuspenseSub");
+  const banner = stage.querySelector("#resBannerSlam");
+
+  // ① 0.2s 〜 2.5s: 心音ドクンドクンと交互の明滅
+  const heartbeatTimers = [
+    { delay: 300, type: "cit", progress: 0 },
+    { delay: 1100, type: "wolf", progress: 0.35 },
+    { delay: 1800, type: "cit", progress: 0.65 },
+    { delay: 2400, type: "wolf", progress: 0.95 },
+  ];
+
+  heartbeatTimers.forEach(({ delay, type, progress }) => {
+    setTimeout(() => {
+      playHeartbeatSound(progress);
+      if (vig) {
+        vig.className = `result-vignette pulse-${type}`;
+      }
+    }, delay);
+  });
+
+  // ② 2.7s: ドラムロール開始 ＆ 「勝者は……」
+  setTimeout(() => {
+    if (sub) sub.textContent = "勝者は……";
+    playTensionDrumrollSound();
+  }, 2700);
+
+  // ③ 4.2s: 勝敗スプラッシュ！大爆発＆SLAM 飛び出し！
+  setTimeout(() => {
+    playResultRevealSound(winner);
+
+    // 画面シェイク
+    screenEl.classList.remove("role-quake");
+    void screenEl.offsetWidth;
+    screenEl.classList.add("role-quake");
+    setTimeout(() => screenEl.classList.remove("role-quake"), 500);
+
+    // バナースラム
+    if (banner) banner.classList.add("is-slammed");
+
+    // 市民勝利時は大量の紙吹雪、人狼勝利時は赤い瘴気
+    if (!isWolf && !isDraw) {
+      triggerConfetti(screenEl);
+      setTimeout(() => triggerConfetti(screenEl), 450);
+    }
+
+    // 衝撃波
+    const shockwave = document.createElement("div");
+    shockwave.className = "role-shockwave is-burst";
+    shockwave.style.setProperty("--accent", isWolf ? "#ef4444" : "#f59e0b");
+    stage.appendChild(shockwave);
+    setTimeout(() => shockwave.remove(), 750);
+  }, 4200);
+
+  // ④ 5.5s: 本編結果画面へカーテンオープン
+  setTimeout(() => {
+    stage.classList.add("is-dimmed");
+    screenEl.classList.add("is-revealed");
+    setTimeout(() => stage.remove(), 850);
+  }, 5500);
 }
 
 /* ------------------------------ 共通パーツ ------------------------------ */
@@ -902,19 +987,19 @@ SCREENS.role = {
     ctx = { revealed: false, revealing: false };
     return shell({
       body: `
-      <h1 class="hdr__title" style="justify-content:center">あなたの役職は…？</h1>
+      <h1 class="hdr__title" style="justify-content:center;font-size:17px;margin-bottom:4px">あなたの役職は…？</h1>
       <div class="role-reveal-stage" id="roleRevealStage">
-        <button type="button" class="flip" id="flip" aria-label="カードをタップして役職を確認">
+        <button type="button" class="flip flip--huge" id="flip" aria-label="カードをタップして役職を確認">
           <div class="flip__inner">
             <div class="flip__face"><img src="img/role_card_back.jpg" alt="役職カード（裏面）" width="571" height="1024"></div>
             <div class="flip__face flip__front"><img id="roleImg" src="img/role_card_back.jpg" alt="役職カード" width="571" height="1024"></div>
           </div>
         </button>
       </div>
-      <p class="hint-line" id="flipHint">👆 カードをタップしてめくる（他の人に見えないように！）</p>
-      <div class="card card--glow" id="roleInfo" hidden>
+      <p class="hint-line" id="flipHint" style="margin-top:6px">👆 カードをタップしてめくる（周囲に見えないように！）</p>
+      <div class="card card--glow" id="roleInfo" hidden style="margin-top:6px;animation:fadeInUp 0.4s ease-out">
         <h2 class="card__title"><span class="dot"></span><span id="roleName"></span><span class="chip" id="roleFaction" style="margin-left:auto"></span></h2>
-        <p class="muted" id="roleDesc"></p><div id="roleExtra"></div>
+        <p class="muted" id="roleDesc" style="font-size:12px;line-height:1.45"></p><div id="roleExtra"></div>
       </div>`,
       footer: okFooter("確認しました（OK）"),
     });
@@ -1450,7 +1535,7 @@ export function render() {
       playNightCutscene(S.room?.turn || 1, false);
     } else if (id === "finished") {
       clearCutscene();
-      playResultRevealSound(S.room?.winner || "citizen");
+      triggerDramaticResultReveal(root, S.room?.winner || "citizen");
     } else {
       clearCutscene();
     }

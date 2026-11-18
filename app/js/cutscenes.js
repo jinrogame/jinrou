@@ -95,6 +95,52 @@ function getCutsceneAudioCtx() {
   }
 }
 
+/** 結果発表用：心音ドクドク・ドラムロール（Web Audio API） */
+export function playHeartbeatSound(progress = 0) {
+  const ctx = getCutsceneAudioCtx();
+  if (!ctx) return;
+  try {
+    const now = ctx.currentTime;
+    // 心音：低音のドクン（2連打）
+    [0, 0.16].forEach((offset, idx) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "sine";
+      const startFreq = idx === 0 ? 82 + progress * 20 : 64 + progress * 15;
+      osc.frequency.setValueAtTime(startFreq, now + offset);
+      osc.frequency.exponentialRampToValueAtTime(32, now + offset + 0.18);
+      const vol = (idx === 0 ? 0.65 : 0.45) * (0.8 + progress * 0.4);
+      gain.gain.setValueAtTime(vol, now + offset);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + offset + 0.22);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(now + offset);
+      osc.stop(now + offset + 0.25);
+    });
+  } catch { /* ignore */ }
+}
+
+export function playTensionDrumrollSound() {
+  const ctx = getCutsceneAudioCtx();
+  if (!ctx) return;
+  try {
+    const now = ctx.currentTime;
+    // 緊張のドラムロール（スネアノイズ連打風）
+    const totalHits = 22;
+    for (let i = 0; i < totalHits; i++) {
+      const t = now + (i / totalHits) * 1.5;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "triangle";
+      osc.frequency.setValueAtTime(140 + (i / totalHits) * 80, t);
+      gain.gain.setValueAtTime(0.08 + (i / totalHits) * 0.22, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.06);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.07);
+    }
+  } catch { /* ignore */ }
+}
+
 /** 最終結果発表：勝利ファンファーレ / 敗北の鐘（Web Audio API） */
 export function playResultRevealSound(winner = "citizen") {
   const ctx = getCutsceneAudioCtx();
