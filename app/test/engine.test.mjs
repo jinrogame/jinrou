@@ -96,17 +96,33 @@ test("報酬/罰：夜襲封じ・夜襲+1・復活・全員ナイト", () => {
 test("勝敗判定", () => {
   // 人狼側と市民側が同数（1 vs 1）の場合は人狼勝利
   assert.equal(checkWin(["werewolf", "citizen"]), "wolf");
-  // 人狼側が市民側を上回る（2 vs 1）場合も人狼勝利
-  assert.equal(checkWin(["werewolf", "psycho", "citizen"]), "wolf");
+
+  // 【狂人・サイコキラーのカウントテスト】
+  // 人狼1人、狂人1人、市民1人（人狼1 vs 非人狼2）➔ 人狼が下回るためゲーム継続
+  assert.equal(checkWin(["werewolf", "madman", "citizen"]), null);
+  // 人狼1人、サイコ1人、市民1人（人狼1 vs 非人狼2）➔ 人狼が下回るためゲーム継続
+  assert.equal(checkWin(["werewolf", "psycho", "citizen"]), null);
+  // 人狼1人、狂人1人（人狼1 vs 非人狼1）➔ 同数成立で人狼勝利
+  assert.equal(checkWin(["werewolf", "madman"]), "wolf");
+  // 人狼1人、サイコ1人（人狼1 vs 非人狼1）➔ 同数成立で人狼勝利
+  assert.equal(checkWin(["werewolf", "psycho"]), "wolf");
+  // 人狼0人、狂人1人、市民1人 ➔ 人狼本体が全滅したため市民陣営の勝利
+  assert.equal(checkWin(["madman", "citizen"]), "citizen");
+  // 人狼0人、サイコ1人、市民1人 ➔ 人狼本体が全滅したため市民陣営の勝利
+  assert.equal(checkWin(["psycho", "citizen"]), "citizen");
+  // 人狼0人、狂人1人 ➔ 市民陣営の勝利
+  assert.equal(checkWin(["madman"]), "citizen");
+
   // 市民側の方が多い（1 vs 2）場合はゲーム継続（null）
   assert.equal(checkWin(["werewolf", "citizen", "citizen"]), null);
   // 人狼が全滅した場合は市民勝利
   assert.equal(checkWin(["citizen", "seer"]), "citizen");
-  // 全員人狼陣営
-  assert.equal(checkWin(["werewolf", "psycho"]), "wolf");
+
   // 最終ターン終了時判定
   assert.equal(finalWin(["werewolf", "citizen"]), "wolf");
   assert.equal(finalWin(["werewolf", "citizen", "citizen"]), "citizen");
+  assert.equal(finalWin(["werewolf", "madman", "citizen"]), "citizen"); // 1 vs 2 で人間側が多い
+  assert.equal(finalWin(["madman", "citizen"]), "citizen"); // 人狼0人
 });
 
 test("tallyTop / tallyTopWithTie: 多数決・スキップ・同票ルーレット候補", () => {

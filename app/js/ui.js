@@ -637,14 +637,14 @@ function renderManualTabContent(dlgEl, tabKey) {
               <td><b class="wolf">狂人</b><br><span class="tag-w">人狼</span></td>
               <td><span class="muted">なし</span></td>
               <td><span class="human">人間</span></td>
-              <td>人狼の味方をする人間。夜の行動はないが、占われても「人間」と出る。</td>
+              <td>人狼の味方をする人間。人狼陣営の勝利が自身の勝利だが、<b>勝敗判定の人狼数にはカウントされない（人狼全滅で市民勝利）。</b>占いは「人間」。</td>
             </tr>
             <tr>
               <td><img src="img/role_psycho.jpg" class="man-card-thumb" alt="サイコキラー"></td>
               <td><b class="wolf">サイコ</b><br><span class="tag-w">人狼</span></td>
               <td><span class="muted">なし</span></td>
               <td><span class="human">人間</span></td>
-              <td><b>夜に関わった（占い・護衛・襲撃・蘇生）プレイヤーを全員返り討ちにする。</b>初夜は無効。襲われても生存。</td>
+              <td><b>勝敗判定の人狼数にはカウントされない。</b>夜に関わった（占い・護衛・襲撃・蘇生）人を全員返り討ちにする。初夜は無効。襲われても生存。</td>
             </tr>
           </tbody>
         </table>

@@ -8,8 +8,8 @@ export const TIME = { intro: 180, day: 300, vote: 120, revive: 60, skill: 120, m
 export const ROLES = {
   wolf_god: { name: "人狼神", team: "wolf", img: "img/role_wolf_god.jpg", desc: "全員の役職が最初からわかる。夜に市民を襲撃する。（占い・霊媒では「人狼」）" },
   werewolf: { name: "人狼", team: "wolf", img: "img/role_werewolf.jpg", desc: "人狼同士は互いがわかる。協力して夜に市民を襲撃する。（占いでは「人狼」）" },
-  madman: { name: "狂人", team: "wolf", img: "img/role_madman.jpg", desc: "人狼の味方をする人間。夜の行動なし。占い結果は「人間」と出る。" },
-  psycho: { name: "サイコキラー", team: "wolf", img: "img/role_psycho.jpg", desc: "夜に自分へ関わった（占い・護衛・襲撃・蘇生）プレイヤーを返り討ちにする。占い結果は「人間」。" },
+  madman: { name: "狂人", team: "wolf", img: "img/role_madman.jpg", desc: "人狼の味方をする人間。人狼陣営の勝利が自身の勝利となるが、勝敗判定の人狼数にはカウントされない（人狼全滅で市民勝利）。占い結果は「人間」。" },
+  psycho: { name: "サイコキラー", team: "wolf", img: "img/role_psycho.jpg", desc: "人狼陣営だが人狼数にはカウントされない。夜に関わった（占い・護衛・襲撃・蘇生）プレイヤーを全員返り討ちにする。占い結果は「人間」。" },
   citizen: { name: "市民", team: "citizen", img: "img/role_citizen.jpg", desc: "特殊能力なし。議論・タスク貢献度・投票で人狼を追放しよう。" },
   seer: { name: "占い師", team: "citizen", img: "img/role_seer.jpg", desc: "毎夜1人を占い「人狼」か「人間」かその場ですぐ知る。" },
   medium: { name: "霊媒師", team: "citizen", img: "img/role_medium.jpg", desc: "夜に、直前に追放された人が「人狼」だったかその場ですぐ知る。" },

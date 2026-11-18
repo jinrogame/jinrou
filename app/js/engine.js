@@ -12,6 +12,8 @@ export const shuffle = (arr, rng = Math.random) => {
 export const pickOne = (arr, rng = Math.random) => arr[Math.floor(rng() * arr.length)];
 export const teamOf = (role) => ROLES[role]?.team ?? "citizen";
 export const isWolfTeam = (role) => teamOf(role) === "wolf";
+/** 勝敗判定時、人狼（襲撃する狼本体）として数える役職。狂人・サイコキラーは数えない（人間扱い） */
+export const isWolfCount = (role) => role === "wolf_god" || role === "werewolf";
 
 /** 配役の枚数を計算 */
 export function roleCounts(config, playerCount) {
@@ -85,24 +87,24 @@ export function capabilities(role, effects = {}, ctx = {}) {
 /** 勝敗判定（朝・夜明け時点の即時決着判定）。null=継続
  * ルール:
  * - 全滅（0 vs 0）: 引き分け
- * - 人狼が0人: 市民陣営の勝利
- * - 市民が0人、または 人狼側の人数 >= 市民側の人数: 人狼陣営の勝利
+ * - 人狼本体（人狼神・人狼）が0人: 市民陣営の勝利（狂人・サイコキラーが生き残っていても市民勝利）
+ * - 人狼本体の人数 >= 非人狼（狂人・サイコキラー・市民側すべて）の人数: 人狼陣営の勝利
  */
 export function checkWin(aliveRoles) {
-  const w = aliveRoles.filter(isWolfTeam).length;
-  const c = aliveRoles.length - w;
-  if (w === 0 && c === 0) return "draw";
+  const w = aliveRoles.filter(isWolfCount).length;
+  const h = aliveRoles.length - w;
+  if (w === 0 && h === 0) return "draw";
   if (w === 0) return "citizen";
-  if (w >= c) return "wolf";
+  if (w >= h) return "wolf";
   return null;
 }
 /** 最大ターン終了時の判定 */
 export function finalWin(aliveRoles) {
-  const w = aliveRoles.filter(isWolfTeam).length;
-  const c = aliveRoles.length - w;
+  const w = aliveRoles.filter(isWolfCount).length;
+  const h = aliveRoles.length - w;
   if (w === 0) return "citizen";
-  if (w >= c) return "wolf";
-  return c > w ? "citizen" : "wolf";
+  if (w >= h) return "wolf";
+  return h > w ? "citizen" : "wolf";
 }
 
 /**
