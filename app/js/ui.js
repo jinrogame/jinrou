@@ -527,6 +527,325 @@ document.getElementById("btnCloseRoleList")?.addEventListener("click", () => {
   document.getElementById("roleListDialog")?.close();
 });
 
+/** 📖 遊び方・ゲームマニュアルモーダル（タブ形式で快適閲覧） */
+let currentManualTab = "manRules";
+
+export function showManualModal(targetTab = "manRules") {
+  const dlgEl = document.getElementById("manualDialog");
+  if (!dlgEl) return;
+  currentManualTab = targetTab;
+  renderManualTabContent(dlgEl, currentManualTab);
+  if (!dlgEl.open) dlgEl.showModal();
+}
+
+function renderManualTabContent(dlgEl, tabKey) {
+  // タブボタンのアクティブ状態更新
+  dlgEl.querySelectorAll(".manual-tab-btn").forEach((btn) => {
+    btn.classList.toggle("is-active", btn.dataset.manTab === tabKey);
+  });
+
+  const content = dlgEl.querySelector("#manualContent");
+  if (!content) return;
+
+  if (tabKey === "manRules") {
+    content.innerHTML = `
+      <div class="card card--blue" style="padding:10px 12px;margin-bottom:8px">
+        <h3 style="font-size:14px;margin:0 0 4px;color:var(--cyan)">🎯 どんなゲーム？</h3>
+        <p style="font-size:12px;line-height:1.55;color:#e2e8f0;margin:0">
+          市民陣営と人狼陣営に分かれて戦う正体隠匿系ゲームです。<br>
+          通常の人狼と異なり、<b>毎朝全員でミニゲームに挑戦</b>し、成功すると市民に有利な報酬、失敗するとペナルティ（罰）が発生します！
+        </p>
+      </div>
+
+      <div class="card card--red" style="padding:10px 12px;margin-bottom:8px">
+        <h3 style="font-size:14px;margin:0 0 6px;color:#f87171">⚖️ 勝敗条件（超重要！）</h3>
+        <div style="font-size:12px;line-height:1.6;color:#f8fafc">
+          <div style="margin-bottom:6px">
+            <b class="human">🧑 市民陣営の勝利：</b><br>
+            村に潜む <span class="wolf">人狼陣営が全滅</span> したら即座に市民の勝利！
+          </div>
+          <div style="margin-bottom:6px">
+            <b class="wolf">🐺 人狼陣営の勝利：</b><br>
+            市民が全滅するか、<b>朝（夜明け）の時点で「人狼の人数 ≧ 市民の人数」（同数以上）</b> になったら即座に人狼の勝利！
+          </div>
+          <div>
+            <b class="accent">🔄 最大ターン終了時：</b><br>
+            設定ターン終了時点で人数が多い陣営の勝利（同数時は人狼勝利）。
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="padding:10px 12px">
+        <h3 style="font-size:14px;margin:0 0 8px;color:#fbbf24">🔄 1日のゲームサイクル</h3>
+        <ol class="manual-cycle-list">
+          <li>
+            <b style="color:#c084fc">🌙 0ターン目：初日の夜（顔合わせ）</b>
+            <p>占い師のみ1人を占えます（初日はサイコ返り討ち無効）。他の人は説明を読んでOKを押し夜が明けます。</p>
+          </li>
+          <li>
+            <b style="color:#fbbf24">☀️ 朝のターン：結果発表 ＆ ミニゲーム挑戦</b>
+            <p>昨晩の犠牲者や追放者を発表。全員でミニゲーム（1分間）に挑み、成功で報酬・失敗で罰が発生！各自の連打数や回答が公開されます。</p>
+          </li>
+          <li>
+            <b style="color:#38bdf8">🗣️ 昼のターン：話し合い（5分間）</b>
+            <p>会話やタスク貢献度、占い結果をもとに「誰が人狼か？」をリアルで議論。脱落者も「幽霊スタンプ」で参加可能！</p>
+          </li>
+          <li>
+            <b style="color:#f43f5e">⚖️ 夜のターン：追放投票 ＆ スキル発動</b>
+            <p>怪しい人に投票して追放者を決定。人狼の夜襲、占い、護衛、蘇生などの夜のスキルを一斉発動します。</p>
+          </li>
+        </ol>
+      </div>
+    `;
+  } else if (tabKey === "manRoles") {
+    content.innerHTML = `
+      <div style="font-size:11px;color:var(--muted);margin-bottom:6px;line-height:1.4">
+        ※画像タップで実際のカード絵柄を確認できます。
+      </div>
+
+      <h3 style="font-size:13px;color:#f87171;margin:8px 0 6px;display:flex;align-items:center;gap:4px">
+        <span>🐺</span> 人狼陣営（全4種）
+      </h3>
+      <div class="manual-table-wrap">
+        <table class="manual-table">
+          <thead>
+            <tr>
+              <th style="width:58px">カード</th>
+              <th style="width:72px">役職名</th>
+              <th style="width:48px">夜襲</th>
+              <th style="width:48px">占い</th>
+              <th>能力詳細</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><img src="img/role_wolf_god.jpg" class="man-card-thumb" alt="人狼神"></td>
+              <td><b class="wolf">人狼神</b><br><span class="tag-w">人狼</span></td>
+              <td><span class="ok">あり</span></td>
+              <td><span class="wolf">人狼</span></td>
+              <td><b>最初から全員の役職がすべてわかる。</b>人狼と協力して夜に市民を襲撃する。</td>
+            </tr>
+            <tr>
+              <td><img src="img/role_werewolf.jpg" class="man-card-thumb" alt="人狼"></td>
+              <td><b class="wolf">人狼</b><br><span class="tag-w">人狼</span></td>
+              <td><span class="ok">あり</span></td>
+              <td><span class="wolf">人狼</span></td>
+              <td>人狼同士（人狼神含む）はお互いがわかる。協力して夜に市民を襲撃する。</td>
+            </tr>
+            <tr>
+              <td><img src="img/role_madman.jpg" class="man-card-thumb" alt="狂人"></td>
+              <td><b class="wolf">狂人</b><br><span class="tag-w">人狼</span></td>
+              <td><span class="muted">なし</span></td>
+              <td><span class="human">人間</span></td>
+              <td>人狼の味方をする人間。夜の行動はないが、占われても「人間」と出る。</td>
+            </tr>
+            <tr>
+              <td><img src="img/role_psycho.jpg" class="man-card-thumb" alt="サイコキラー"></td>
+              <td><b class="wolf">サイコ</b><br><span class="tag-w">人狼</span></td>
+              <td><span class="muted">なし</span></td>
+              <td><span class="human">人間</span></td>
+              <td><b>夜に関わった（占い・護衛・襲撃・蘇生）プレイヤーを全員返り討ちにする。</b>初夜は無効。襲われても生存。</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 style="font-size:13px;color:#38bdf8;margin:14px 0 6px;display:flex;align-items:center;gap:4px">
+        <span>🛡️</span> 市民陣営（全7種）
+      </h3>
+      <div class="manual-table-wrap">
+        <table class="manual-table">
+          <thead>
+            <tr>
+              <th style="width:58px">カード</th>
+              <th style="width:72px">役職名</th>
+              <th style="width:48px">行動</th>
+              <th style="width:48px">占い</th>
+              <th>能力詳細</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><img src="img/role_seer.jpg" class="man-card-thumb" alt="占い師"></td>
+              <td><b class="human">占い師</b><br><span class="tag-c">市民</span></td>
+              <td>占い</td>
+              <td><span class="human">人間</span></td>
+              <td>毎夜1人を占い、その場で「人狼」か「人間」か知る（初日夜も実行可能）。</td>
+            </tr>
+            <tr>
+              <td><img src="img/role_knight.jpg" class="man-card-thumb" alt="騎士"></td>
+              <td><b class="human">騎士</b><br><span class="tag-c">市民</span></td>
+              <td>護衛</td>
+              <td><span class="human">人間</span></td>
+              <td>毎夜1人を人狼の襲撃から守る（自分自身は守れない）。</td>
+            </tr>
+            <tr>
+              <td><img src="img/role_medium.jpg" class="man-card-thumb" alt="霊媒師"></td>
+              <td><b class="human">霊媒師</b><br><span class="tag-c">市民</span></td>
+              <td>霊媒</td>
+              <td><span class="human">人間</span></td>
+              <td>夜に、直前に追放された人が「人狼」だったかその場ですぐ知る。</td>
+            </tr>
+            <tr>
+              <td><img src="img/role_lovers.jpg" class="man-card-thumb" alt="恋人"></td>
+              <td><b class="human">恋人</b><br><span class="tag-c">市民</span></td>
+              <td><span class="muted">なし</span></td>
+              <td><span class="human">人間</span></td>
+              <td>2人1組。お互いが味方とわかる。<b>片方が死ぬともう片方も後追い死亡する。</b></td>
+            </tr>
+            <tr>
+              <td><img src="img/role_doctor.jpg" class="man-card-thumb" alt="奇跡の医者"></td>
+              <td><b class="human">医者</b><br><span class="tag-c">市民</span></td>
+              <td>蘇生</td>
+              <td><span class="human">人間</span></td>
+              <td><b>ゲーム中1回のみ死者を蘇生。</b>サイコキラーを蘇生すると自身が死亡する。</td>
+            </tr>
+            <tr>
+              <td><img src="img/role_cosplayer.jpg" class="man-card-thumb" alt="コスプレイヤー"></td>
+              <td><b class="human">コスプレ</b><br><span class="tag-c">市民</span></td>
+              <td>護衛</td>
+              <td><span class="wolf">人狼</span></td>
+              <td>騎士と同じく毎夜1人を守れるが、衣装のせいで<b>占われると「人狼」と判定される。</b></td>
+            </tr>
+            <tr>
+              <td><img src="img/role_citizen.jpg" class="man-card-thumb" alt="市民"></td>
+              <td><b class="human">市民</b><br><span class="tag-c">市民</span></td>
+              <td><span class="muted">なし</span></td>
+              <td><span class="human">人間</span></td>
+              <td>特殊能力なし。議論・タスク貢献度・推理・投票で人狼追放を目指す。</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    `;
+  } else if (tabKey === "manMinigames") {
+    content.innerHTML = `
+      <h3 style="font-size:13px;color:#fbbf24;margin:4px 0 6px;display:flex;align-items:center;gap:4px">
+        <span>🎮</span> ミニゲーム一覧（全5種・毎朝抽選）
+      </h3>
+      <div class="manual-table-wrap">
+        <table class="manual-table">
+          <thead>
+            <tr>
+              <th style="width:110px">ミニゲーム</th>
+              <th style="width:100px">クリア条件</th>
+              <th>ルール詳細</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>👆 みんなで連打！</b></td>
+              <td><span class="accent">生存数×500回</span></td>
+              <td>1分間で全員で画面を連打！個人の連打数がそのまま貢献度になります。</td>
+            </tr>
+            <tr>
+              <td><b>🤝 気持ちを合わせろ！</b></td>
+              <td><span class="accent">全員一致</span></td>
+              <td>お題（例：赤い果物【ひらがな】）に全員同じ回答を入力できればクリア！</td>
+            </tr>
+            <tr>
+              <td><b>🚫 かぶっちゃだめよ！</b></td>
+              <td><span class="accent">全員バラバラ</span></td>
+              <td>お題に全員が被らず別々の回答を入力できればクリア！1人でも被ると失敗。</td>
+            </tr>
+            <tr>
+              <td><b>⏱️ みんな答えろ！</b></td>
+              <td><span class="accent">全員順番に回答</span></td>
+              <td>お題（例：都道府県【漢字】）に1人ずつ順番に重複なく回答するリレー形式！</td>
+            </tr>
+            <tr>
+              <td><b>🔟 10秒チャレンジ！</b></td>
+              <td><span class="accent">±0.5秒以内</span></td>
+              <td>体内時計で10.0秒（9.5〜10.5秒）を狙ってストップ！途中から表示が隠れます。</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 style="font-size:13px;color:#34d399;margin:14px 0 6px;display:flex;align-items:center;gap:4px">
+        <span>✨</span> 成功報酬（メリット：全5種から1つ）
+      </h3>
+      <div class="manual-table-wrap">
+        <table class="manual-table">
+          <thead>
+            <tr>
+              <th style="width:120px">報酬名</th>
+              <th>効果詳細</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b style="color:#34d399">🛡️ 全員ナイト</b></td>
+              <td>今晩1回限り、市民全員がナイト（護衛）スキルを使用可能になります。</td>
+            </tr>
+            <tr>
+              <td><b style="color:#34d399">🔮 全員占い師</b></td>
+              <td>今晩1回限り、全員が占い師の能力を一度だけ使えるようになります。</td>
+            </tr>
+            <tr>
+              <td><b style="color:#34d399">💉 脱落者1名復活</b></td>
+              <td>夜に脱落者を1人、投票で復活できます（人狼を復活させるリスクあり）。</td>
+            </tr>
+            <tr>
+              <td><b style="color:#34d399">🚫 夜襲封じ</b></td>
+              <td>今晩1回限り、人狼による夜襲が封じられ犠牲者が0人になります。</td>
+            </tr>
+            <tr>
+              <td><b style="color:#34d399">👁️ 人狼生存数公開</b></td>
+              <td>現在生き残っている人狼陣営の人数が全員に開示されます。</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 style="font-size:13px;color:#f87171;margin:14px 0 6px;display:flex;align-items:center;gap:4px">
+        <span>💀</span> 失敗時の罰（デメリット：全3種から1つ）
+      </h3>
+      <div class="manual-table-wrap">
+        <table class="manual-table">
+          <thead>
+            <tr>
+              <th style="width:120px">罰名</th>
+              <th>効果詳細</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b style="color:#f87171">🐺 夜襲対象＋1人</b></td>
+              <td>今晩の人狼の夜襲犠牲者が＋1人増え、合計2人が襲撃されます。</td>
+            </tr>
+            <tr>
+              <td><b style="color:#f87171">❌ 占い師無効</b></td>
+              <td>今晩1回限り、占い師のスキルが無効（使用不可）になります。</td>
+            </tr>
+            <tr>
+              <td><b style="color:#f87171">⚖️ 2人追放</b></td>
+              <td>今晩の追放投票で、得票上位の「2人」が同時に追放されます。</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    `;
+  }
+}
+
+// マニュアルタブ切り替えのイベント委譲
+document.getElementById("manualDialog")?.addEventListener("click", (e) => {
+  const dlgEl = document.getElementById("manualDialog");
+  if (e.target === dlgEl) {
+    dlgEl.close();
+    return;
+  }
+  const tabBtn = e.target.closest(".manual-tab-btn");
+  if (tabBtn && tabBtn.dataset.manTab) {
+    currentManualTab = tabBtn.dataset.manTab;
+    renderManualTabContent(dlgEl, currentManualTab);
+  }
+});
+document.getElementById("btnCloseManual")?.addEventListener("click", () => {
+  document.getElementById("manualDialog")?.close();
+});
+
 /** 自分の役職確認ダイアログ（誤タップ防止ステップ付き） */
 export function openMyRoleConfirm() {
   const dlgEl = document.getElementById("myRoleDialog");
@@ -599,6 +918,7 @@ phone?.addEventListener("click", (e) => {
   if (e.target.closest("[data-leave-room]")) confirmLeaveRoom();
   if (e.target.closest("[data-open-role-list]")) showRoleListModal();
   if (e.target.closest("[data-check-my-role]")) openMyRoleConfirm();
+  if (e.target.closest("#btnOpenManual")) showManualModal();
 });
 
 function syncOk(r, required, label, canOk = true) {
@@ -824,6 +1144,14 @@ SCREENS.lobby = {
         </div>
         <div class="avatar-grid" id="lobbyAvatars"></div>
       </div>
+
+      <!-- 📖 遊び方・マニュアルボタン（全員閲覧可能） -->
+      <button type="button" class="btn btn--solid btn--cyan lobby-config-btn" id="btnOpenManual" style="margin-bottom:5px;box-shadow:0 0 12px rgba(56,189,248,0.35)">
+        <div style="display:flex;align-items:center;justify-content:space-between;width:100%">
+          <span style="display:flex;align-items:center;gap:6px">📖 <b>遊び方・ルールマニュアル</b></span>
+          <span class="chip" style="background:#0369a1;color:#f0f9ff;font-size:10px">読む ➔</span>
+        </div>
+      </button>
 
       <!-- 役職・ルール設定ボタン（ポップアップで設定） -->
       ${host ? `

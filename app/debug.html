@@ -171,8 +171,9 @@
             <div class="card card--amber">
               <h2 class="card__title"><span class="dot"></span>📜 ポップアップ機能テスト</h2>
               <div class="config-grid-2">
+                <button type="button" class="btn btn--solid btn--cyan btn--sm" id="btnTestManual">📖 遊び方マニュアル</button>
                 <button type="button" class="btn btn--solid btn--cyan btn--sm" id="btnTestRoleList">📜 設定役職一覧＆説明</button>
-                <button type="button" class="btn btn--solid btn--amber btn--sm" id="btnTestMyRole">🃏 自分の役職確認（確認画面つき）</button>
+                <button type="button" class="btn btn--solid btn--amber btn--sm" id="btnTestMyRole" style="grid-column:1/-1">🃏 自分の役職確認（確認画面つき）</button>
               </div>
             </div>
           </div>
@@ -225,6 +226,21 @@
     </div>
   </dialog>
 
+  <!-- 📖 遊び方・ゲームマニュアルモーダル（タブ形式で快適閲覧） -->
+  <dialog class="result result--config manual-dialog" id="manualDialog" aria-labelledby="manualTitle">
+    <div class="result__ico">📖</div>
+    <h2 class="result__title" id="manualTitle">遊び方・ゲームマニュアル</h2>
+    <div class="manual-tabs" role="tablist">
+      <button type="button" class="manual-tab-btn is-active" data-man-tab="manRules">📜 基本ルール</button>
+      <button type="button" class="manual-tab-btn" data-man-tab="manRoles">🃏 役職一覧</button>
+      <button type="button" class="manual-tab-btn" data-man-tab="manMinigames">🎯 タスク＆効果</button>
+    </div>
+    <div class="config-modal-scroll manual-modal-scroll" id="manualContent"></div>
+    <div style="margin-top:10px">
+      <button type="button" class="btn btn--solid btn--cyan" id="btnCloseManual">マニュアルを閉じる</button>
+    </div>
+  </dialog>
+
   <!-- 自分の役職確認ダイアログ（誤タップ防止確認付き） -->
   <dialog class="result result--config" id="myRoleDialog" aria-labelledby="myRoleTitle">
     <div id="myRoleConfirmStep">
@@ -252,7 +268,7 @@
     import { S } from "./js/state.js";
     import { ROLES } from "./js/data.js";
     import { playMorningCutscene, playDayCutscene, playNightCutscene, playWolfSlashSound, playShieldClangSound, playDayAmbientSound, playNightAmbientSound, playResultRevealSound } from "./js/cutscenes.js";
-    import { triggerJudgeEffect, triggerConfetti, bindGhostStamps, triggerDramaticRoleReveal, spawnGhostStamp, showRoleListModal, openMyRoleConfirm, triggerDramaticResultReveal } from "./js/ui.js";
+    import { triggerJudgeEffect, triggerConfetti, bindGhostStamps, triggerDramaticRoleReveal, spawnGhostStamp, showRoleListModal, openMyRoleConfirm, triggerDramaticResultReveal, showManualModal } from "./js/ui.js";
 
     S.players = {
       p1: { name: "たろう", avatarId: "1", alive: true },
@@ -452,6 +468,10 @@
 
     document.getElementById("fxWinWolf").addEventListener("click", () => {
       triggerDramaticResultReveal(screen, "wolf");
+    });
+
+    document.getElementById("btnTestManual")?.addEventListener("click", () => {
+      showManualModal();
     });
 
     document.getElementById("btnTestRoleList")?.addEventListener("click", () => {
