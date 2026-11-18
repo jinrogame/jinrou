@@ -1159,11 +1159,15 @@ dialog.manual-dialog {
   box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
 }
 .manual-modal-scroll {
+  display: block !important;
   max-height: calc(88dvh - 180px);
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   padding-right: 4px;
+}
+.manual-modal-scroll > * {
+  flex-shrink: 0;
 }
 .manual-cycle-list {
   margin: 0;
