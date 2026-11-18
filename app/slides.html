@@ -2,29 +2,34 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>ルール解説プレゼンテーション | TASK & MYSTERY WEREWOLF</title>
-  <meta name="theme-color" content="#0a0e17">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ルール・操作説明スライド | TASK & MYSTERY WEREWOLF</title>
+  <meta name="theme-color" content="#f8fafc">
   <link rel="icon" href="favicon.ico">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700;900&family=Noto+Sans+JP:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700;900&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0a0e17;
-      --bg-card: rgba(18, 25, 43, 0.85);
-      --bg-card-hover: rgba(26, 36, 62, 0.95);
-      --border: rgba(0, 255, 204, 0.22);
-      --border-bright: rgba(0, 255, 204, 0.6);
-      --cyan: #00ffcc;
-      --cyan-glow: rgba(0, 255, 204, 0.4);
-      --amber: #ffb800;
-      --crimson: #ff3366;
-      --purple: #a855f7;
-      --blue: #38bdf8;
-      --green: #22c55e;
-      --text: #f1f5f9;
-      --text-muted: #94a3b8;
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --surface-sub: #f1f5f9;
+      --border: #e2e8f0;
+      --border-strong: #cbd5e1;
+      --primary: #0284c7;
+      --primary-light: #e0f2fe;
+      --primary-dark: #0369a1;
+      --wolf: #dc2626;
+      --wolf-light: #fee2e2;
+      --amber: #d97706;
+      --amber-light: #fef3c7;
+      --green: #16a34a;
+      --green-light: #dcfce7;
+      --text: #0f172a;
+      --text-sub: #475569;
+      --text-muted: #64748b;
+      --shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
+      --shadow-lg: 0 10px 30px rgba(15, 23, 42, 0.1);
       --font-display: 'Chakra Petch', sans-serif;
       --font-body: 'Noto Sans JP', sans-serif;
     }
@@ -43,30 +48,12 @@
       background: var(--bg);
       color: var(--text);
       font-family: var(--font-body);
-      font-size: 15px;
-      line-height: 1.5;
-      user-select: none;
+      font-size: 14.5px;
+      line-height: 1.6;
     }
 
-    /* 背景グラデーション＆グリッド */
-    .bg-grid {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 0;
-      background:
-        radial-gradient(circle at 15% 20%, rgba(0, 255, 204, 0.08) 0%, transparent 40%),
-        radial-gradient(circle at 85% 80%, rgba(168, 85, 247, 0.08) 0%, transparent 40%),
-        radial-gradient(circle at 50% 50%, rgba(255, 51, 102, 0.04) 0%, transparent 60%),
-        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-      background-size: 100% 100%, 100% 100%, 100% 100%, 40px 40px, 40px 40px;
-    }
-
-    /* アプリ全体ラッパー */
+    /* 全体コンテナ */
     .deck-container {
-      position: relative;
-      z-index: 1;
       display: flex;
       flex-direction: column;
       width: 100vw;
@@ -74,18 +61,17 @@
       overflow: hidden;
     }
 
-    /* トップバー */
+    /* トップヘッダーバー */
     .top-bar {
       display: flex;
       align-items: center;
       justify-content: space-between;
       height: 52px;
       padding: 0 20px;
-      background: rgba(10, 14, 23, 0.85);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
       flex-shrink: 0;
-      z-index: 10;
+      z-index: 20;
     }
 
     .brand {
@@ -95,27 +81,21 @@
       text-decoration: none;
       color: var(--text);
     }
-    .brand__icon {
-      font-size: 20px;
-      filter: drop-shadow(0 0 8px var(--cyan));
-    }
+    .brand__icon { font-size: 20px; }
     .brand__title {
       font-family: var(--font-display);
-      font-weight: 700;
+      font-weight: 900;
       font-size: 16px;
-      letter-spacing: 1px;
-      color: var(--cyan);
-      text-shadow: 0 0 10px var(--cyan-glow);
+      color: var(--primary-dark);
+      letter-spacing: 0.5px;
     }
-    .brand__badge {
-      display: inline-block;
-      padding: 2px 8px;
+    .brand__sub {
       font-size: 11px;
-      font-weight: 600;
-      background: rgba(0, 255, 204, 0.12);
-      border: 1px solid var(--border);
+      font-weight: 700;
+      color: var(--text-muted);
+      padding: 2px 8px;
+      background: var(--surface-sub);
       border-radius: 999px;
-      color: var(--cyan);
     }
 
     .top-actions {
@@ -123,42 +103,38 @@
       align-items: center;
       gap: 10px;
     }
-
-    .slide-counter {
+    .counter-badge {
       font-family: var(--font-display);
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 700;
-      color: var(--text-muted);
+      color: var(--text-sub);
       padding: 4px 10px;
-      background: rgba(255, 255, 255, 0.05);
+      background: var(--surface-sub);
       border-radius: 6px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border);
     }
-    .slide-counter b {
-      color: var(--cyan);
-    }
+    .counter-badge b { color: var(--primary); font-size: 15px; }
 
-    .btn-icon {
-      display: flex;
+    .btn-top {
+      display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       height: 34px;
       padding: 0 12px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
       border-radius: 6px;
       color: var(--text);
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
+      font-size: 12.5px;
+      font-weight: 700;
       text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s;
     }
-    .btn-icon:hover {
-      background: rgba(0, 255, 204, 0.15);
-      border-color: var(--cyan);
-      color: var(--cyan);
-      box-shadow: 0 0 12px var(--cyan-glow);
+    .btn-top:hover {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #ffffff;
     }
 
     /* スライド表示領域 */
@@ -166,965 +142,684 @@
       position: relative;
       flex: 1;
       width: 100%;
-      height: calc(100vh - 52px - 60px);
       overflow: hidden;
     }
 
     .slide {
       position: absolute;
       inset: 0;
-      padding: 24px 32px;
+      padding: 24px 32px 32px;
       display: flex;
       flex-direction: column;
+      gap: 16px;
       opacity: 0;
-      transform: translateX(40px) scale(0.98);
+      transform: translateX(30px);
       pointer-events: none;
-      transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: opacity 0.3s ease, transform 0.3s ease;
       overflow-y: auto;
       overflow-x: hidden;
-      scrollbar-width: thin;
-      scrollbar-color: rgba(0, 255, 204, 0.3) transparent;
     }
-
-    .slide::-webkit-scrollbar {
-      width: 6px;
-    }
-    .slide::-webkit-scrollbar-thumb {
-      background: rgba(0, 255, 204, 0.3);
-      border-radius: 3px;
-    }
-
     .slide.is-active {
       opacity: 1;
-      transform: translateX(0) scale(1);
+      transform: translateX(0);
       pointer-events: auto;
       z-index: 2;
     }
-
     .slide.is-prev {
       opacity: 0;
-      transform: translateX(-40px) scale(0.98);
+      transform: translateX(-30px);
     }
 
-    /* ボトムバー */
+    /* ボトムナビゲーションバー */
     .bottom-bar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      height: 60px;
-      padding: 0 24px;
-      background: rgba(10, 14, 23, 0.9);
-      backdrop-filter: blur(10px);
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      height: 56px;
+      padding: 0 20px;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
       flex-shrink: 0;
-      z-index: 10;
+      z-index: 20;
     }
 
-    .nav-btn {
+    .btn-nav {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 6px;
-      min-width: 110px;
-      height: 40px;
-      padding: 0 16px;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      min-width: 105px;
+      height: 38px;
+      padding: 0 14px;
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
       border-radius: 8px;
       color: var(--text);
-      font-size: 14px;
+      font-size: 13.5px;
       font-weight: 700;
       cursor: pointer;
       transition: all 0.2s;
     }
-    .nav-btn:hover:not(:disabled) {
-      background: var(--cyan);
-      color: #0a0e17;
-      border-color: var(--cyan);
-      box-shadow: 0 0 16px var(--cyan-glow);
+    .btn-nav--primary {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
     }
-    .nav-btn:disabled {
-      opacity: 0.3;
+    .btn-nav:hover:not(:disabled) {
+      background: var(--primary-dark);
+      color: #ffffff;
+      border-color: var(--primary-dark);
+    }
+    .btn-nav:disabled {
+      opacity: 0.35;
       cursor: not-allowed;
     }
 
     .dots-nav {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 6px;
     }
-
     .dot-btn {
-      position: relative;
       width: 28px;
       height: 28px;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      color: var(--text-muted);
+      background: var(--surface-sub);
+      border: 1px solid var(--border);
+      color: var(--text-sub);
       font-family: var(--font-display);
-      font-size: 11px;
+      font-size: 11.5px;
       font-weight: 700;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.2s ease;
+      transition: all 0.2s;
     }
     .dot-btn:hover {
-      background: rgba(0, 255, 204, 0.2);
-      color: var(--cyan);
-      border-color: var(--cyan);
+      background: var(--primary-light);
+      color: var(--primary);
+      border-color: var(--primary);
     }
     .dot-btn.is-active {
-      background: var(--cyan);
-      color: #0a0e17;
-      border-color: var(--cyan);
-      box-shadow: 0 0 12px var(--cyan-glow);
-      transform: scale(1.15);
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+      transform: scale(1.1);
     }
 
-    .keyboard-hint {
+    .kbd-guide {
+      font-size: 11.5px;
+      color: var(--text-muted);
       display: flex;
       align-items: center;
       gap: 6px;
-      font-size: 11px;
-      color: var(--text-muted);
     }
     .kbd {
-      display: inline-block;
-      padding: 1px 5px;
+      padding: 1px 6px;
+      background: var(--surface-sub);
+      border: 1px solid var(--border-strong);
+      border-radius: 4px;
       font-family: var(--font-display);
       font-size: 10px;
       font-weight: 700;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 4px;
-      color: var(--cyan);
+      color: var(--text);
     }
 
-    /* 各スライド共通要素 */
+    /* スライド内ヘッダー */
     .slide-header {
-      margin-bottom: 20px;
       flex-shrink: 0;
     }
-    .slide-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-family: var(--font-display);
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 1px;
-      color: var(--cyan);
-      text-transform: uppercase;
-      margin-bottom: 6px;
-    }
-    .slide-tag::before {
-      content: '';
+    .slide-badge {
       display: inline-block;
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--cyan);
-      box-shadow: 0 0 8px var(--cyan);
+      padding: 2px 10px;
+      border-radius: 4px;
+      background: var(--primary-light);
+      color: var(--primary-dark);
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
     }
     .slide-title {
-      font-family: var(--font-display);
-      font-size: clamp(22px, 3.2vw, 32px);
+      font-size: clamp(20px, 2.5vw, 28px);
       font-weight: 900;
-      line-height: 1.25;
-      color: #ffffff;
-      text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+      color: var(--text);
+      line-height: 1.3;
     }
     .slide-desc {
-      font-size: clamp(13px, 1.4vw, 15px);
-      color: var(--text-muted);
-      margin-top: 4px;
+      font-size: 13.5px;
+      color: var(--text-sub);
+      margin-top: 3px;
     }
 
-    .slide-body {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      min-height: 0;
-    }
-
-    /* スライド1：タイトル */
-    .hero-slide {
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100%;
-      gap: 20px;
-    }
-    .hero-logo-wrap {
-      position: relative;
-    }
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 18px;
-      background: rgba(0, 255, 204, 0.1);
-      border: 1px solid var(--border-bright);
-      border-radius: 999px;
-      font-family: var(--font-display);
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--cyan);
-      letter-spacing: 2px;
-      box-shadow: 0 0 20px rgba(0, 255, 204, 0.2);
-    }
-    .hero-title {
-      font-family: var(--font-display);
-      font-size: clamp(34px, 6vw, 64px);
-      font-weight: 900;
-      letter-spacing: 2px;
-      line-height: 1.1;
-      background: linear-gradient(135deg, #ffffff 0%, #a5f3fc 40%, var(--cyan) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      text-shadow: 0 0 40px rgba(0, 255, 204, 0.4);
-    }
-    .hero-subtitle {
-      font-size: clamp(16px, 2.2vw, 22px);
-      font-weight: 700;
-      color: #e2e8f0;
-      letter-spacing: 1px;
-    }
-    .hero-features {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 12px;
-      margin-top: 10px;
-      max-width: 900px;
-    }
-    .hero-pill {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 16px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 8px;
-      font-size: 13px;
-      font-weight: 600;
-      color: #cbd5e1;
-    }
-    .hero-pill b {
-      color: var(--cyan);
-    }
-
-    /* スライド2：特徴グリッド */
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 20px;
-      width: 100%;
-    }
-    .feature-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      transition: all 0.3s;
-      position: relative;
-      overflow: hidden;
-    }
-    .feature-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, var(--cyan), var(--purple));
-    }
-    .feature-card:hover {
-      background: var(--bg-card-hover);
-      transform: translateY(-4px);
-      box-shadow: 0 10px 25px rgba(0, 255, 204, 0.15);
-      border-color: var(--border-bright);
-    }
-    .feature-icon {
-      font-size: 36px;
-      width: 56px;
-      height: 56px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 12px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    .feature-title {
-      font-size: 18px;
-      font-weight: 700;
-      color: #ffffff;
-    }
-    .feature-text {
-      font-size: 14px;
-      color: var(--text-muted);
-      line-height: 1.6;
-    }
-
-    /* スライド3：勝利条件 */
-    .vs-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
-      width: 100%;
-    }
-    .win-box {
-      border-radius: 14px;
-      padding: 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      position: relative;
-    }
-    .win-box--wolf {
-      background: linear-gradient(145deg, rgba(239, 68, 68, 0.12), rgba(15, 23, 42, 0.9));
-      border: 1px solid rgba(239, 68, 68, 0.35);
-    }
-    .win-box--citizen {
-      background: linear-gradient(145deg, rgba(0, 255, 204, 0.1), rgba(15, 23, 42, 0.9));
-      border: 1px solid var(--border);
-    }
-    .win-box__header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .win-box__icon {
-      font-size: 32px;
-    }
-    .win-box__title {
-      font-size: 20px;
-      font-weight: 900;
-    }
-    .win-box--wolf .win-box__title { color: #f87171; }
-    .win-box--citizen .win-box__title { color: var(--cyan); }
-    .win-cond-main {
-      font-size: 16px;
-      font-weight: 700;
-      padding: 12px 16px;
-      border-radius: 8px;
-      line-height: 1.5;
-    }
-    .win-box--wolf .win-cond-main {
-      background: rgba(239, 68, 68, 0.18);
-      border-left: 4px solid #ef4444;
-      color: #fee2e2;
-    }
-    .win-box--citizen .win-cond-main {
-      background: rgba(0, 255, 204, 0.12);
-      border-left: 4px solid var(--cyan);
-      color: #ccfbf1;
-    }
-    .win-rule-notice {
-      font-size: 13px;
-      line-height: 1.6;
-      padding: 12px;
-      background: rgba(0, 0, 0, 0.3);
-      border-radius: 8px;
-      border: 1px dashed rgba(255, 255, 255, 0.15);
-    }
-    .win-rule-notice b {
-      color: var(--amber);
-    }
-
-    /* スライド4：始め方① QR & 自撮り */
-    .onboarding-steps {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 18px;
-      width: 100%;
-    }
-    .step-card {
-      background: var(--bg-card);
+    /* カード・グリッド共通 */
+    .panel {
+      background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 12px;
       padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      position: relative;
-    }
-    .step-num {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
-      background: var(--cyan);
-      color: #0a0e17;
-      font-family: var(--font-display);
-      font-weight: 900;
-      font-size: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .step-visual {
-      height: 140px;
-      background: rgba(0, 0, 0, 0.35);
-      border-radius: 8px;
-      border: 1px dashed rgba(0, 255, 204, 0.3);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      font-size: 32px;
-    }
-    .step-label {
-      font-size: 16px;
-      font-weight: 700;
-      color: #ffffff;
-    }
-    .step-desc {
-      font-size: 13px;
-      color: var(--text-muted);
-      line-height: 1.6;
+      box-shadow: var(--shadow);
     }
 
-    /* スライド5：始め方② カードめくり体験 */
-    .card-reveal-layout {
-      display: grid;
-      grid-template-columns: 1.2fr 1fr;
-      gap: 32px;
-      align-items: center;
-      width: 100%;
-    }
-    .card-instructions {
+    /* SLIDE 1: タイトル */
+    .slide-hero {
       display: flex;
       flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      height: 100%;
+      min-height: 400px;
       gap: 16px;
     }
-    .reveal-box {
-      background: rgba(255, 255, 255, 0.04);
-      border-left: 4px solid var(--amber);
-      padding: 14px 18px;
-      border-radius: 0 8px 8px 0;
-      font-size: 14px;
-      line-height: 1.6;
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(32px, 5vw, 54px);
+      font-weight: 900;
+      color: var(--primary-dark);
+      letter-spacing: 1px;
+      line-height: 1.15;
     }
-    .flip-demo-wrap {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
-      perspective: 1000px;
-    }
-    .interactive-card {
-      width: 220px;
-      height: 310px;
-      position: relative;
-      transform-style: preserve-3d;
-      transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-      cursor: pointer;
-    }
-    .interactive-card.is-flipped {
-      transform: rotateY(180deg);
-    }
-    .card-face {
-      position: absolute;
-      inset: 0;
-      border-radius: 12px;
-      backface-visibility: hidden;
-      overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-      border: 2px solid rgba(255, 255, 255, 0.15);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-    .card-face--back {
-      background: #111827;
-      border-color: rgba(0, 255, 204, 0.4);
-    }
-    .card-face--back img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .card-face--front {
-      transform: rotateY(180deg);
-      border-color: #ef4444;
-      background: #1f2937;
-    }
-    .card-face--front img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .tap-hint-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 14px;
-      background: rgba(255, 184, 0, 0.15);
-      border: 1px solid var(--amber);
-      border-radius: 999px;
-      color: var(--amber);
-      font-size: 12px;
+    .hero-sub {
+      font-size: clamp(16px, 2.2vw, 22px);
       font-weight: 700;
-      animation: pulse 1.5s infinite;
+      color: var(--text);
     }
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.05); opacity: 0.85; }
-    }
-
-    /* スライド6：1日のサイクル＆動画プレイヤー */
-    .cycle-layout {
+    .spec-table-simple {
       display: grid;
-      grid-template-columns: 1fr 1.3fr;
-      gap: 24px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
       width: 100%;
-      align-items: stretch;
+      max-width: 800px;
+      margin-top: 10px;
     }
-    .timeline-list {
+    .spec-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 12px;
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+    .spec-item .label { font-size: 11.5px; color: var(--text-muted); font-weight: 700; }
+    .spec-item .val { font-size: 14.5px; font-weight: 800; color: var(--text); margin-top: 2px; }
+
+    /* SLIDE 2: 特徴 */
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      width: 100%;
+    }
+    .card-feature {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: var(--shadow);
       display: flex;
       flex-direction: column;
       gap: 10px;
-      justify-content: space-between;
     }
-    .timeline-item {
-      background: var(--bg-card);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+    .feature-ico {
+      width: 44px;
+      height: 44px;
       border-radius: 10px;
-      padding: 12px 16px;
+      background: var(--primary-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+    .feature-name { font-size: 16px; font-weight: 800; color: var(--text); }
+    .feature-desc { font-size: 13px; color: var(--text-sub); line-height: 1.6; }
+
+    /* SLIDE 3: 勝利条件 */
+    .vs-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      width: 100%;
+    }
+    .win-card {
+      background: var(--surface);
+      border-radius: 12px;
+      padding: 22px;
+      box-shadow: var(--shadow);
+      border-top: 4px solid var(--primary);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .win-card--wolf { border-top-color: var(--wolf); }
+    .win-header { display: flex; align-items: center; gap: 10px; }
+    .win-title { font-size: 18px; font-weight: 900; }
+    .win-cond-box {
+      background: var(--surface-sub);
+      border-left: 4px solid var(--primary);
+      padding: 12px 14px;
+      border-radius: 0 8px 8px 0;
+      font-size: 14px;
+      font-weight: 800;
+      line-height: 1.5;
+    }
+    .win-card--wolf .win-cond-box { border-left-color: var(--wolf); background: var(--wolf-light); color: #991b1b; }
+    .win-card--citizen .win-cond-box { border-left-color: var(--primary); background: var(--primary-light); color: var(--primary-dark); }
+    .rule-note {
+      background: var(--amber-light);
+      border: 1px solid #fde68a;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 12.5px;
+      color: #92400e;
+      line-height: 1.55;
+    }
+
+    /* SLIDE 4 & 5: 実機画面シミュレーター付きレイアウト */
+    .split-layout {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 24px;
+      width: 100%;
+      align-items: start;
+    }
+    .flow-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .flow-step-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
       display: flex;
       align-items: flex-start;
       gap: 12px;
-      transition: all 0.2s;
       cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: var(--shadow);
     }
-    .timeline-item:hover, .timeline-item.is-active {
-      border-color: var(--cyan);
-      background: rgba(0, 255, 204, 0.08);
+    .flow-step-item.is-active {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.15);
     }
-    .timeline-ico {
-      font-size: 24px;
-      flex-shrink: 0;
-      margin-top: 2px;
-    }
-    .timeline-item h4 {
-      font-size: 15px;
-      font-weight: 700;
+    .flow-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      background: var(--primary);
       color: #fff;
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
     }
-    .timeline-item p {
-      font-size: 12px;
-      color: var(--text-muted);
-      margin-top: 2px;
-      line-height: 1.4;
-    }
+    .flow-step-item h4 { font-size: 15px; font-weight: 800; color: var(--text); }
+    .flow-step-item p { font-size: 12.5px; color: var(--text-sub); margin-top: 2px; line-height: 1.5; }
 
-    /* ビデオプレーヤーコンテナ */
-    .video-showcase {
-      background: #000;
-      border: 1px solid var(--border);
-      border-radius: 12px;
+    /* スマホ実画面シミュレーター（実ゲームCSSと共通仕様） */
+    .phone-simulator {
+      background: #0f172a;
+      border: 6px solid #1e293b;
+      border-radius: 28px;
+      width: 320px;
+      height: 480px;
+      margin: 0 auto;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
       display: flex;
       flex-direction: column;
-      overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
     }
-    .video-tabs {
-      display: flex;
-      background: rgba(18, 25, 43, 0.95);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    .phone-notch {
+      width: 90px;
+      height: 16px;
+      background: #020617;
+      border-radius: 999px;
+      margin: 6px auto 0;
+      flex-shrink: 0;
+      z-index: 10;
     }
-    .video-tab-btn {
+    .phone-screen-area {
       flex: 1;
-      padding: 10px 8px;
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
-      font-size: 12px;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      transition: all 0.2s;
-    }
-    .video-tab-btn:hover {
-      color: var(--text);
-      background: rgba(255, 255, 255, 0.05);
-    }
-    .video-tab-btn.is-active {
-      color: var(--cyan);
-      border-bottom: 2px solid var(--cyan);
-      background: rgba(0, 255, 204, 0.08);
-    }
-    .video-wrapper {
       position: relative;
-      width: 100%;
-      height: 240px;
-      background: #050811;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .video-wrapper video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .video-info {
-      padding: 10px 14px;
-      background: rgba(18, 25, 43, 0.9);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 12px;
-    }
-    .video-desc {
-      color: #e2e8f0;
-      font-weight: 600;
-    }
-    .video-ctrls {
-      display: flex;
-      gap: 8px;
-    }
-    .btn-vid {
-      padding: 4px 10px;
-      border-radius: 4px;
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      overflow-y: auto;
+      overflow-x: hidden;
+      background: #090d18;
       color: #fff;
-      font-size: 11px;
-      cursor: pointer;
-      font-weight: 600;
+      font-size: 13px;
     }
-    .btn-vid:hover {
-      background: var(--cyan);
-      color: #000;
+    .sim-view {
+      display: none;
+      padding: 14px;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 100%;
     }
-
-    /* スライド7：ミニゲーム＆効果 */
-    .mini-grid {
-      display: grid;
-      grid-template-columns: 1.1fr 1fr;
-      gap: 20px;
+    .sim-view.is-active {
+      display: flex;
+    }
+    .sim-card {
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      padding: 10px 12px;
+    }
+    .sim-btn {
+      display: block;
       width: 100%;
+      padding: 8px;
+      border-radius: 6px;
+      border: none;
+      font-size: 12px;
+      font-weight: 800;
+      text-align: center;
+      cursor: pointer;
     }
-    .table-container {
-      background: var(--bg-card);
+    .sim-btn--cyan { background: #00ffcc; color: #0a0e17; }
+    .sim-btn--amber { background: #f59e0b; color: #000; }
+    .sim-btn--red { background: #ef4444; color: #fff; }
+
+    /* SLIDE 6: 1日のサイクル */
+    .cycle-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      width: 100%;
+      align-items: start;
+    }
+    .phase-timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .phase-card {
+      background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 10px;
-      padding: 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: var(--shadow);
     }
-    .table-title {
-      font-size: 14px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 6px;
+    .phase-card.is-active {
+      border-color: var(--primary);
+      background: var(--primary-light);
     }
-    .table-title--reward { color: var(--cyan); }
-    .table-title--penalty { color: #f87171; }
-    .custom-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 12px;
-    }
-    .custom-table th {
-      text-align: left;
-      padding: 6px 8px;
-      background: rgba(255, 255, 255, 0.05);
-      color: var(--text-muted);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    .custom-table td {
-      padding: 6px 8px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-      color: #e2e8f0;
-    }
-    .custom-table tr:last-child td {
-      border-bottom: none;
-    }
-    .badge-tag {
-      display: inline-block;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-size: 10px;
-      font-weight: 700;
-    }
-    .badge-reward { background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4); }
-    .badge-penalty { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
-
-    /* スライド8 & 9：役職紹介カードグリッド */
-    .roles-wolf-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-      width: 100%;
-    }
-    .roles-citizen-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
-      width: 100%;
-    }
-    @media (max-width: 1024px) {
-      .roles-wolf-grid { grid-template-columns: repeat(2, 1fr); }
-      .roles-citizen-grid { grid-template-columns: repeat(3, 1fr); }
-    }
-    @media (max-width: 640px) {
-      .roles-wolf-grid { grid-template-columns: 1fr; }
-      .roles-citizen-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-
-    .role-card {
-      background: var(--bg-card);
-      border-radius: 12px;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-      transition: all 0.25s ease;
-    }
-    .role-card--wolf {
-      border-color: rgba(239, 68, 68, 0.35);
-    }
-    .role-card--wolf:hover {
-      border-color: #ef4444;
-      box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
-      transform: translateY(-4px);
-    }
-    .role-card--citizen {
-      border-color: rgba(0, 255, 204, 0.3);
-    }
-    .role-card--citizen:hover {
-      border-color: var(--cyan);
-      box-shadow: 0 8px 25px rgba(0, 255, 204, 0.25);
-      transform: translateY(-4px);
-    }
-
-    .role-thumb-wrap {
-      width: 100%;
-      height: 160px;
-      background: #050811;
-      position: relative;
-      overflow: hidden;
-    }
-    .role-thumb-wrap img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.3s ease;
-    }
-    .role-card:hover .role-thumb-wrap img {
-      transform: scale(1.06);
-    }
-    .role-meta-badge {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      padding: 2px 8px;
-      border-radius: 4px;
-      font-size: 10px;
-      font-weight: 700;
-      backdrop-filter: blur(4px);
-    }
-    .badge-wolf-team {
-      background: rgba(220, 38, 38, 0.8);
-      color: #fff;
-    }
-    .badge-citizen-team {
-      background: rgba(14, 165, 233, 0.85);
-      color: #fff;
-    }
-
-    .role-info {
-      padding: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      flex: 1;
-    }
-    .role-name {
+    .phase-card-title {
       font-size: 15px;
       font-weight: 800;
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
-    .role-card--wolf .role-name { color: #f87171; }
-    .role-card--citizen .role-name { color: var(--cyan); }
-    .role-attr-tags {
+    .phase-badge {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: var(--surface-sub);
+      color: var(--text-sub);
+      font-weight: 700;
+    }
+    .phase-card.is-active .phase-badge {
+      background: var(--primary);
+      color: #fff;
+    }
+    .phase-card p {
+      font-size: 12.5px;
+      color: var(--text-sub);
+      margin-top: 4px;
+      line-height: 1.5;
+    }
+
+    /* SLIDE 7: テーブル */
+    .tables-layout {
+      display: grid;
+      grid-template-columns: 1.05fr 1fr;
+      gap: 18px;
+      width: 100%;
+    }
+    .clean-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12.5px;
+    }
+    .clean-table th {
+      background: var(--surface-sub);
+      padding: 8px 10px;
+      text-align: left;
+      font-weight: 800;
+      color: var(--text);
+      border-bottom: 2px solid var(--border);
+    }
+    .clean-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-sub);
+    }
+    .clean-table tr:last-child td { border-bottom: none; }
+    .badge {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 10.5px;
+      font-weight: 700;
+    }
+    .badge--reward { background: var(--green-light); color: var(--green); }
+    .badge--penalty { background: var(--wolf-light); color: var(--wolf); }
+
+    /* SLIDE 8 & 9: 役職カタログ（カード表示） */
+    .role-grid-wolf {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      width: 100%;
+    }
+    .role-grid-citizen {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      width: 100%;
+    }
+    .role-catalog-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+    }
+    .role-thumb {
+      width: 100%;
+      height: 160px;
+      background: #0f172a;
+      position: relative;
+      overflow: hidden;
+    }
+    .role-thumb--sm { height: 110px; }
+    .role-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 20%;
+    }
+    .role-tag-top {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #fff;
+    }
+    .role-catalog-info {
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+    }
+    .role-catalog-name {
+      font-size: 14.5px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .role-catalog-attrs {
       display: flex;
       gap: 4px;
       flex-wrap: wrap;
     }
-    .role-attr {
+    .role-attr-chip {
       font-size: 10px;
-      padding: 1px 6px;
+      padding: 1px 5px;
       border-radius: 4px;
-      background: rgba(255, 255, 255, 0.06);
-      color: #cbd5e1;
-    }
-    .role-attr b {
-      color: var(--amber);
-    }
-    .role-desc {
-      font-size: 12px;
-      color: #cbd5e1;
-      line-height: 1.45;
-      margin-top: 2px;
-    }
-    .role-desc strong {
-      color: #ffffff;
+      background: var(--surface-sub);
+      color: var(--text-sub);
       font-weight: 700;
     }
-    .role-desc .warn-rule {
-      color: var(--amber);
-      font-weight: 700;
-      display: block;
+    .role-catalog-desc {
+      font-size: 11.5px;
+      color: var(--text-sub);
+      line-height: 1.5;
       margin-top: 2px;
     }
+    .role-catalog-desc b { color: var(--text); }
+    .role-catalog-desc .warn-txt { color: #b45309; font-weight: 700; display: block; margin-top: 2px; }
 
-    /* スライド10：まとめ & ゲーム開始 */
-    .cta-slide {
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100%;
+    /* SLIDE 10: 注意点＆案内 */
+    .finish-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
       gap: 20px;
+      width: 100%;
+      align-items: start;
     }
-    .cta-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-bright);
-      border-radius: 16px;
-      padding: 32px 40px;
-      max-width: 680px;
+    .checklist {
+      list-style: none;
       display: flex;
       flex-direction: column;
-      gap: 16px;
-      box-shadow: 0 0 40px rgba(0, 255, 204, 0.2);
+      gap: 10px;
     }
-    .cta-btn-main {
+    .checklist li {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 13px;
+      line-height: 1.5;
+      box-shadow: var(--shadow);
+    }
+    .check-ico { color: var(--primary); font-weight: 900; font-size: 15px; flex-shrink: 0; }
+
+    .btn-action-main {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
-      padding: 14px 32px;
-      background: var(--cyan);
-      color: #0a0e17;
-      font-family: var(--font-display);
-      font-size: 18px;
-      font-weight: 900;
+      gap: 8px;
+      width: 100%;
+      padding: 14px 20px;
+      background: var(--primary);
+      color: #ffffff;
       border-radius: 10px;
+      font-size: 16px;
+      font-weight: 800;
       text-decoration: none;
-      box-shadow: 0 0 25px var(--cyan-glow);
       transition: all 0.2s;
-      cursor: pointer;
     }
-    .cta-btn-main:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 35px var(--cyan);
+    .btn-action-main:hover {
+      background: var(--primary-dark);
+      box-shadow: var(--shadow-lg);
     }
-    .cta-sub-btn {
+    .btn-action-sub {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 6px;
-      padding: 10px 20px;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      width: 100%;
+      padding: 10px 16px;
+      background: var(--surface-sub);
+      border: 1px solid var(--border-strong);
       border-radius: 8px;
-      color: #cbd5e1;
+      color: var(--text);
       font-size: 13px;
       font-weight: 700;
       cursor: pointer;
-      text-decoration: none;
-    }
-    .cta-sub-btn:hover {
-      background: rgba(255, 255, 255, 0.15);
-      color: #fff;
     }
 
-    /* レスポンシブ調整 */
-    @media (max-width: 768px) {
-      .top-bar { padding: 0 12px; height: 46px; }
-      .brand__title { font-size: 14px; }
-      .brand__badge { display: none; }
-      .slide { padding: 16px; }
-      .bottom-bar { padding: 0 12px; height: 54px; }
-      .nav-btn { min-width: 80px; font-size: 12px; height: 36px; padding: 0 10px; }
-      .dots-nav { gap: 4px; }
-      .dot-btn { width: 22px; height: 22px; font-size: 9px; }
-      .keyboard-hint { display: none; }
-      .vs-grid, .cycle-layout, .card-reveal-layout, .mini-grid, .onboarding-steps {
+    /* レスポンシブ */
+    @media (max-width: 900px) {
+      .grid-3, .vs-grid, .split-layout, .cycle-grid, .tables-layout, .finish-layout {
         grid-template-columns: 1fr;
       }
-      .timeline-list { gap: 6px; }
-      .timeline-item { padding: 8px 12px; }
-      .video-wrapper { height: 180px; }
+      .role-grid-wolf { grid-template-columns: repeat(2, 1fr); }
+      .role-grid-citizen { grid-template-columns: repeat(2, 1fr); }
+      .slide { padding: 16px 16px 24px; }
+      .kbd-guide, .brand__sub { display: none; }
+      .phone-simulator { width: 100%; max-width: 320px; }
     }
   </style>
 </head>
 <body>
-  <div class="bg-grid"></div>
 
   <div class="deck-container">
-    <!-- トップナビゲーションバー -->
+    <!-- 上部固定バー -->
     <header class="top-bar">
-      <a href="index.html" class="brand" title="ロビーに戻る">
+      <a href="index.html" class="brand" title="ロビーへ移動">
         <span class="brand__icon">🐺</span>
         <span class="brand__title">TASK & MYSTERY WEREWOLF</span>
-        <span class="brand__badge">ルール解説スライド</span>
+        <span class="brand__sub">ルール・操作説明スライド</span>
       </a>
       <div class="top-actions">
-        <div class="slide-counter" id="slideCounter"><b>01</b> / 10</div>
-        <button type="button" class="btn-icon" id="btnFullscreen" title="全画面表示 (Fキー)">
+        <div class="counter-badge" id="slideCounter"><b>01</b> / 10</div>
+        <button type="button" class="btn-top" id="btnFullscreen" title="全画面表示の切替">
           <span>⛶</span> 全画面
         </button>
-        <a href="index.html" class="btn-icon" title="ゲーム画面を開く">
+        <a href="index.html" class="btn-top" title="ゲーム画面を開く">
           <span>🎮</span> ロビーへ
         </a>
       </div>
     </header>
 
-    <!-- スライド表示メイン領域 -->
+    <!-- スライド本体 -->
     <main class="slides-viewport" id="slidesViewport">
 
-      <!-- SLIDE 1: タイトル & コンセプト -->
+      <!-- SLIDE 1: タイトル & 概要 -->
       <section class="slide is-active" data-index="1">
-        <div class="hero-slide">
-          <div class="hero-logo-wrap">
-            <div class="hero-badge">🐺 ONLINE MULTIPLAYER PARTY GAME</div>
-          </div>
+        <div class="slide-hero">
+          <div class="slide-badge">OVERVIEW & SPECS</div>
           <h1 class="hero-title">TASK & MYSTERY<br>WEREWOLF</h1>
-          <p class="hero-subtitle">スマホで遊ぶ、新世代オンライン人狼ゲーム</p>
-          <p style="color:var(--text-muted);max-width:640px;margin:0 auto;line-height:1.6">
-            「タスク（ミニゲーム）」×「白熱の心理戦」×「映画のようなドラマチック演出」。<br>
-            アプリインストール不要・ブラウザだけで今すぐ全員で楽しめるハイブリッド人狼！
+          <p class="hero-sub">ルール・操作説明資料</p>
+          <p style="color:var(--text-sub);max-width:640px;line-height:1.7">
+            本作は、各自のスマートフォンを持ち寄って遊ぶWebブラウザ人狼ゲームです。<br>
+            朝の協力ミニゲーム（タスク）、昼の話し合い、夜の投票とスキル発動を繰り返して勝敗を決します。
           </p>
-          <div class="hero-features">
-            <div class="hero-pill">📱 <b>インストール不要</b>（QRで即参加）</div>
-            <div class="hero-pill">📸 <b>自撮りアバター連動</b>（臨場感MAX）</div>
-            <div class="hero-pill">🎯 <b>昼のミニゲームタスク</b>（逆転の特殊効果）</div>
-            <div class="hero-pill">🎬 <b>動画＆サウンド演出</b>（圧倒的没入感）</div>
+          <div class="spec-table-simple">
+            <div class="spec-item">
+              <div class="label">プレイ人数</div>
+              <div class="val">3〜10名（推奨5〜10名）</div>
+            </div>
+            <div class="spec-item">
+              <div class="label">プラットフォーム</div>
+              <div class="val">スマホ・ブラウザ（アプリ不要）</div>
+            </div>
+            <div class="spec-item">
+              <div class="label">所要時間</div>
+              <div class="val">最大5ターン（約20〜30分）</div>
+            </div>
           </div>
         </div>
       </section>
@@ -1132,246 +827,355 @@
       <!-- SLIDE 2: 本作の特徴 -->
       <section class="slide" data-index="2">
         <div class="slide-header">
-          <div class="slide-tag">CONCEPT & HIGHLIGHTS</div>
-          <h2 class="slide-title">なぜこの人狼が最高に盛り上がるのか？</h2>
-          <p class="slide-desc">従来の会話だけの人狼にはない、本作ならではの3つの画期的な特徴</p>
+          <span class="slide-badge">SYSTEM FEATURES</span>
+          <h2 class="slide-title">ゲームの主な特徴とシステム</h2>
+          <p class="slide-desc">従来の対面人狼にタスク協力要素とデジタル進行管理を融合させたゲーム設計です。</p>
         </div>
-        <div class="slide-body">
-          <div class="features-grid">
-            <div class="feature-card">
-              <div class="feature-icon">📲</div>
-              <h3 class="feature-title">1. アプリ不要・QRコードで即集合</h3>
-              <p class="feature-text">
-                ホストの大画面に表示されたQRコードを各自のスマートフォンで読み取るだけ！会員登録やアプリのダウンロードは一切不要。誰でも10秒でルームに参加できます。
-              </p>
-            </div>
-            <div class="feature-card">
-              <div class="feature-icon">🎮</div>
-              <h3 class="feature-title">2. 昼の「タスク（ミニゲーム）」</h3>
-              <p class="feature-text">
-                昼は会話だけでなく全員でミニゲームに挑戦！クリアすれば「全員護衛」や「人狼数公開」などの強力な恩恵を獲得。話すのが苦手な人でもゲームに大きく貢献できます！
-              </p>
-            </div>
-            <div class="feature-card">
-              <div class="feature-icon">🎬</div>
-              <h3 class="feature-title">3. 映画のようなドラマチック演出</h3>
-              <p class="feature-text">
-                「夜の遠吠え」「朝の襲撃発表」「夕刻の集結」など、ゲームの要所でハイクオリティな動画とサウンドが自動再生。全員の心拍数を一気に引き上げます！
-              </p>
-            </div>
+        <div class="grid-3">
+          <div class="card-feature">
+            <div class="feature-ico">📱</div>
+            <h3 class="feature-name">1. アプリ不要・QRコード参加</h3>
+            <p class="feature-desc">
+              ホスト画面のQRコードをスマホカメラで読み取るだけで参加可能です。事前の会員登録やアプリインストールは必要ありません。
+            </p>
+          </div>
+          <div class="card-feature">
+            <div class="feature-ico">🎯</div>
+            <h3 class="feature-name">2. 朝の「タスク（ミニゲーム）」</h3>
+            <p class="feature-desc">
+              毎朝、全員で協力してミニゲームに挑戦します。成功すると市民に有利な報酬、失敗するとペナルティが発生し、夜の展開が変化します。
+            </p>
+          </div>
+          <div class="card-feature">
+            <div class="feature-ico">📊</div>
+            <h3 class="feature-name">3. タスク貢献度の可視化</h3>
+            <p class="feature-desc">
+              ミニゲーム終了後、各プレイヤーの貢献度が画面に開示されます。人狼側がサボったり妨害するとバレるため、昼の推理の手がかりになります。
+            </p>
           </div>
         </div>
       </section>
 
-      <!-- SLIDE 3: 勝利条件と基本ルール -->
+      <!-- SLIDE 3: 勝利条件 -->
       <section class="slide" data-index="3">
         <div class="slide-header">
-          <div class="slide-tag">WIN CONDITIONS</div>
-          <h2 class="slide-title">陣営ごとの勝利条件</h2>
-          <p class="slide-desc">朝の生存者判定で即座に決着！狂人・サイコキラーの特殊カウントに注意しよう</p>
+          <span class="slide-badge">WIN CONDITIONS</span>
+          <h2 class="slide-title">陣営と勝利条件</h2>
+          <p class="slide-desc">毎朝の犠牲者発表直後に自動判定されます。狂人・サイコキラーのカウント方法にご注意ください。</p>
         </div>
-        <div class="slide-body">
-          <div class="vs-grid">
-            <!-- 人狼陣営 -->
-            <div class="win-box win-box--wolf">
-              <div class="win-box__header">
-                <span class="win-box__icon">🐺</span>
-                <div>
-                  <h3 class="win-box__title">人狼陣営の勝利</h3>
-                  <div style="font-size:12px;color:#fca5a5">WOLF TEAM VICTORY</div>
-                </div>
-              </div>
-              <div class="win-cond-main">
-                🌅 朝の判定で「人狼の生存数 ≧ 人狼以外の生存数」となった瞬間に勝利！
-              </div>
-              <p style="font-size:13px;color:#cbd5e1;line-height:1.6">
-                夜の襲撃や日中のミスリードを駆使して市民を減らし、人狼と同数以下まで追い詰めれば人狼陣営の勝利です。
-              </p>
-              <div class="win-rule-notice">
-                <b>⚠️ 重要ルール（狂人・サイコキラーのカウント）</b><br>
-                狂人およびサイコキラーは人狼陣営ですが、<b>勝利条件判定の「人狼の生存数」にはカウントされません</b>（市民側と同じ扱いとなります）。純粋な人狼（人狼神・人狼）が全滅すると、狂人・サイコが生き残っていても市民の勝利となります！
+        <div class="vs-grid">
+          <!-- 人狼陣営 -->
+          <div class="win-card win-card--wolf">
+            <div class="win-header">
+              <span style="font-size:24px">🐺</span>
+              <div>
+                <h3 class="win-title" style="color:var(--wolf)">人狼陣営の勝利</h3>
+                <span style="font-size:11px;color:var(--text-muted)">WOLF TEAM</span>
               </div>
             </div>
+            <div class="win-cond-box">
+              朝の判定で「人狼本体の生存数 ≧ 非人狼の生存数」となった時点で即勝利
+            </div>
+            <p style="font-size:13px;color:var(--text-sub)">
+              市民側を減らし、人狼本体と同数以下まで追い詰めるか、市民側を全滅させれば人狼陣営の勝利です。
+            </p>
+            <div class="rule-note">
+              <b>⚠️ 狂人・サイコキラーのカウント除外ルール（重要）</b><br>
+              狂人・サイコキラーは人狼陣営ですが、<b>勝敗判定上の「人狼数」にはカウントされません</b>（非人狼として数えます）。そのため、人狼本体（人狼神・人狼）が全滅すると、狂人やサイコが生きていても市民陣営の勝利となります。
+            </div>
+          </div>
 
-            <!-- 市民陣営 -->
-            <div class="win-box win-box--citizen">
-              <div class="win-box__header">
-                <span class="win-box__icon">🛡️</span>
-                <div>
-                  <h3 class="win-box__title">市民陣営の勝利</h3>
-                  <div style="font-size:12px;color:#5eead4">CITIZEN TEAM VICTORY</div>
-                </div>
+          <!-- 市民陣営 -->
+          <div class="win-card win-card--citizen">
+            <div class="win-header">
+              <span style="font-size:24px">🛡️</span>
+              <div>
+                <h3 class="win-title" style="color:var(--primary-dark)">市民陣営の勝利</h3>
+                <span style="font-size:11px;color:var(--text-muted)">CITIZEN TEAM</span>
               </div>
-              <div class="win-cond-main">
-                ☀️ すべての人狼（人狼神・人狼）を追放または壊滅させること！
-              </div>
-              <p style="font-size:13px;color:#cbd5e1;line-height:1.6">
-                昼の議論、占い師や霊媒師の情報、ミニゲームで得た特殊効果を活用し、夜襲の脅威となる人狼を全員見つけ出して追放しましょう！
-              </p>
-              <div class="win-rule-notice">
-                <b>💡 判定のタイミング</b><br>
-                ゲームは<b>毎朝の犠牲者発表の直後</b>に自動で生存者をチェックします。市民が全員脱落するか、人狼が全滅するまで戦いは続きます。
-              </div>
+            </div>
+            <div class="win-cond-box">
+              すべての人狼本体（人狼神・人狼）を追放または壊滅させること
+            </div>
+            <p style="font-size:13px;color:var(--text-sub)">
+              昼の議論やタスク貢献度の情報、占い師・霊媒師のスキルを活かして人狼本体を見つけ出し、投票で追放すれば勝利です。
+            </p>
+            <div class="rule-note" style="background:var(--primary-light);border-color:#bae6fd;color:var(--primary-dark)">
+              <b>💡 ターン終了時の判定</b><br>
+              最大ターン数（デフォルト5ターン）終了時点で決着がついていない場合は、生存人数が多い陣営の勝利となります（同数の場合は人狼陣営の勝利）。
             </div>
           </div>
         </div>
       </section>
 
-      <!-- SLIDE 4: ゲームの始め方① QRスキャン & 自撮りアバター -->
+      <!-- SLIDE 4: ゲームの始め方 ①（参加・アバター登録） -->
       <section class="slide" data-index="4">
         <div class="slide-header">
-          <div class="slide-tag">GETTING STARTED - STEP 1</div>
-          <h2 class="slide-title">ゲームの始め方 ①：QR読み取り＆アバター撮影</h2>
-          <p class="slide-desc">全員が手元のスマホを用意して、1分でセットアップ完了！</p>
+          <span class="slide-badge">GETTING STARTED 1</span>
+          <h2 class="slide-title">ゲームの始め方 ①：参加とアバター登録</h2>
+          <p class="slide-desc">右側のスマホ実画面シミュレーターで、実際の登録から入室までの流れを確認できます。</p>
         </div>
-        <div class="slide-body">
-          <div class="onboarding-steps">
-            <div class="step-card">
-              <div class="step-num">1</div>
-              <div class="step-visual">
-                <span>🖥️ ➔ 📱</span>
-                <span style="font-size:12px;color:var(--cyan);font-family:var(--font-display)">SCAN QR CODE</span>
+        <div class="split-layout">
+          <div class="flow-steps">
+            <div class="flow-step-item is-active" id="stepItem0" onclick="showSimView(0)">
+              <div class="flow-num">1</div>
+              <div>
+                <h4>QRコードをスキャンして開く</h4>
+                <p>ホスト画面に表示されたQRコードをスマホの標準カメラで読み取ります。招待リンクから即座に入室画面が開きます。</p>
               </div>
-              <h3 class="step-label">QRコードをスキャン</h3>
-              <p class="step-desc">
-                プロジェクターやPC画面に表示されたQRコードを、各自のスマートフォンのカメラで読み取ります。
-              </p>
             </div>
 
-            <div class="step-card">
-              <div class="step-num">2</div>
-              <div class="step-visual">
-                <span>📸 😃</span>
-                <span style="font-size:12px;color:var(--cyan);font-family:var(--font-display)">SELFIE AVATAR</span>
+            <div class="flow-step-item" id="stepItem1" onclick="showSimView(1)">
+              <div class="flow-num">2</div>
+              <div>
+                <h4>プレイヤー名入力 ＆ 自撮り顔写真撮影</h4>
+                <p>名前を入力し、カメラを起動して顔写真を撮影します。この写真がゲーム内の生存者リストや投票画面のアイコンになります。</p>
               </div>
-              <h3 class="step-label">名前入力 ＆ 自撮り撮影</h3>
-              <p class="step-desc">
-                プレイヤー名を入力し、インカメラで自分の顔写真をパシャリ！この写真がゲーム内のアバターとして全員に表示されます。
-              </p>
             </div>
 
-            <div class="step-card">
-              <div class="step-num">3</div>
-              <div class="step-visual">
-                <span>👥 🕹️</span>
-                <span style="font-size:12px;color:var(--cyan);font-family:var(--font-display)">READY IN LOBBY</span>
+            <div class="flow-step-item" id="stepItem2" onclick="showSimView(2)">
+              <div class="flow-num">3</div>
+              <div>
+                <h4>ロビーで待機 ➔ ホストがゲーム開始</h4>
+                <p>参加者全員の写真がロビーに並びます。ホストが人数と役職の内訳を確認し、「ゲーム開始」ボタンを押すと開始します。</p>
               </div>
-              <h3 class="step-label">ロビーで待機 ➔ スタート！</h3>
-              <p class="step-desc">
-                全員の写真がロビーに並びます。ホストが参加者を確認して「ゲーム開始」ボタンを押せば、ただちにゲームが幕を開けます！
-              </p>
+            </div>
+          </div>
+
+          <!-- 実機画面シミュレーター（実際の画面UI） -->
+          <div class="phone-simulator">
+            <div class="phone-notch"></div>
+            <div class="phone-screen-area">
+              <!-- View 0: トップ画面（実画面） -->
+              <div class="sim-view is-active" id="simView0">
+                <div style="text-align:center;padding:10px 0 4px">
+                  <span style="font-size:28px">🐺</span>
+                  <div style="font-size:11px;font-weight:900;color:#38bdf8">TASK & MYSTERY WEREWOLF</div>
+                </div>
+                <div class="sim-card">
+                  <div style="font-size:11px;color:#94a3b8;margin-bottom:4px">参加ルーム</div>
+                  <div style="font-size:15px;font-weight:800;color:#facc15">ROOM: ABCD</div>
+                </div>
+                <div class="sim-card" style="text-align:center">
+                  <div style="font-size:11px;color:#cbd5e1;margin-bottom:6px">名前とアイコンを設定してください</div>
+                  <button type="button" class="sim-btn sim-btn--cyan" onclick="showSimView(1)">次へ：顔アイコン撮影 ➔</button>
+                </div>
+              </div>
+
+              <!-- View 1: 自撮り・名前登録（実画面） -->
+              <div class="sim-view" id="simView1">
+                <div class="sim-card">
+                  <div style="font-size:12px;font-weight:800;color:#38bdf8;margin-bottom:6px">プレイヤー情報登録</div>
+                  <input type="text" value="たろう" readonly style="width:100%;padding:6px;background:#1e293b;border:1px solid #475569;border-radius:6px;color:#fff;font-size:12px;margin-bottom:8px">
+                  <div style="width:72px;height:72px;border-radius:50%;border:2px solid #38bdf8;margin:8px auto;display:flex;align-items:center;justify-content:center;background:#0284c7;font-size:32px">
+                    😄
+                  </div>
+                  <div style="font-size:10px;text-align:center;color:#94a3b8;margin-bottom:8px">顔写真アイコン登録完了</div>
+                  <button type="button" class="sim-btn sim-btn--cyan" onclick="showSimView(2)">ロビーへ入室する ➔</button>
+                </div>
+              </div>
+
+              <!-- View 2: ロビー画面（実画面） -->
+              <div class="sim-view" id="simView2">
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0">
+                  <b style="color:#38bdf8;font-size:12px">LOBBY (5人参加中)</b>
+                  <span style="font-size:10px;background:#1e293b;padding:2px 6px;border-radius:4px">ROOM: ABCD</span>
+                </div>
+                <div class="sim-card">
+                  <div style="font-size:11px;color:#94a3b8;margin-bottom:6px">参加プレイヤー</div>
+                  <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:6px;text-align:center;font-size:10px">
+                    <div><div style="font-size:18px">👩</div>はなこ</div>
+                    <div><div style="font-size:18px">👨</div>けんじ</div>
+                    <div><div style="font-size:18px">🧑</div>そうた</div>
+                    <div><div style="font-size:18px">👧</div>みく</div>
+                    <div style="color:#38bdf8"><div style="font-size:18px">😄</div>たろう</div>
+                  </div>
+                </div>
+                <button type="button" class="sim-btn sim-btn--amber" style="margin-top:auto" onclick="goToSlide(5)">
+                  ▶ ゲーム開始（役職発表へ）
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- SLIDE 5: ゲームの始め方② 秘密の役職カードめくり体験 -->
+      <!-- SLIDE 5: ゲームの始め方 ②（役職確認・自己紹介） -->
       <section class="slide" data-index="5">
         <div class="slide-header">
-          <div class="slide-tag">GETTING STARTED - STEP 2</div>
-          <h2 class="slide-title">ゲームの始め方 ②：秘密の役職カードめくり</h2>
-          <p class="slide-desc">スマホに配られたカードをタップしてオープン！周囲に見られないよう注意</p>
+          <span class="slide-badge">GETTING STARTED 2</span>
+          <h2 class="slide-title">ゲームの始め方 ②：役職確認と自己紹介</h2>
+          <p class="slide-desc">手元のカードをタップして反転。周囲に画面が見られないよう注意しながら確認します。</p>
         </div>
-        <div class="slide-body">
-          <div class="card-reveal-layout">
-            <div class="card-instructions">
-              <div class="reveal-box">
-                <b>🃏 あなただけの秘密の役職</b><br>
-                ゲーム開始と同時に、各プレイヤーの手元にカードが裏向きで配布されます。画面をタップするとカードが3Dフリップしてあなたの役職と能力が開示されます！
-              </div>
-              <div class="reveal-box" style="border-left-color:var(--cyan)">
-                <b>🙈 誤タップ防止＆いつでも再確認</b><br>
-                確認したら「閉じて隠す」ボタンでいつでも裏面に戻せます。ゲーム進行中も、右上の役職アイコンからいつでも安全に自分の能力を再確認できます。
-              </div>
-              <div class="reveal-box" style="border-left-color:#ef4444">
-                <b>🤫 リアクションに注意！</b><br>
-                人狼や占い師を引いた瞬間の表情で正体がバレないよう、ポーカーフェイスを保ちましょう！
-              </div>
+        <div class="split-layout">
+          <div class="flow-steps">
+            <div class="panel" style="padding:16px">
+              <h4 style="font-size:15px;font-weight:800;color:var(--text);margin-bottom:6px">🃏 秘密の役職カード配布</h4>
+              <p style="font-size:13px;color:var(--text-sub);line-height:1.6">
+                ゲーム開始と同時に、各プレイヤーの手元に役職カードが裏向きで配布されます。画面をタップするとカードが反転し、あなたの役職と能力が表示されます。
+              </p>
             </div>
+            <div class="panel" style="padding:16px">
+              <h4 style="font-size:15px;font-weight:800;color:var(--text);margin-bottom:6px">🙈 閉じて隠す＆いつでも再確認</h4>
+              <p style="font-size:13px;color:var(--text-sub);line-height:1.6">
+                確認した後は「閉じて隠す」ボタンを押して画面を裏面に戻せます。ゲーム進行中も、右上の役職アイコンからいつでも安全に自分の能力を再確認できます。
+              </p>
+            </div>
+            <div class="panel" style="padding:16px">
+              <h4 style="font-size:15px;font-weight:800;color:var(--text);margin-bottom:6px">🗣️ 自己紹介タイム（3分）</h4>
+              <p style="font-size:13px;color:var(--text-sub);line-height:1.6">
+                役職確認後、全員で順番に自己紹介を行います。役職を引いた瞬間のリアクションで周囲に悟られないようポーカーフェイスを保ちましょう。
+              </p>
+            </div>
+          </div>
 
-            <div class="flip-demo-wrap">
-              <div class="interactive-card" id="demoCard" onclick="toggleCardFlip()">
-                <!-- 裏面 -->
-                <div class="card-face card-face--back">
-                  <img src="img/role_card_back.jpg" alt="カード裏面">
-                </div>
-                <!-- 表面 -->
-                <div class="card-face card-face--front">
-                  <img src="img/role_wolf_god.jpg" alt="人狼神カード" id="demoCardFront">
+          <!-- 実機カード画面シミュレーター -->
+          <div class="phone-simulator">
+            <div class="phone-notch"></div>
+            <div class="phone-screen-area" style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;text-align:center">
+              <div style="font-size:11px;color:#94a3b8;margin-bottom:8px">あなたの手元画面（タップで反転）</div>
+              <div style="width:160px;height:230px;position:relative;cursor:pointer;perspective:800px" onclick="toggleSimRoleCard()">
+                <div id="simRoleInner" style="width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform 0.5s ease;border-radius:10px;box-shadow:0 8px 20px rgba(0,0,0,0.6)">
+                  <!-- 裏面 -->
+                  <div style="position:absolute;inset:0;backface-visibility:hidden;border-radius:10px;overflow:hidden;border:2px solid #38bdf8">
+                    <img src="img/role_card_back.jpg" alt="カード裏面" style="width:100%;height:100%;object-fit:cover">
+                  </div>
+                  <!-- 表面 -->
+                  <div style="position:absolute;inset:0;backface-visibility:hidden;transform:rotateY(180deg);border-radius:10px;overflow:hidden;border:2px solid #ef4444">
+                    <img src="img/role_wolf_god.jpg" alt="人狼神" id="simRoleImg" style="width:100%;height:100%;object-fit:cover">
+                  </div>
                 </div>
               </div>
-              <div class="tap-hint-pill" onclick="toggleCardFlip()">
-                <span>👆 カードをタップしてめくってみよう！</span>
-              </div>
-              <div style="font-size:11px;color:var(--text-muted)">
-                ※タップするたびに表裏が反転します（カード画像切替も可能）
+              <div style="margin-top:12px;width:100%">
+                <div id="simRoleLabel" style="font-size:12px;font-weight:800;color:#f87171;margin-bottom:6px">
+                  タップしてカードを開示
+                </div>
+                <button type="button" class="sim-btn sim-btn--cyan" onclick="toggleSimRoleCard()">
+                  カードを反転切替
+                </button>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- SLIDE 6: 1日のゲームサイクル（動画3本埋め込み） -->
+      <!-- SLIDE 6: 1日のゲームサイクル（朝・昼・夜） -->
       <section class="slide" data-index="6">
         <div class="slide-header">
-          <div class="slide-tag">1-DAY GAME CYCLE & CINEMATICS</div>
-          <h2 class="slide-title">1日のゲームサイクル ＆ ドラマチック動画演出</h2>
-          <p class="slide-desc">夜 ➔ 朝 ➔ 昼（ミニゲーム） ➔ 夕方（投票）の4フェーズをループ！</p>
+          <span class="slide-badge">GAME CYCLE</span>
+          <h2 class="slide-title">1日のゲームサイクル（朝 ➔ 昼 ➔ 夜）</h2>
+          <p class="slide-desc">朝フェーズでタスク（ミニゲーム）を実行し、昼に話し合い、夜に追放投票とスキルを行います。</p>
         </div>
-        <div class="slide-body">
-          <div class="cycle-layout">
-            <!-- タイムライン解説 -->
-            <div class="timeline-list">
-              <div class="timeline-item is-active" onclick="switchVideo('night')">
-                <div class="timeline-ico">🌙</div>
-                <div>
-                  <h4>① 夜（Night / 能力発動）</h4>
-                  <p>人狼は密談して市民を襲撃。占い師・騎士・医者などの役職が秘密裏にスキルを発動します。</p>
-                </div>
+        <div class="cycle-grid">
+          <div class="phase-timeline">
+            <!-- 朝 -->
+            <div class="phase-card is-active" id="phaseCard0" onclick="showPhaseView(0)">
+              <div class="phase-card-title">
+                <span>🌅 ① 朝のターン（制限時間：5分）</span>
+                <span class="phase-badge">タスク実行</span>
               </div>
-              <div class="timeline-item" onclick="switchVideo('morning')">
-                <div class="timeline-ico">🌅</div>
-                <div>
-                  <h4>② 朝（Morning / 襲撃発表）</h4>
-                  <p>昨晩の犠牲者がドラマチックに発表！同時に勝敗条件の判定が自動で行われます。</p>
-                </div>
-              </div>
-              <div class="timeline-item" onclick="switchVideo('day')">
-                <div class="timeline-ico">☀️</div>
-                <div>
-                  <h4>③ 昼（Day / 議論 ＆ ミニゲーム）</h4>
-                  <p>生存者全員で議論を行いながら、強力な効果を獲得できる「ミニゲームタスク」に挑戦！</p>
-                </div>
-              </div>
-              <div class="timeline-item">
-                <div class="timeline-ico">🗳️</div>
-                <div>
-                  <h4>④ 夕方・投票（Vote / 追放）</h4>
-                  <p>全員で最も怪しい人物を投票。最多得票者が追放され、再び夜の闇が訪れます。</p>
-                </div>
-              </div>
+              <p>
+                <b>昨晩の結果発表</b>（追放者・犠牲者・復活者）と勝敗判定 ➔ <b>本日のタスク発表</b> ➔ <b>ミニゲーム実行</b> ➔ <b>タスク成否＆貢献度開示</b>。
+              </p>
             </div>
 
-            <!-- 動画ショウケース -->
-            <div class="video-showcase">
-              <div class="video-tabs">
-                <button type="button" class="video-tab-btn is-active" id="tabVidNight" onclick="switchVideo('night')">
-                  🌙 夜の遠吠え
-                </button>
-                <button type="button" class="video-tab-btn" id="tabVidMorning" onclick="switchVideo('morning')">
-                  🌅 朝の襲撃発表
-                </button>
-                <button type="button" class="video-tab-btn" id="tabVidDay" onclick="switchVideo('day')">
-                  ☀️ 日中の集結
-                </button>
+            <!-- 昼 -->
+            <div class="phase-card" id="phaseCard1" onclick="showPhaseView(1)">
+              <div class="phase-card-title">
+                <span>☀️ ② 昼のターン（制限時間：5分）</span>
+                <span class="phase-badge">話し合い</span>
               </div>
-              <div class="video-wrapper">
-                <video id="slideVideoPlayer" src="movies/night_howl.mp4" playsinline controls loop preload="metadata"></video>
+              <p>
+                生存者全員で話し合い。朝のタスク貢献度ランキングや、占い師・霊媒師の情報をもとに人狼を推理します。
+              </p>
+            </div>
+
+            <!-- 夜 -->
+            <div class="phase-card" id="phaseCard2" onclick="showPhaseView(2)">
+              <div class="phase-card-title">
+                <span>🌙 ③ 夜のターン（制限時間：5分）</span>
+                <span class="phase-badge">投票＆スキル</span>
               </div>
-              <div class="video-info">
-                <span class="video-desc" id="slideVideoDesc">🎬 演出動画：夜の遠吠え（night_howl.mp4）</span>
-                <div class="video-ctrls">
-                  <button type="button" class="btn-vid" onclick="playPauseVideo()">再生/一時停止</button>
+              <p>
+                <b>追放投票</b> ➔ （脱落者復活投票） ➔ <b>役職スキル発動</b>（占い・護衛・夜襲・蘇生）。占い師と霊媒師の結果はその場ですぐに画面に表示されます。
+              </p>
+            </div>
+          </div>
+
+          <!-- 各フェーズの実画面表示シミュレーター -->
+          <div class="phone-simulator">
+            <div class="phone-notch"></div>
+            <div class="phone-screen-area">
+              <!-- Phase 0: 朝（実画面：タスク連打中） -->
+              <div class="sim-view is-active" id="phaseSim0">
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                  <span style="font-size:11px;font-weight:800;color:#facc15">🌅 朝のターン（タスク実行）</span>
+                  <span style="font-size:10px;background:#1e293b;padding:2px 6px;border-radius:4px">残り 0:45</span>
+                </div>
+                <div class="sim-card">
+                  <div style="font-size:11px;font-weight:800;color:#38bdf8">本日のタスク：みんなで連打！</div>
+                  <div style="font-size:10px;color:#cbd5e1">1分間で全員合計 2,500回 を目指せ！</div>
+                  <div style="background:#1e293b;height:8px;border-radius:4px;overflow:hidden;margin:6px 0">
+                    <div style="background:#22c55e;width:68%;height:100%"></div>
+                  </div>
+                  <div style="font-size:12px;font-weight:800;text-align:right;color:#22c55e">現在：1,720 / 2,500 回</div>
+                </div>
+                <button type="button" class="sim-btn sim-btn--amber" style="padding:18px;font-size:15px;font-weight:900">
+                  👆 ここを連打！（MASH!!）
+                </button>
+                <div class="sim-card" style="font-size:10.5px">
+                  <b style="color:#22c55e">🎁 成功報酬：全員ナイト</b><br>
+                  今晩、市民全員が護衛能力を使えるようになります。
+                </div>
+              </div>
+
+              <!-- Phase 1: 昼（実画面：話し合い） -->
+              <div class="sim-view" id="phaseSim1">
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                  <span style="font-size:11px;font-weight:800;color:#38bdf8">☀️ 昼のターン（話し合い）</span>
+                  <span style="font-size:10px;background:#1e293b;padding:2px 6px;border-radius:4px">残り 4:12</span>
+                </div>
+                <div class="sim-card">
+                  <div style="font-size:11px;color:#94a3b8;margin-bottom:4px">生存者一覧（5名生存）</div>
+                  <div style="display:grid;grid-template-columns:repeat(5, 1fr);gap:4px;text-align:center;font-size:9.5px">
+                    <div>👩<br>はなこ</div>
+                    <div>👨<br>けんじ</div>
+                    <div>🧑<br>そうた</div>
+                    <div>👧<br>みく</div>
+                    <div style="color:#38bdf8">😄<br>たろう</div>
+                  </div>
+                </div>
+                <div class="sim-card" style="font-size:11px">
+                  <div style="font-weight:800;color:#facc15;margin-bottom:4px">朝のタスク貢献度ランキング</div>
+                  <div>1位：けんじ（580回）</div>
+                  <div>2位：たろう（520回）</div>
+                  <div>3位：みく（410回）</div>
+                  <div style="color:#f87171">4位：そうた（120回）※怪しい？</div>
+                </div>
+                <div style="font-size:11px;color:#94a3b8;text-align:center;margin-top:auto">
+                  タスク貢献度や占い結果を手がかりに議論を進めてください
+                </div>
+              </div>
+
+              <!-- Phase 2: 夜（実画面：追放投票とスキル） -->
+              <div class="sim-view" id="phaseSim2">
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                  <span style="font-size:11px;font-weight:800;color:#c084fc">🌙 夜のターン（追放投票＆スキル）</span>
+                  <span style="font-size:10px;background:#1e293b;padding:2px 6px;border-radius:4px">残り 1:30</span>
+                </div>
+                <div class="sim-card">
+                  <div style="font-size:11px;font-weight:800;color:#f87171;margin-bottom:6px">追放したいプレイヤーを選択</div>
+                  <div style="display:flex;flex-direction:column;gap:4px;font-size:11px">
+                    <label style="display:flex;align-items:center;gap:6px"><input type="radio" name="simVote"> 👩 はなこ</label>
+                    <label style="display:flex;align-items:center;gap:6px"><input type="radio" name="simVote"> 👨 けんじ</label>
+                    <label style="display:flex;align-items:center;gap:6px"><input type="radio" name="simVote" checked> 🧑 そうた</label>
+                    <label style="display:flex;align-items:center;gap:6px"><input type="radio" name="simVote"> 👧 みく</label>
+                  </div>
+                  <button type="button" class="sim-btn sim-btn--red" style="margin-top:8px">投票を確定する</button>
+                </div>
+                <div class="sim-card" style="font-size:10.5px">
+                  <b style="color:#38bdf8">🔮 占い師・霊媒師の即時結果</b><br>
+                  占い・霊媒を実行すると、結果（人間 or 人狼）がその場ですぐに画面にポップアップ表示されます。
                 </div>
               </div>
             </div>
@@ -1379,362 +1183,290 @@
         </div>
       </section>
 
-      <!-- SLIDE 7: 日中のタスク（ミニゲーム）と獲得効果 -->
+      <!-- SLIDE 7: 朝のタスク（ミニゲーム）と獲得効果 -->
       <section class="slide" data-index="7">
         <div class="slide-header">
-          <div class="slide-tag">MINIGAMES & BUFFS</div>
-          <h2 class="slide-title">日中のタスク（ミニゲーム）と効果一覧</h2>
-          <p class="slide-desc">タスクを成功させてチート級の恩恵を掴め！失敗するとペナルティも…！？</p>
+          <span class="slide-badge">MINIGAMES & EFFECTS</span>
+          <h2 class="slide-title">朝のタスク（5種類）と獲得効果（報酬・罰）一覧</h2>
+          <p class="slide-desc">毎朝、タスク1つと効果（報酬または罰）1つが選出されます（同一ゲーム内での重複はありません）。</p>
         </div>
-        <div class="slide-body">
-          <div class="mini-grid">
-            <!-- ミニゲーム5種 -->
-            <div class="table-container">
-              <div class="table-title" style="color:var(--amber)">
-                <span>🎯</span> 5種類の協力ミニゲーム（タスク）
-              </div>
-              <table class="custom-table">
-                <thead>
-                  <tr>
-                    <th>タスク名</th>
-                    <th>ルール概要</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><b>👆 みんなで連打！</b></td>
-                    <td>1分間で「生存人数×500回」を全員でタップ連打！</td>
-                  </tr>
-                  <tr>
-                    <td><b>🤝 気持ちを合わせろクイズ！</b></td>
-                    <td>お題（例: 赤い果物）に対して全員が同じ回答を揃える！</td>
-                  </tr>
-                  <tr>
-                    <td><b>🚫 かぶっちゃだめよクイズ！</b></td>
-                    <td>お題に対して全員が被らないバラバラの回答をする！</td>
-                  </tr>
-                  <tr>
-                    <td><b>⏱️ みんな答えろクイズ！</b></td>
-                    <td>都道府県などのお題に1分以内で順番に被らず回答！</td>
-                  </tr>
-                  <tr>
-                    <td><b>🔟 10秒チャレンジ！</b></td>
-                    <td>体内時計でジャスト10.0秒（±0.5秒）を目指す！</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+        <div class="tables-layout">
+          <!-- ミニゲーム5種 -->
+          <div class="panel" style="padding:14px">
+            <h4 style="font-size:14px;font-weight:800;color:var(--text);margin-bottom:8px">🎯 5種類のミニゲーム（タスク）</h4>
+            <table class="clean-table">
+              <thead>
+                <tr><th style="width:120px">タスク名</th><th>ルール仕様</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><b>👆 みんなで連打！</b></td><td>1分間で「生存人数×500回」を全員でタップ連打</td></tr>
+                <tr><td><b>🤝 気持ちを合わせろ！</b></td><td>お題（例: 赤い果物）に対して全員が同じ回答を揃える</td></tr>
+                <tr><td><b>🚫 かぶっちゃだめよ！</b></td><td>お題に対して全員が被らないバラバラの回答をする</td></tr>
+                <tr><td><b>⏱️ みんな答えろ！</b></td><td>都道府県などのお題に1分以内で順番にかぶらず回答</td></tr>
+                <tr><td><b>🔟 10秒チャレンジ！</b></td><td>体内時計でジャスト10.0秒（±0.5秒）を狙う</td></tr>
+              </tbody>
+            </table>
+          </div>
 
-            <!-- 報酬＆ペナルティ -->
-            <div class="table-container">
-              <div class="table-title table-title--reward">
-                <span>🎁</span> クリア報酬（5種）＆ 失敗罰（3種）
-              </div>
-              <table class="custom-table">
-                <thead>
-                  <tr>
-                    <th style="width:70px">種類</th>
-                    <th>効果</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="badge-tag badge-reward">クリア報酬</span></td>
-                    <td><b>全員ナイト</b>：今晩、市民全員が護衛能力を使える！</td>
-                  </tr>
-                  <tr>
-                    <td><span class="badge-tag badge-reward">クリア報酬</span></td>
-                    <td><b>全員占い</b>：今晩、全員が占い能力を使える！</td>
-                  </tr>
-                  <tr>
-                    <td><span class="badge-tag badge-reward">クリア報酬</span></td>
-                    <td><b>脱落者復活</b>：夜に投票で脱落者を1人蘇生できる！</td>
-                  </tr>
-                  <tr>
-                    <td><span class="badge-tag badge-reward">クリア報酬</span></td>
-                    <td><b>夜襲封じ</b>：今晩の人狼の夜襲を無効化する！</td>
-                  </tr>
-                  <tr>
-                    <td><span class="badge-tag badge-reward">クリア報酬</span></td>
-                    <td><b>人狼数公開</b>：生存している人狼陣営の人数が判明！</td>
-                  </tr>
-                  <tr>
-                    <td><span class="badge-tag badge-penalty">失敗ペナルティ</span></td>
-                    <td><b>夜襲＋1</b>：今晩の夜襲対象が＋1人増える…！</td>
-                  </tr>
-                  <tr>
-                    <td><span class="badge-tag badge-penalty">失敗ペナルティ</span></td>
-                    <td><b>占い無効</b>：今晩の占い師のスキルが無効化…！</td>
-                  </tr>
-                  <tr>
-                    <td><span class="badge-tag badge-penalty">失敗ペナルティ</span></td>
-                    <td><b>2人追放</b>：今晩の投票で上位2名が追放される…！</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+          <!-- 報酬5種 ＆ 罰3種 -->
+          <div class="panel" style="padding:14px">
+            <h4 style="font-size:14px;font-weight:800;color:var(--text);margin-bottom:8px">🎁 成功報酬（5種）＆ 失敗罰（3種）</h4>
+            <table class="clean-table">
+              <thead>
+                <tr><th style="width:70px">種別</th><th>発動する効果</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><span class="badge badge--reward">報酬</span></td><td><b>全員ナイト</b>：今晩、市民全員が護衛スキルを使用可能</td></tr>
+                <tr><td><span class="badge badge--reward">報酬</span></td><td><b>全員占い</b>：今晩、全員が占い師の能力を使える</td></tr>
+                <tr><td><span class="badge badge--reward">報酬</span></td><td><b>脱落者復活</b>：夜に投票で脱落者を1人蘇生できる</td></tr>
+                <tr><td><span class="badge badge--reward">報酬</span></td><td><b>夜襲封じ</b>：今晩の人狼の夜襲が完全に封じられる</td></tr>
+                <tr><td><span class="badge badge--reward">報酬</span></td><td><b>人狼数公開</b>：生存している人狼陣営の人数が公開される</td></tr>
+                <tr><td><span class="badge badge--penalty">罰</span></td><td><b>夜襲＋1人</b>：今晩の夜襲対象が＋1人増える</td></tr>
+                <tr><td><span class="badge badge--penalty">罰</span></td><td><b>占い無効</b>：今晩、占い師のスキルが無効化される</td></tr>
+                <tr><td><span class="badge badge--penalty">罰</span></td><td><b>2人追放</b>：今晩の投票で上位2名が追放される</td></tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </section>
 
-      <!-- SLIDE 8: 役職紹介① 人狼陣営（全4種・カード画像付き） -->
+      <!-- SLIDE 8: 役職一覧 ① 人狼陣営 -->
       <section class="slide" data-index="8">
         <div class="slide-header">
-          <div class="slide-tag" style="color:#f87171">ROLES CATALOG - WOLF TEAM</div>
-          <h2 class="slide-title">役職紹介 ①：人狼陣営（全4種）</h2>
-          <p class="slide-desc">闇に潜み市民を喰らう夜の支配者たち。狂人・サイコの特性に注目！</p>
+          <span class="slide-badge" style="background:var(--wolf-light);color:var(--wolf)">ROLES CATALOG 1</span>
+          <h2 class="slide-title">役職一覧 ①：人狼陣営（全4種）</h2>
+          <p class="slide-desc">実際の役職カードを表示しています。狂人・サイコキラーの勝敗カウント判定にご注意ください。</p>
         </div>
-        <div class="slide-body">
-          <div class="roles-wolf-grid">
-            <!-- 人狼神 -->
-            <div class="role-card role-card--wolf">
-              <div class="role-thumb-wrap">
-                <img src="img/role_wolf_god.jpg" alt="人狼神">
-                <span class="role-meta-badge badge-wolf-team">夜襲あり</span>
-              </div>
-              <div class="role-info">
-                <div class="role-name">
-                  <span>人狼神</span>
-                  <span style="font-size:11px;color:#fca5a5">WOLF GOD</span>
-                </div>
-                <div class="role-attr-tags">
-                  <span class="role-attr">占い判定: <b>人狼</b></span>
-                  <span class="role-attr">勝敗人狼数: <b>含む</b></span>
-                </div>
-                <p class="role-desc">
-                  <b>最初から全員の役職がすべて判明している</b>人狼の絶対神。夜は人狼と協力して市民を襲撃する。
-                </p>
-              </div>
+        <div class="role-grid-wolf">
+          <!-- 人狼神 -->
+          <div class="role-catalog-card" style="border-color:#fca5a5">
+            <div class="role-thumb">
+              <img src="img/role_wolf_god.jpg" alt="人狼神">
+              <span class="role-tag-top" style="background:#dc2626">人狼陣営</span>
             </div>
-
-            <!-- 人狼 -->
-            <div class="role-card role-card--wolf">
-              <div class="role-thumb-wrap">
-                <img src="img/role_werewolf.jpg" alt="人狼">
-                <span class="role-meta-badge badge-wolf-team">夜襲あり</span>
+            <div class="role-catalog-info">
+              <div class="role-catalog-name"><span style="color:#dc2626">人狼神</span><span style="font-size:11px;color:#94a3b8">WOLF GOD</span></div>
+              <div class="role-catalog-attrs">
+                <span class="role-attr-chip">夜襲：あり</span>
+                <span class="role-attr-chip">占い：人狼</span>
+                <span class="role-attr-chip">人狼数：カウント</span>
               </div>
-              <div class="role-info">
-                <div class="role-name">
-                  <span>人狼</span>
-                  <span style="font-size:11px;color:#fca5a5">WEREWOLF</span>
-                </div>
-                <div class="role-attr-tags">
-                  <span class="role-attr">占い判定: <b>人狼</b></span>
-                  <span class="role-attr">勝敗人狼数: <b>含む</b></span>
-                </div>
-                <p class="role-desc">
-                  人狼同士（人狼神含む）はお互いがわかる。夜に相談して毎晩市民1人を襲撃する。
-                </p>
-              </div>
+              <p class="role-catalog-desc">
+                <b>最初から全員の役職がすべて判明している</b>人狼の長。仲間と協力して夜に市民を襲撃する。
+              </p>
             </div>
+          </div>
 
-            <!-- 狂人 -->
-            <div class="role-card role-card--wolf">
-              <div class="role-thumb-wrap">
-                <img src="img/role_madman.jpg" alt="狂人">
-                <span class="role-meta-badge" style="background:#64748b;color:#fff">夜襲なし</span>
-              </div>
-              <div class="role-info">
-                <div class="role-name">
-                  <span>狂人</span>
-                  <span style="font-size:11px;color:#cbd5e1">MADMAN</span>
-                </div>
-                <div class="role-attr-tags">
-                  <span class="role-attr">占い判定: <b style="color:var(--cyan)">人間</b></span>
-                  <span class="role-attr">勝敗人狼数: <b style="color:#ef4444">含まない</b></span>
-                </div>
-                <p class="role-desc">
-                  人狼に味方する人間。人狼陣営の勝利が自身の勝利。<span class="warn-rule">※勝敗判定の人狼数には数えられない（人狼全滅で市民勝利）。</span>
-                </p>
-              </div>
+          <!-- 人狼 -->
+          <div class="role-catalog-card" style="border-color:#fca5a5">
+            <div class="role-thumb">
+              <img src="img/role_werewolf.jpg" alt="人狼">
+              <span class="role-tag-top" style="background:#dc2626">人狼陣営</span>
             </div>
+            <div class="role-catalog-info">
+              <div class="role-catalog-name"><span style="color:#dc2626">人狼</span><span style="font-size:11px;color:#94a3b8">WEREWOLF</span></div>
+              <div class="role-catalog-attrs">
+                <span class="role-attr-chip">夜襲：あり</span>
+                <span class="role-attr-chip">占い：人狼</span>
+                <span class="role-attr-chip">人狼数：カウント</span>
+              </div>
+              <p class="role-catalog-desc">
+                人狼同士（人狼神含む）はお互いがわかる。夜に相談して毎晩市民1人を襲撃する。
+              </p>
+            </div>
+          </div>
 
-            <!-- サイコキラー -->
-            <div class="role-card role-card--wolf">
-              <div class="role-thumb-wrap">
-                <img src="img/role_psycho.jpg" alt="サイコキラー">
-                <span class="role-meta-badge" style="background:#7f1d1d;color:#fff">返り討ち</span>
+          <!-- 狂人 -->
+          <div class="role-catalog-card">
+            <div class="role-thumb">
+              <img src="img/role_madman.jpg" alt="狂人">
+              <span class="role-tag-top" style="background:#64748b">人狼陣営</span>
+            </div>
+            <div class="role-catalog-info">
+              <div class="role-catalog-name"><span>狂人</span><span style="font-size:11px;color:#94a3b8">MADMAN</span></div>
+              <div class="role-catalog-attrs">
+                <span class="role-attr-chip">夜襲：なし</span>
+                <span class="role-attr-chip">占い：人間</span>
+                <span class="role-attr-chip" style="background:#fef3c7;color:#b45309">人狼数：カウント外</span>
               </div>
-              <div class="role-info">
-                <div class="role-name">
-                  <span>サイコキラー</span>
-                  <span style="font-size:11px;color:#fca5a5">PSYCHO</span>
-                </div>
-                <div class="role-attr-tags">
-                  <span class="role-attr">占い判定: <b style="color:var(--cyan)">人間</b></span>
-                  <span class="role-attr">勝敗人狼数: <b style="color:#ef4444">含まない</b></span>
-                </div>
-                <p class="role-desc">
-                  夜に関わった（占い・護衛・襲撃・蘇生）プレイヤーを全員返り討ちにする。<span class="warn-rule">※勝敗判定の人狼数には含まれない。</span>
-                </p>
+              <p class="role-catalog-desc">
+                人狼に味方する人間。人狼陣営の勝利が自身の勝利。<span class="warn-txt">※勝敗判定の人狼数には含まれない（人狼全滅で市民勝利）。</span>
+              </p>
+            </div>
+          </div>
+
+          <!-- サイコキラー -->
+          <div class="role-catalog-card">
+            <div class="role-thumb">
+              <img src="img/role_psycho.jpg" alt="サイコキラー">
+              <span class="role-tag-top" style="background:#991b1b">人狼陣営</span>
+            </div>
+            <div class="role-catalog-info">
+              <div class="role-catalog-name"><span style="color:#b91c1c">サイコキラー</span><span style="font-size:11px;color:#94a3b8">PSYCHO</span></div>
+              <div class="role-catalog-attrs">
+                <span class="role-attr-chip">夜襲：返り討ち</span>
+                <span class="role-attr-chip">占い：人間</span>
+                <span class="role-attr-chip" style="background:#fef3c7;color:#b45309">人狼数：カウント外</span>
               </div>
+              <p class="role-catalog-desc">
+                夜に関わった（占い・護衛・襲撃・蘇生）プレイヤーを返り討ちにする。<span class="warn-txt">※勝敗判定の人狼数には含まれない。</span>
+              </p>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- SLIDE 9: 役職紹介② 市民陣営（全7種・カード画像付き） -->
+      <!-- SLIDE 9: 役職一覧 ② 市民陣営 -->
       <section class="slide" data-index="9">
         <div class="slide-header">
-          <div class="slide-tag" style="color:var(--cyan)">ROLES CATALOG - CITIZEN TEAM</div>
-          <h2 class="slide-title">役職紹介 ②：市民陣営（全7種）</h2>
-          <p class="slide-desc">固有のスキルと推理力で人狼を暴き、村の平和を取り戻せ！</p>
+          <span class="slide-badge">ROLES CATALOG 2</span>
+          <h2 class="slide-title">役職一覧 ②：市民陣営（全7種）</h2>
+          <p class="slide-desc">実際の役職カードを表示しています。夜に発動するスキルや判定の違いを確認してください。</p>
         </div>
-        <div class="slide-body">
-          <div class="roles-citizen-grid">
-            <!-- 占い師 -->
-            <div class="role-card role-card--citizen">
-              <div class="role-thumb-wrap" style="height:120px">
-                <img src="img/role_seer.jpg" alt="占い師">
-                <span class="role-meta-badge badge-citizen-team">夜スキル</span>
-              </div>
-              <div class="role-info" style="padding:8px 10px">
-                <div class="role-name" style="font-size:13px">占い師 🔮</div>
-                <p class="role-desc" style="font-size:11px">毎夜1人を占い、その場で「人狼」か「人間」かを判別する超重要役職。</p>
-              </div>
+        <div class="role-grid-citizen">
+          <!-- 占い師 -->
+          <div class="role-catalog-card">
+            <div class="role-thumb role-thumb--sm"><img src="img/role_seer.jpg" alt="占い師"></div>
+            <div class="role-catalog-info">
+              <div class="role-catalog-name" style="font-size:13.5px;color:var(--primary)">占い師 🔮</div>
+              <p class="role-catalog-desc">毎夜1人を占い、その場で「人狼」か「人間」かを即時知る。</p>
             </div>
+          </div>
 
-            <!-- 騎士 -->
-            <div class="role-card role-card--citizen">
-              <div class="role-thumb-wrap" style="height:120px">
-                <img src="img/role_knight.jpg" alt="騎士">
-                <span class="role-meta-badge badge-citizen-team">夜スキル</span>
-              </div>
-              <div class="role-info" style="padding:8px 10px">
-                <div class="role-name" style="font-size:13px">騎士 🛡️</div>
-                <p class="role-desc" style="font-size:11px">毎夜1人を人狼の襲撃から護衛する。自分自身を守ることはできない。</p>
-              </div>
+          <!-- 騎士 -->
+          <div class="role-catalog-card">
+            <div class="role-thumb role-thumb--sm"><img src="img/role_knight.jpg" alt="騎士"></div>
+            <div class="role-catalog-info">
+              <div class="role-catalog-name" style="font-size:13.5px;color:var(--primary)">騎士 🛡️</div>
+              <p class="role-catalog-desc">毎夜1人を人狼の襲撃から護衛する（自分自身は守れない）。</p>
             </div>
+          </div>
 
-            <!-- 霊媒師 -->
-            <div class="role-card role-card--citizen">
-              <div class="role-thumb-wrap" style="height:120px">
-                <img src="img/role_medium.jpg" alt="霊媒師">
-                <span class="role-meta-badge badge-citizen-team">夜スキル</span>
-              </div>
-              <div class="role-info" style="padding:8px 10px">
-                <div class="role-name" style="font-size:13px">霊媒師 🕯️</div>
-                <p class="role-desc" style="font-size:11px">夜に、直前に追放された人物が「人狼」だったかその場で知ることができる。</p>
-              </div>
+          <!-- 霊媒師 -->
+          <div class="role-catalog-card">
+            <div class="role-thumb role-thumb--sm"><img src="img/role_medium.jpg" alt="霊媒師"></div>
+            <div class="role-catalog-info">
+              <div class="role-catalog-name" style="font-size:13.5px;color:var(--primary)">霊媒師 🕯️</div>
+              <p class="role-catalog-desc">夜に、直前に追放された人物が「人狼」だったか即時知る。</p>
             </div>
+          </div>
 
-            <!-- 恋人 -->
-            <div class="role-card role-card--citizen">
-              <div class="role-thumb-wrap" style="height:120px">
-                <img src="img/role_lovers.jpg" alt="恋人">
-                <span class="role-meta-badge badge-citizen-team">2人1組</span>
-              </div>
-              <div class="role-info" style="padding:8px 10px">
-                <div class="role-name" style="font-size:13px">恋人 💕</div>
-                <p class="role-desc" style="font-size:11px">2人1組でお互いが味方とわかる。片方が死亡するともう片方も後追い死亡する。</p>
-              </div>
+          <!-- 恋人 -->
+          <div class="role-catalog-card">
+            <div class="role-thumb role-thumb--sm"><img src="img/role_lovers.jpg" alt="恋人"></div>
+            <div class="role-catalog-info">
+              <div class="role-catalog-name" style="font-size:13.5px;color:#db2777">恋人 💕</div>
+              <p class="role-catalog-desc">2人1組で互いが味方とわかる。片方が死ぬともう片方も後追い死亡。</p>
             </div>
+          </div>
 
-            <!-- 奇跡の医者 -->
-            <div class="role-card role-card--citizen">
-              <div class="role-thumb-wrap" style="height:120px">
-                <img src="img/role_doctor.jpg" alt="奇跡の医者">
-                <span class="role-meta-badge badge-citizen-team">1回のみ</span>
-              </div>
-              <div class="role-info" style="padding:8px 10px">
-                <div class="role-name" style="font-size:13px">奇跡の医者 💉</div>
-                <p class="role-desc" style="font-size:11px">ゲーム中1回だけ死者を蘇生可能（サイコキラーを蘇生すると自身が死亡）。</p>
-              </div>
+          <!-- 奇跡の医者 -->
+          <div class="role-catalog-card">
+            <div class="role-thumb role-thumb--sm"><img src="img/role_doctor.jpg" alt="奇跡の医者"></div>
+            <div class="role-catalog-info">
+              <div class="role-catalog-name" style="font-size:13.5px;color:var(--green)">奇跡の医者 💉</div>
+              <p class="role-catalog-desc">ゲーム中1回だけ死者を蘇生（サイコキラー蘇生時は自身が死亡）。</p>
             </div>
+          </div>
 
-            <!-- コスプレイヤー -->
-            <div class="role-card role-card--citizen">
-              <div class="role-thumb-wrap" style="height:120px">
-                <img src="img/role_cosplayer.jpg" alt="コスプレイヤー">
-                <span class="role-meta-badge" style="background:#e11d48;color:#fff">占い黒</span>
-              </div>
-              <div class="role-info" style="padding:8px 10px">
-                <div class="role-name" style="font-size:13px">コスプレイヤー 🎭</div>
-                <p class="role-desc" style="font-size:11px">毎夜1人を護衛できるが、衣装のせいで<b>占われると「人狼」と判定</b>される！</p>
-              </div>
+          <!-- コスプレイヤー -->
+          <div class="role-catalog-card">
+            <div class="role-thumb role-thumb--sm"><img src="img/role_cosplayer.jpg" alt="コスプレイヤー"></div>
+            <div class="role-catalog-info">
+              <div class="role-catalog-name" style="font-size:13.5px;color:#e11d48">コスプレ 🎭</div>
+              <p class="role-catalog-desc">毎夜1人を護衛できるが、<b>占われると「人狼」と判定</b>される。</p>
             </div>
+          </div>
 
-            <!-- 市民 -->
-            <div class="role-card role-card--citizen">
-              <div class="role-thumb-wrap" style="height:120px">
-                <img src="img/role_citizen.jpg" alt="市民">
-                <span class="role-meta-badge" style="background:#475569;color:#fff">基本役職</span>
-              </div>
-              <div class="role-info" style="padding:8px 10px">
-                <div class="role-name" style="font-size:13px">市民 👤</div>
-                <p class="role-desc" style="font-size:11px">能力はないが、日中の議論と投票、そしてミニゲームへの貢献で村を救う真の主役！</p>
-              </div>
+          <!-- 市民 -->
+          <div class="role-catalog-card">
+            <div class="role-thumb role-thumb--sm"><img src="img/role_citizen.jpg" alt="市民"></div>
+            <div class="role-catalog-info">
+              <div class="role-catalog-name" style="font-size:13.5px">市民 👤</div>
+              <p class="role-catalog-desc">特殊能力なし。議論・タスク・投票で人狼を追放する基本役職。</p>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- SLIDE 10: ドラマチックな結末 & ゲームスタート！ -->
+      <!-- SLIDE 10: 進行上の注意点 & ロビー案内 -->
       <section class="slide" data-index="10">
-        <div class="cta-slide">
-          <div class="cta-card">
-            <div style="font-size:48px">🏆 ➔ 🐺</div>
-            <h2 style="font-family:var(--font-display);font-size:28px;color:#fff;letter-spacing:1px">
-              さあ、欺瞞と推理が交錯する村へ飛び込もう！
-            </h2>
-            <p style="color:var(--text-muted);font-size:14px;line-height:1.6">
-              生存者の歓喜か、人狼の狂笑か――。<br>
-              結果発表では生存者と犠牲者がドラマチックに演出されます。<br>
-              全員スマホを手に取り、QRコードを読み取ってゲームを始めましょう！
-            </p>
-            <div style="display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:10px">
-              <a href="index.html" class="cta-btn-main">
-                <span>🎮</span> ゲームロビーを開く
-              </a>
-              <button type="button" class="cta-sub-btn" onclick="goToSlide(1)">
-                <span>🔄</span> スライドを最初から見る
-              </button>
-            </div>
+        <div class="slide-header">
+          <span class="slide-badge">CHECKLIST & START</span>
+          <h2 class="slide-title">ゲーム進行上の注意点と参加案内</h2>
+          <p class="slide-desc">ルールを確認したら、スマホを用意してゲームロビーを開きましょう。</p>
+        </div>
+        <div class="finish-layout">
+          <div>
+            <h4 style="font-size:14.5px;font-weight:800;color:var(--text);margin-bottom:10px">⚠️ プレイ時の重要チェック項目</h4>
+            <ul class="checklist">
+              <li>
+                <span class="check-ico">✔</span>
+                <div><b>画面の覗き見に注意</b>：役職確認や夜の投票・スキル選択時は、手元を隠して操作してください。</div>
+              </li>
+              <li>
+                <span class="check-ico">✔</span>
+                <div><b>脱落者もゲーム終了まで待機</b>：奇跡の医者やタスク報酬で復活する可能性があるため、脱落後も退出せず静観してください。</div>
+              </li>
+              <li>
+                <span class="check-ico">✔</span>
+                <div><b>占い・霊媒は即時結果表示</b>：占い師や霊媒師がスキルを発動すると、その場ですぐに相手の結果が画面に表示されます。</div>
+              </li>
+            </ul>
           </div>
 
-          <div class="keyboard-hint" style="justify-content:center;margin-top:10px">
-            <span>操作方法：</span>
-            <span class="kbd">←</span> <span class="kbd">→</span> <span>スライド切り替え</span>
-            <span class="kbd">Space</span> <span>次へ</span>
-            <span class="kbd">F</span> <span>全画面切り替え</span>
+          <div class="panel" style="display:flex;flex-direction:column;gap:14px;text-align:center;padding:26px">
+            <div style="font-size:36px">📱 ➔ 🎮</div>
+            <h3 style="font-size:18px;font-weight:800;color:var(--text)">
+              準備が整いましたら<br>ロビー画面を開いてください
+            </h3>
+            <p style="font-size:13px;color:var(--text-sub);line-height:1.6">
+              ホスト画面のQRコードを参加者全員でスキャンして開始します。
+            </p>
+            <div style="display:flex;flex-direction:column;gap:8px;margin-top:6px">
+              <a href="index.html" class="btn-action-main">
+                <span>🎮</span> ゲームロビーを開く
+              </a>
+              <button type="button" class="btn-action-sub" onclick="goToSlide(1)">
+                <span>🔄</span> スライドを最初から見直す
+              </button>
+            </div>
           </div>
         </div>
       </section>
 
     </main>
 
-    <!-- ボトムナビゲーションバー -->
+    <!-- 下部操作バー -->
     <footer class="bottom-bar">
-      <button type="button" class="nav-btn" id="btnPrevSlide" onclick="prevSlide()" disabled>
+      <button type="button" class="btn-nav" id="btnPrevSlide" onclick="prevSlide()" disabled>
         <span>◀</span> 前へ (←)
       </button>
 
-      <!-- 1〜10のジャンプドット -->
       <nav class="dots-nav" id="dotsNav" aria-label="スライド選択">
-        <button type="button" class="dot-btn is-active" data-slide="1" title="1. タイトル">1</button>
+        <button type="button" class="dot-btn is-active" data-slide="1" title="1. 概要">1</button>
         <button type="button" class="dot-btn" data-slide="2" title="2. 特徴">2</button>
         <button type="button" class="dot-btn" data-slide="3" title="3. 勝利条件">3</button>
-        <button type="button" class="dot-btn" data-slide="4" title="4. 始め方①">4</button>
-        <button type="button" class="dot-btn" data-slide="5" title="5. 始め方②">5</button>
-        <button type="button" class="dot-btn" data-slide="6" title="6. サイクル＆動画">6</button>
-        <button type="button" class="dot-btn" data-slide="7" title="7. ミニゲーム">7</button>
+        <button type="button" class="dot-btn" data-slide="4" title="4. 始め方①（実画面）">4</button>
+        <button type="button" class="dot-btn" data-slide="5" title="5. 始め方②（役職確認）">5</button>
+        <button type="button" class="dot-btn" data-slide="6" title="6. サイクル（朝昼夜）">6</button>
+        <button type="button" class="dot-btn" data-slide="7" title="7. タスク＆効果">7</button>
         <button type="button" class="dot-btn" data-slide="8" title="8. 人狼陣営">8</button>
         <button type="button" class="dot-btn" data-slide="9" title="9. 市民陣営">9</button>
-        <button type="button" class="dot-btn" data-slide="10" title="10. スタート">10</button>
+        <button type="button" class="dot-btn" data-slide="10" title="10. 注意点＆開始">10</button>
       </nav>
 
-      <div class="keyboard-hint">
-        <span class="kbd">←</span> / <span class="kbd">→</span> キーで移動
+      <div class="kbd-guide">
+        <span class="kbd">←</span> / <span class="kbd">→</span> スライド切替　<span class="kbd">F</span> 全画面
       </div>
 
-      <button type="button" class="nav-btn" id="btnNextSlide" onclick="nextSlide()">
+      <button type="button" class="btn-nav btn-nav--primary" id="btnNextSlide" onclick="nextSlide()">
         次へ (→) <span>▶</span>
       </button>
     </footer>
   </div>
 
   <script>
-    // スライド制御ロジック
     const TOTAL_SLIDES = 10;
     let currentSlide = 1;
 
@@ -1744,23 +1476,16 @@
     const btnPrev = document.getElementById('btnPrevSlide');
     const btnNext = document.getElementById('btnNextSlide');
     const btnFullscreen = document.getElementById('btnFullscreen');
-    const videoPlayer = document.getElementById('slideVideoPlayer');
-    const videoDesc = document.getElementById('slideVideoDesc');
 
     function updateSlide(newIndex) {
       if (newIndex < 1 || newIndex > TOTAL_SLIDES) return;
-
-      const prevIndex = currentSlide;
       currentSlide = newIndex;
 
       slides.forEach((s) => {
         const idx = parseInt(s.dataset.index, 10);
         s.classList.remove('is-active', 'is-prev');
-        if (idx === currentSlide) {
-          s.classList.add('is-active');
-        } else if (idx < currentSlide) {
-          s.classList.add('is-prev');
-        }
+        if (idx === currentSlide) s.classList.add('is-active');
+        else if (idx < currentSlide) s.classList.add('is-prev');
       });
 
       dotBtns.forEach((dot) => {
@@ -1768,181 +1493,88 @@
         dot.classList.toggle('is-active', idx === currentSlide);
       });
 
-      const formatted = String(currentSlide).padStart(2, '0');
-      counterEl.innerHTML = `<b>${formatted}</b> / ${TOTAL_SLIDES}`;
-
+      counterEl.innerHTML = `<b>${String(currentSlide).padStart(2, '0')}</b> / ${TOTAL_SLIDES}`;
       btnPrev.disabled = (currentSlide === 1);
       btnNext.disabled = (currentSlide === TOTAL_SLIDES);
-
-      // スライド移動時に動画を自動停止（スライド6以外）
-      if (currentSlide !== 6 && videoPlayer) {
-        videoPlayer.pause();
-      }
     }
 
-    function nextSlide() {
-      if (currentSlide < TOTAL_SLIDES) {
-        updateSlide(currentSlide + 1);
-      }
-    }
+    function nextSlide() { if (currentSlide < TOTAL_SLIDES) updateSlide(currentSlide + 1); }
+    function prevSlide() { if (currentSlide > 1) updateSlide(currentSlide - 1); }
+    function goToSlide(index) { updateSlide(index); }
 
-    function prevSlide() {
-      if (currentSlide > 1) {
-        updateSlide(currentSlide - 1);
-      }
-    }
-
-    function goToSlide(index) {
-      updateSlide(index);
-    }
-
-    // ドットクリックイベント
     dotBtns.forEach((dot) => {
-      dot.addEventListener('click', () => {
-        const idx = parseInt(dot.dataset.slide, 10);
-        goToSlide(idx);
-      });
+      dot.addEventListener('click', () => goToSlide(parseInt(dot.dataset.slide, 10)));
     });
 
-    // キーボードショートカット
     window.addEventListener('keydown', (e) => {
-      // 入力フォームでの誤爆防止
       if (['INPUT', 'TEXTAREA'].includes(e.target.tagName)) return;
-
       if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
-        e.preventDefault();
-        nextSlide();
+        e.preventDefault(); nextSlide();
       } else if (e.key === 'ArrowLeft' || e.key === 'PageUp' || e.key === 'Backspace') {
-        e.preventDefault();
-        prevSlide();
+        e.preventDefault(); prevSlide();
       } else if (e.key === 'Home') {
-        e.preventDefault();
-        goToSlide(1);
+        e.preventDefault(); goToSlide(1);
       } else if (e.key === 'End') {
-        e.preventDefault();
-        goToSlide(TOTAL_SLIDES);
+        e.preventDefault(); goToSlide(TOTAL_SLIDES);
       } else if (e.key === 'f' || e.key === 'F') {
-        e.preventDefault();
-        toggleFullscreen();
+        e.preventDefault(); toggleFullscreen();
       }
     });
 
-    // スワイプ操作対応
-    let touchStartX = 0;
-    let touchStartY = 0;
+    // スワイプ
+    let touchStartX = 0, touchStartY = 0;
     const viewport = document.getElementById('slidesViewport');
-
     viewport.addEventListener('touchstart', (e) => {
       touchStartX = e.changedTouches[0].clientX;
       touchStartY = e.changedTouches[0].clientY;
     }, { passive: true });
-
     viewport.addEventListener('touchend', (e) => {
-      const diffX = e.changedTouches[0].clientX - touchStartX;
-      const diffY = e.changedTouches[0].clientY - touchStartY;
-      // 水平スワイプがメインの場合
-      if (Math.abs(diffX) > 50 && Math.abs(diffX) > Math.abs(diffY)) {
-        if (diffX < 0) {
-          nextSlide();
-        } else {
-          prevSlide();
-        }
+      const dx = e.changedTouches[0].clientX - touchStartX;
+      const dy = e.changedTouches[0].clientY - touchStartY;
+      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
+        if (dx < 0) nextSlide(); else prevSlide();
       }
     }, { passive: true });
 
-    // フルスクリーン切替
+    // 全画面
     function toggleFullscreen() {
       if (!document.fullscreenElement) {
         document.documentElement.requestFullscreen().catch(() => {});
-        btnFullscreen.innerHTML = '<span>✕</span> 解除';
-      } else {
-        if (document.exitFullscreen) {
-          document.exitFullscreen().catch(() => {});
-        }
-        btnFullscreen.innerHTML = '<span>⛶</span> 全画面';
+      } else if (document.exitFullscreen) {
+        document.exitFullscreen().catch(() => {});
       }
     }
     btnFullscreen.addEventListener('click', toggleFullscreen);
-
     document.addEventListener('fullscreenchange', () => {
-      if (!document.fullscreenElement) {
-        btnFullscreen.innerHTML = '<span>⛶</span> 全画面';
-      } else {
-        btnFullscreen.innerHTML = '<span>✕</span> 解除';
-      }
+      btnFullscreen.innerHTML = document.fullscreenElement ? '<span>✕</span> 解除' : '<span>⛶</span> 全画面';
     });
 
-    // スライド5：カードめくり体験ギミック
-    const demoCard = document.getElementById('demoCard');
-    const demoCardFront = document.getElementById('demoCardFront');
-    const demoRoles = [
-      'img/role_wolf_god.jpg',
-      'img/role_seer.jpg',
-      'img/role_werewolf.jpg',
-      'img/role_knight.jpg',
-      'img/role_psycho.jpg'
-    ];
-    let demoRoleIdx = 0;
-
-    function toggleCardFlip() {
-      if (!demoCard) return;
-      const isFlipped = demoCard.classList.contains('is-flipped');
-      if (!isFlipped) {
-        demoRoleIdx = (demoRoleIdx + 1) % demoRoles.length;
-        demoCardFront.src = demoRoles[demoRoleIdx];
-        demoCard.classList.add('is-flipped');
-      } else {
-        demoCard.classList.remove('is-flipped');
+    // Slide 4: 実画面シミュレーター切替
+    function showSimView(stepIdx) {
+      for (let i = 0; i < 3; i++) {
+        document.getElementById('simView' + i).classList.toggle('is-active', i === stepIdx);
+        document.getElementById('stepItem' + i).classList.toggle('is-active', i === stepIdx);
       }
     }
 
-    // スライド6：動画切り替え
-    const videoData = {
-      night: {
-        src: 'movies/night_howl.mp4',
-        desc: '🎬 演出動画：夜の遠吠え（night_howl.mp4）',
-        tabId: 'tabVidNight'
-      },
-      morning: {
-        src: 'movies/morning_attack.mp4',
-        desc: '🎬 演出動画：朝の襲撃発表（morning_attack.mp4）',
-        tabId: 'tabVidMorning'
-      },
-      day: {
-        src: 'movies/day_gather.mp4',
-        desc: '🎬 演出動画：日中の集結（day_gather.mp4）',
-        tabId: 'tabVidDay'
-      }
-    };
-
-    function switchVideo(type) {
-      const data = videoData[type];
-      if (!data || !videoPlayer) return;
-
-      document.querySelectorAll('.video-tab-btn').forEach(btn => btn.classList.remove('is-active'));
-      const activeTab = document.getElementById(data.tabId);
-      if (activeTab) activeTab.classList.add('is-active');
-
-      document.querySelectorAll('.timeline-item').forEach(item => item.classList.remove('is-active'));
-      const timelineIdx = type === 'night' ? 0 : type === 'morning' ? 1 : 2;
-      const tItems = document.querySelectorAll('.timeline-item');
-      if (tItems[timelineIdx]) tItems[timelineIdx].classList.add('is-active');
-
-      videoPlayer.src = data.src;
-      videoDesc.textContent = data.desc;
-      videoPlayer.play().catch(() => {});
+    // Slide 5: 役職カード反転
+    let isRoleFlipped = false;
+    const simRoleInner = document.getElementById('simRoleInner');
+    const simRoleLabel = document.getElementById('simRoleLabel');
+    function toggleSimRoleCard() {
+      isRoleFlipped = !isRoleFlipped;
+      simRoleInner.style.transform = isRoleFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)';
+      simRoleLabel.textContent = isRoleFlipped ? '開示中：🐺 人狼神（人狼陣営）' : 'タップしてカードを開示';
     }
 
-    function playPauseVideo() {
-      if (!videoPlayer) return;
-      if (videoPlayer.paused) {
-        videoPlayer.play().catch(() => {});
-      } else {
-        videoPlayer.pause();
+    // Slide 6: 1日サイクル実画面切替
+    function showPhaseView(idx) {
+      for (let i = 0; i < 3; i++) {
+        document.getElementById('phaseSim' + i).classList.toggle('is-active', i === idx);
+        document.getElementById('phaseCard' + i).classList.toggle('is-active', i === idx);
       }
     }
 
-    // 初期化
     updateSlide(1);
   </script>
 </body>
