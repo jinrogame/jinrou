@@ -434,24 +434,64 @@
       object-fit: cover;
       display: block;
     }
+    .flow-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .flow-step-item {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 9px 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    }
+    .flow-step-num {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 12px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .flow-step-body h4 {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+    .flow-step-body p {
+      font-size: 11.8px;
+      color: var(--text-sub);
+      line-height: 1.45;
+    }
     .screenshots-row {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
     }
     .screenshot-card {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 12px;
+      border-radius: 8px;
+      padding: 10px;
       box-shadow: var(--shadow);
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 4px;
     }
     .screenshot-thumb {
       width: 100%;
-      height: 220px;
+      height: 130px;
       border-radius: 6px;
       overflow: hidden;
       background: #0f172a;
@@ -463,8 +503,8 @@
       object-fit: cover;
       object-position: top;
     }
-    .screenshot-card h5 { font-size: 13px; font-weight: 800; color: var(--text); }
-    .screenshot-card p { font-size: 11.5px; color: var(--text-sub); line-height: 1.45; }
+    .screenshot-card h5 { font-size: 11.5px; font-weight: 800; color: var(--text); }
+    .screenshot-card p { font-size: 10.5px; color: var(--text-sub); line-height: 1.35; }
 
     /* SLIDE 5: 役職確認（実画面スクショ＆反転カード） */
     .reveal-layout {
@@ -879,48 +919,86 @@
       <!-- SLIDE 4: ゲームの始め方 ①（縦型スマホ実画面操作動画 ＆ 実際のスクショ） -->
       <section class="slide" data-index="4">
         <div class="slide-header">
-          <span class="slide-badge">GETTING STARTED 1</span>
-          <h2 class="slide-title">ゲームの始め方 ①：参加・アバター登録・ロビー集合</h2>
-          <p class="slide-desc">左側の縦長スマホ動画で、名前入力から顔写真撮影、ロビー集合までの実際の操作画面を確認できます。</p>
+          <span class="slide-badge">GETTING STARTED</span>
+          <h2 class="slide-title">ゲームの始め方：ルーム作成から開始までの流れ</h2>
+          <p class="slide-desc">実際のスマホ画面を操作した動画（左側）と画面スクリーンショットで、ルーム作成からゲーム開始までの一連の流れを解説します。</p>
         </div>
         <div class="video-demo-layout">
           <!-- 縦型スマホ実画面操作動画 -->
           <div>
             <div class="phone-video-frame">
-              <video src="movies/screen_onboarding.webm" autoplay loop muted playsinline controls></video>
+              <video src="movies/screen_onboarding.webm" poster="img/actual_screen_lobby.png" autoplay loop muted playsinline controls></video>
             </div>
             <div style="font-size:11.5px;color:var(--primary-dark);font-weight:700;text-align:center;margin-top:6px">
-              🎬 実画面操作動画（自動ループ再生）
+              🎬 実際のスマホ操作動画（ルーム作成 → QR参加 → 役職設定 → 開始）
             </div>
           </div>
 
-          <!-- 右側：実際の画面スクリーンショットと解説 -->
-          <div style="display:flex;flex-direction:column;gap:14px">
-            <div class="panel" style="padding:14px">
-              <h4 style="font-size:14px;font-weight:800;color:var(--text);margin-bottom:4px">参加手順（所要時間：約10秒）</h4>
-              <p style="font-size:12.5px;color:var(--text-sub);line-height:1.6">
-                1. ホスト画面に表示されたQRコードをスマホの標準カメラでスキャンします。<br>
-                2. 名前を入力し、インカメラで自分の顔写真をパシャリと撮影します。<br>
-                3. 「入室する」ボタンを押すと、全員のアイコンがロビーに並びます。
-              </p>
+          <!-- 右側：実際の画面スクリーンショットと5ステップ解説 -->
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <!-- 5ステップ詳細解説 -->
+            <div class="flow-steps">
+              <div class="flow-step-item">
+                <div class="flow-step-num">1</div>
+                <div class="flow-step-body">
+                  <h4>オーナーが名前を入力してルームID発行</h4>
+                  <p>ニックネームを入力し「部屋を作成」をタップ。専用の4桁英数字ルームIDが即時発行されます。</p>
+                </div>
+              </div>
+              <div class="flow-step-item">
+                <div class="flow-step-num">2</div>
+                <div class="flow-step-body">
+                  <h4>他のメンバーがQRコードを読み取って参加</h4>
+                  <p>ロビー画面に表示されたQRコードをスマホカメラで読み取って入室。全員のアバター写真がリアルタイムに並びます。</p>
+                </div>
+              </div>
+              <div class="flow-step-item">
+                <div class="flow-step-num">3</div>
+                <div class="flow-step-body">
+                  <h4>オーナーが使用する役職を決める</h4>
+                  <p>「⚙️ ルール・役職設定」を開き、参加人数に合わせた役職の配分（市民、占い師、騎士、霊媒師、人狼、裏切り者等）を設定します。</p>
+                </div>
+              </div>
+              <div class="flow-step-item">
+                <div class="flow-step-num">4</div>
+                <div class="flow-step-body">
+                  <h4>オーナーが「ゲーム開始」を押す</h4>
+                  <p>メンバーが揃い役職設定を確認したら、オーナーが画面下部の「ゲーム開始」ボタンを押します。</p>
+                </div>
+              </div>
+              <div class="flow-step-item">
+                <div class="flow-step-num">5</div>
+                <div class="flow-step-body">
+                  <h4>手元に秘密の役職カードが配られゲーム開始</h4>
+                  <p>全員の画面が0日目の役職確認画面に切り替わり、カードをめくって自分の役職を確認します。</p>
+                </div>
+              </div>
             </div>
 
-            <!-- 実際の画面スクリーンショット -->
+            <!-- 実際の画面スクリーンショット（3ステップ） -->
             <div class="screenshots-row">
               <div class="screenshot-card">
                 <div class="screenshot-thumb">
                   <img src="img/actual_screen_title.png" alt="実際の登録画面スクリーンショット">
                 </div>
-                <h5>① 実際の登録画面</h5>
-                <p>名前入力とカメラ起動ボタン。顔写真は自動で丸型アイコンにトリミングされます。</p>
+                <h5>① 名前入力と部屋作成</h5>
+                <p>名前を入力し「部屋を作成」でルームID発行</p>
               </div>
 
               <div class="screenshot-card">
                 <div class="screenshot-thumb">
                   <img src="img/actual_screen_lobby.png" alt="実際のロビー画面スクリーンショット">
                 </div>
-                <h5>② 実際のロビー画面</h5>
-                <p>参加メンバーの写真が一覧表示されます。ホストが「ゲーム開始」を押すと開始します。</p>
+                <h5>② QRコード表示と集合</h5>
+                <p>QRコードを読み取って他メンバーが続々集合</p>
+              </div>
+
+              <div class="screenshot-card">
+                <div class="screenshot-thumb">
+                  <img src="img/actual_screen_role_config.png" alt="実際の役職設定画面スクリーンショット">
+                </div>
+                <h5>③ 役職配分の設定</h5>
+                <p>設定ダイアログで人数に応じた役職を決定</p>
               </div>
             </div>
           </div>
@@ -1326,6 +1404,7 @@
     function updateSlide(newIndex) {
       if (newIndex < 1 || newIndex > TOTAL_SLIDES) return;
       currentSlide = newIndex;
+      history.replaceState(null, '', '#' + currentSlide);
 
       slides.forEach((s) => {
         const idx = parseInt(s.dataset.index, 10);
@@ -1429,7 +1508,12 @@
       v.play().catch(() => {});
     }
 
-    updateSlide(1);
+    // 初期表示：URLハッシュ (#4 等) があればそのスライド、なければ1
+    const initHashMatch = location.hash.match(/#(\d+)/);
+    const initialSlide = (initHashMatch && parseInt(initHashMatch[1], 10) >= 1 && parseInt(initHashMatch[1], 10) <= TOTAL_SLIDES)
+      ? parseInt(initHashMatch[1], 10)
+      : 1;
+    updateSlide(initialSlide);
   </script>
 </body>
 </html>
