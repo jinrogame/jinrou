@@ -908,6 +908,65 @@ document.getElementById("myRoleDialog")?.addEventListener("click", (e) => {
   if (e.target === dlgEl) dlgEl.close();
 });
 
+/* 📊 朝のタスク貢献度＆獲得効果モーダル（昼・夜に共通して確認可能） */
+export function openTaskInfoModal() {
+  const dlgEl = document.getElementById("taskInfoDialog");
+  const content = document.getElementById("taskInfoContent");
+  if (!dlgEl || !content) return;
+
+  const es = S.room?.effectState;
+  const eff = EFFECTS.find((e) => e.id === es?.id);
+  const res = S.room?.taskResult;
+
+  if (!res && !es) {
+    content.innerHTML = `
+      <div class="card card--blue center" style="padding:16px">
+        <p class="muted" style="color:#dbe5ff;font-weight:700">まだ朝のタスクが行われていません。</p>
+        <p style="font-size:11.5px;color:var(--muted);margin-top:6px">※1日目の朝タスク終了後から確認できます。</p>
+      </div>`;
+  } else {
+    const ok = res?.success;
+    const taskHeader = res ? `
+      <div class="card ${ok ? 'card--amber' : 'card--red'}" style="padding:10px 12px;margin-bottom:8px">
+        <div class="row-between">
+          <b style="font-size:13.5px">${ok ? '🎉 タスク成功！' : '💥 タスク失敗…'}</b>
+          <span class="chip ${ok ? 'chip--green' : 'chip--red'}" style="font-size:11px">${ok ? 'クリア' : '失敗'}</span>
+        </div>
+        <p style="font-size:12px;color:var(--text);margin-top:4px;font-weight:700">${esc(res.summary)}</p>
+      </div>` : '';
+
+    const effectCard = es ? `
+      <div class="card card--glow ${es.applied ? (es.type === 'reward' ? 'card--green' : 'card--red') : 'card--blue'}" style="padding:10px 12px;margin-bottom:8px">
+        <div style="display:flex;align-items:center;gap:6px">
+          <span style="font-size:16px">${es.applied ? (es.type === 'reward' ? '✨' : '💀') : 'ℹ️'}</span>
+          <b style="font-size:13px;color:#fff">${es.applied ? (es.type === 'reward' ? '【獲得報酬】' : '【発生中の罰】') : '【効果ステータス】'}${esc(eff?.name || 'なし')}</b>
+        </div>
+        <p class="muted" style="font-size:11.5px;margin-top:3px;line-height:1.4">${esc(eff?.short || '')}（${es.applied ? (es.type === 'reward' ? '効果発動中' : '今晩適用') : 'タスク失敗のため未獲得'}）</p>
+        ${es.wolfAlive != null ? `<div style="font-size:12px;color:#fca5a5;font-weight:900;margin-top:4px">🐺 人狼陣営の生存数：${es.wolfAlive}人</div>` : ''}
+      </div>` : '';
+
+    const contribSection = res ? `
+      <div class="card" style="padding:10px 12px">
+        <h3 style="font-size:12.5px;font-weight:800;color:var(--text);margin-bottom:6px;display:flex;align-items:center;gap:4px">
+          <span>👥</span> 各プレイヤーの貢献度一覧
+        </h3>
+        <p class="muted" style="font-size:10.5px;margin-bottom:8px">※誰がどれだけ貢献したか（または足を引っ張ったか）を確認できます。</p>
+        <div class="contrib" style="max-height:240px;overflow-y:auto">${contribHtml()}</div>
+      </div>` : '';
+
+    content.innerHTML = taskHeader + effectCard + contribSection;
+  }
+
+  if (!dlgEl.open) dlgEl.showModal();
+}
+document.getElementById("btnCloseTaskInfo")?.addEventListener("click", () => {
+  document.getElementById("taskInfoDialog")?.close();
+});
+document.getElementById("taskInfoDialog")?.addEventListener("click", (e) => {
+  const dlgEl = document.getElementById("taskInfoDialog");
+  if (e.target === dlgEl) dlgEl.close();
+});
+
 leaveDlg?.addEventListener("click", (e) => { if (e.target === leaveDlg) leaveDlg.close(); });
 $("#btnLeaveCancel")?.addEventListener("click", () => leaveDlg?.close());
 $("#btnLeaveConfirm")?.addEventListener("click", () => {
@@ -919,6 +978,7 @@ phone?.addEventListener("click", (e) => {
   if (e.target.closest("[data-open-role-list]")) showRoleListModal();
   if (e.target.closest("[data-check-my-role]")) openMyRoleConfirm();
   if (e.target.closest("#btnOpenManual")) showManualModal();
+  if (e.target.closest("#btnDayInfo, #btnNightTaskInfo, [data-open-task-info]")) openTaskInfoModal();
 });
 
 function syncOk(r, required, label, canOk = true) {
@@ -1458,8 +1518,9 @@ function buildNight(night0) {
   } else body = cards.join("");
   const eff = !night0 && S.room.effectState?.applied ? `<span class="chip chip--${S.room.effectState.type === "reward" ? "green" : "red"}">${esc(EFFECTS.find((e) => e.id === S.room.effectState.id)?.short ?? "")}</span>` : "";
   const roleCheckBtn = `<button type="button" class="chip chip--amber" data-check-my-role style="cursor:pointer;font-weight:800;border:1px solid #fbbf24">🃏 役職確認</button>`;
+  const taskInfoBtn = !night0 ? `<button type="button" class="chip chip--cyan" id="btnNightTaskInfo" data-open-task-info style="cursor:pointer;font-weight:800">📊 貢献度</button>` : "";
   return shell({
-    body: `<div class="hdr"><h1 class="hdr__title">🌙 ${night0 ? "初日の夜（0ターン目）" : "夜：スキル"}</h1><div style="display:flex;gap:4px;align-items:center">${roleCheckBtn}${eff}${night0 ? "" : ring(TIME.skill)}</div></div>${body}`,
+    body: `<div class="hdr"><h1 class="hdr__title">🌙 ${night0 ? "初日の夜（0ターン目）" : "夜：スキル"}</h1><div style="display:flex;gap:4px;align-items:center">${roleCheckBtn}${taskInfoBtn}${eff}${night0 ? "" : ring(TIME.skill)}</div></div>${body}`,
     footer: okFooter("OK（夜の行動完了）", "btn--violet"),
   });
 }
@@ -1744,26 +1805,21 @@ SCREENS.day = {
     return shell({
       phase: "day", bg: "bg_day",
       body: `
-      <div class="hdr"><h1 class="hdr__title">🗣️ 昼のターン：議論中</h1><span class="chip chip--accent">Turn ${Math.min(S.room.turn, S.room.maxTurns)} / ${S.room.maxTurns}</span></div>
+      <div class="hdr">
+        <h1 class="hdr__title">🗣️ 昼のターン：議論中</h1>
+        <div style="display:flex;gap:4px;align-items:center">
+          <button type="button" class="chip chip--cyan" data-open-task-info style="cursor:pointer;font-weight:800">📊 貢献度・効果</button>
+          <span class="chip chip--accent">Turn ${Math.min(S.room.turn, S.room.maxTurns)} / ${S.room.maxTurns}</span>
+        </div>
+      </div>
       ${ring(TIME.day, "", "var(--accent)")}
       <div class="card"><div class="row-between"><b>プレイヤー状況</b><span class="chip chip--green" id="aliveChip"></span></div><div class="avatar-grid" id="dayAvatars"></div></div>
-      <button type="button" class="btn btn--sm" id="btnDayInfo">📊 タスク貢献度・発生中の報酬/罰を確認</button>
+      <button type="button" class="btn btn--sm" id="btnDayInfo" data-open-task-info>📊 朝のタスク貢献度＆獲得効果を確認</button>
       ${!imAlive ? ghostStampBoxHtml() : ""}`,
       footer: okFooter("議論終了（夜のターンへ）"),
     });
   },
-  bind(r) {
-    bindCommon(r);
-    $("#btnDayInfo", r).addEventListener("click", () => {
-      const es = S.room.effectState, eff = EFFECTS.find((e) => e.id === es?.id), res = S.room.taskResult;
-      const bad = res?.contrib.filter((c) => !c.ok).map((c) => nameOf(c.uid)) || [];
-      showDialog({
-        ico: "📊", title: "今朝の貢献度・発生中の効果",
-        body: `<div style="font-size:13px;text-align:left;font-weight:700;line-height:1.6">${es?.applied ? `${es.type === "reward" ? "✨ 発動中" : "💀 罰"}：${esc(eff.name)}` : "発動中の効果：なし"}<br>${es?.wolfAlive != null ? `🐺 人狼陣営の生存数：${es.wolfAlive}人<br>` : ""}${res ? `🎯 タスク：${res.success ? "成功" : "失敗"}（${esc(res.summary)}）<br>⚠️ 未達：${bad.length ? bad.map(esc).join("・") : "なし"}` : ""}</div>`,
-        note: "※画面をスクロールさせずにモーダルで確認できます。",
-      });
-    });
-  },
+  bind: bindCommon,
   update(r) {
     const list = sortedPlayers(), alive = list.filter((p) => p.alive).length;
     $("#aliveChip", r).textContent = `生存 ${alive} / 脱落 ${list.length - alive}`;
@@ -1789,7 +1845,7 @@ function voteScreen(kind) {
       else body = `<div class="card card--violet"><h2 class="card__title"><span class="dot"></span>追放したいプレイヤーを1人選択</h2>
         <p class="muted">※最多得票が同数の場合は翌朝のルーレットで決定！「誰にも投票しない」も選択可能です。${flags.doubleExile ? "<br>💀罰発動中：上位2名が追放されます！" : ""}</p></div>${picksHtml("vote", list, "", { allowSkip: true })}`;
       return shell({
-        body: `<div class="hdr"><h1 class="hdr__title">🌙 夜：${revive ? "復活投票" : "追放投票"}</h1>${ring(revive ? TIME.revive : TIME.vote)}</div>${body}`,
+        body: `<div class="hdr"><h1 class="hdr__title">🌙 夜：${revive ? "復活投票" : "追放投票"}</h1><div style="display:flex;gap:4px;align-items:center"><button type="button" class="chip chip--cyan" id="btnNightTaskInfo" data-open-task-info style="cursor:pointer;font-weight:800">📊 貢献度</button>${ring(revive ? TIME.revive : TIME.vote)}</div></div>${body}`,
         footer: okFooter(revive ? "復活に投票する" : "投票する", revive ? "btn--green" : "btn--red"),
       });
     },

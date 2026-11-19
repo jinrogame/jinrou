@@ -96,6 +96,16 @@
     </div>
   </dialog>
 
+  <!-- 📊 朝のタスク貢献度＆獲得効果モーダル（昼・夜のターンでいつでも確認可能） -->
+  <dialog class="result result--config" id="taskInfoDialog" aria-labelledby="taskInfoTitle">
+    <div class="result__ico">📊</div>
+    <h2 class="result__title" id="taskInfoTitle">朝のタスク貢献度＆獲得効果</h2>
+    <div class="config-modal-scroll" id="taskInfoContent"></div>
+    <div style="margin-top:10px">
+      <button type="button" class="btn btn--solid btn--cyan" id="btnCloseTaskInfo">閉じる</button>
+    </div>
+  </dialog>
+
   <script type="module" src="js/main.js?v=8"></script>
 </body>
 </html>

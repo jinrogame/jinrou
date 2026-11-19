@@ -565,6 +565,34 @@
       margin-top: 4px;
       line-height: 1.5;
     }
+    .night-role-tabs {
+      display: flex;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .role-pill-btn {
+      flex: 1;
+      padding: 6px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--border-strong);
+      background: var(--surface);
+      color: var(--text);
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .role-pill-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+    .role-pill-btn.is-active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+      box-shadow: 0 2px 6px rgba(37,99,235,0.25);
+    }
 
     .phase-video-column {
       display: flex;
@@ -1077,19 +1105,25 @@
             <div class="phase-tab-btn" id="phaseBtn2" onclick="switchPhaseMedia(2)">
               <div class="phase-tab-title">
                 <span>🌙 ③ 夜のターン（制限時間：5分）</span>
-                <span class="phase-tab-badge">投票＆スキル</span>
+                <span class="phase-tab-badge">追放投票 ➔ スキル</span>
               </div>
               <p>
-                <b>追放投票</b> ➔ （脱落者復活投票） ➔ <b>役職スキル発動</b>（占い・護衛・夜襲・蘇生）。占い・霊媒の結果は画面に即時表示されます。
+                <b>追放投票</b>（追放する人を決定） ➔ <b>役職スキル発動</b>（占い・護衛・夜襲等）。役職別の3パターンを動画で確認できます。
               </p>
+              <!-- 役職パターン切り替えタブ -->
+              <div class="night-role-tabs" id="nightRoleTabs" style="display:none" onclick="event.stopPropagation()">
+                <button type="button" class="role-pill-btn is-active" id="btnRoleSeer" onclick="switchNightRole('seer')">🔮 占い師</button>
+                <button type="button" class="role-pill-btn" id="btnRoleCit" onclick="switchNightRole('citizen')">👤 市民</button>
+                <button type="button" class="role-pill-btn" id="btnRoleWolf" onclick="switchNightRole('werewolf')">🐺 人狼</button>
+              </div>
             </div>
 
             <div class="panel" style="padding:12px 14px;margin-top:4px">
               <h4 style="font-size:12.5px;font-weight:800;color:var(--text);margin-bottom:4px">💡 各ターンのポイント</h4>
               <ul style="font-size:11.5px;color:var(--text-sub);line-height:1.55;padding-left:16px;margin:0">
                 <li><b>朝（タスク）</b>：5種のミニゲームから1日1つ抽選。全員で協力して成功を目指します。</li>
-                <li><b>昼（議論）</b>：タスク貢献度や発生効果は、画面上のボタンでいつでも確認できます。</li>
-                <li><b>夜（投票・スキル）</b>：占い師や霊媒師の結果は、手元に即時ダイアログで表示されます。</li>
+                <li><b>昼（議論）</b>：タスク貢献度グラフや獲得効果は、「📊 貢献度」ボタンからいつでもポップアップで確認可能。</li>
+                <li><b>夜（投票 ➔ スキル）</b>：追放投票のあとに役職スキル画面へ遷移。占い師・霊媒師の結果は待たずに手元に即時表示！</li>
               </ul>
             </div>
           </div>
@@ -1504,14 +1538,52 @@
       }
     ];
 
-    function switchPhaseMedia(idx) {
-      const data = phaseMediaData[idx];
-      if (!data) return;
+    let currentNightRole = 'seer';
 
+    function switchNightRole(role) {
+      currentNightRole = role;
+      document.getElementById('btnRoleSeer')?.classList.toggle('is-active', role === 'seer');
+      document.getElementById('btnRoleCit')?.classList.toggle('is-active', role === 'citizen');
+      document.getElementById('btnRoleWolf')?.classList.toggle('is-active', role === 'werewolf');
+
+      const v = document.getElementById('phaseVideo');
+      const label = document.getElementById('phaseMediaLabel');
+      const badge = document.getElementById('phaseTypeBadge');
+      const desc = document.getElementById('phaseMediaDesc');
+
+      if (role === 'seer') {
+        label.textContent = '🌙 夜のプレイ動画【占い師】：追放投票 ➔ 占い先選択 ➔ 即時判定';
+        badge.textContent = '夜：占い師';
+        desc.textContent = '追放したい人を投票後、スキル画面へ遷移。占う対象を選んで「占う」を押すと、手元に即時判定（人間）が表示されます。';
+        v.src = 'movies/screen_night_seer.webm';
+      } else if (role === 'citizen') {
+        label.textContent = '🌙 夜のプレイ動画【市民】：追放投票 ➔ 行動なし（OKで完了）';
+        badge.textContent = '夜：市民';
+        desc.textContent = '追放したい人を投票後、スキル画面へ遷移。市民は固有スキルがないため「夜の行動はありません」と表示。全員同じ操作をするためスマホ操作から役職がバレません。';
+        v.src = 'movies/screen_night_citizen.webm';
+      } else if (role === 'werewolf') {
+        label.textContent = '🌙 夜のプレイ動画【人狼】：追放投票 ➔ 仲間確認＆襲撃先選択';
+        badge.textContent = '夜：人狼';
+        desc.textContent = '追放したい人を投票後、スキル画面へ遷移。仲間の人狼を確認し、今夜襲撃する市民陣営のプレイヤーを選択して夜襲を実行します。';
+        v.src = 'movies/screen_night_werewolf.webm';
+      }
+      v.play().catch(() => {});
+    }
+
+    function switchPhaseMedia(idx) {
       for (let i = 0; i < 3; i++) {
         document.getElementById('phaseBtn' + i).classList.toggle('is-active', i === idx);
       }
+      const roleTabs = document.getElementById('nightRoleTabs');
+      if (roleTabs) roleTabs.style.display = (idx === 2) ? 'flex' : 'none';
 
+      if (idx === 2) {
+        switchNightRole(currentNightRole);
+        return;
+      }
+
+      const data = phaseMediaData[idx];
+      if (!data) return;
       document.getElementById('phaseMediaLabel').textContent = data.label;
       document.getElementById('phaseTypeBadge').textContent = data.badge;
       document.getElementById('phaseMediaDesc').textContent = data.desc;
