@@ -518,8 +518,8 @@
     /* SLIDE 6: 1日のゲームサイクル（朝タスク・昼・夜 ＆ 実画面動画切り替え） */
     .cycle-layout-new {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
+      grid-template-columns: 1fr 300px;
+      gap: 24px;
       width: 100%;
       align-items: start;
     }
@@ -529,7 +529,7 @@
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 10px;
-      padding: 14px 16px;
+      padding: 13px 16px;
       cursor: pointer;
       transition: all 0.2s;
       box-shadow: var(--shadow);
@@ -538,9 +538,10 @@
     .phase-tab-btn.is-active {
       border-color: var(--primary);
       background: var(--primary-light);
+      box-shadow: 0 4px 14px rgba(37,99,235,0.12);
     }
     .phase-tab-title {
-      font-size: 15px;
+      font-size: 14.5px;
       font-weight: 800;
       display: flex;
       align-items: center;
@@ -559,40 +560,38 @@
       color: #fff;
     }
     .phase-tab-btn p {
-      font-size: 12.5px;
+      font-size: 12.2px;
       color: var(--text-sub);
       margin-top: 4px;
       line-height: 1.5;
     }
 
-    .phase-media-box {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 16px;
-      box-shadow: var(--shadow);
+    .phase-video-column {
       display: flex;
       flex-direction: column;
-      gap: 12px;
-    }
-    .phase-screen-img {
-      width: 100%;
-      height: 240px;
-      border-radius: 8px;
-      overflow: hidden;
+      align-items: center;
+      background: var(--surface);
       border: 1px solid var(--border);
-      background: #0f172a;
+      border-radius: 14px;
+      padding: 14px;
+      box-shadow: var(--shadow);
     }
-    .phase-screen-img img {
+    .phase-phone-frame {
+      width: 260px;
+      height: 480px;
+      background: #000;
+      border: 6px solid #1e293b;
+      border-radius: 28px;
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+    }
+    .phase-phone-frame video {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      object-position: top;
+      display: block;
     }
-    .phase-movie-wrap {
-      width: 100%;
-      height: 160px;
-      border-radius: 8px;
       overflow: hidden;
       background: #000;
     }
@@ -1050,7 +1049,7 @@
         <div class="slide-header">
           <span class="slide-badge">GAME CYCLE</span>
           <h2 class="slide-title">1日のゲームサイクル（朝 ➔ 昼 ➔ 夜）</h2>
-          <p class="slide-desc">タスク（ミニゲーム）は「朝」のターンに実行します。左のフェーズを選択すると右側の実画面と演出動画が連動します。</p>
+          <p class="slide-desc">タスク（ミニゲーム）は「朝」のターンに実行します。左のフェーズを選択すると、右側に各ターンの実際のスマホプレイ動画が切り替わります。</p>
         </div>
         <div class="cycle-layout-new">
           <!-- フェーズ切り替えボタン群 -->
@@ -1084,25 +1083,31 @@
                 <b>追放投票</b> ➔ （脱落者復活投票） ➔ <b>役職スキル発動</b>（占い・護衛・夜襲・蘇生）。占い・霊媒の結果は画面に即時表示されます。
               </p>
             </div>
+
+            <div class="panel" style="padding:12px 14px;margin-top:4px">
+              <h4 style="font-size:12.5px;font-weight:800;color:var(--text);margin-bottom:4px">💡 各ターンのポイント</h4>
+              <ul style="font-size:11.5px;color:var(--text-sub);line-height:1.55;padding-left:16px;margin:0">
+                <li><b>朝（タスク）</b>：5種のミニゲームから1日1つ抽選。全員で協力して成功を目指します。</li>
+                <li><b>昼（議論）</b>：タスク貢献度や発生効果は、画面上のボタンでいつでも確認できます。</li>
+                <li><b>夜（投票・スキル）</b>：占い師や霊媒師の結果は、手元に即時ダイアログで表示されます。</li>
+              </ul>
+            </div>
           </div>
 
-          <!-- 右側：選択中フェーズの実際の画面スクリーンショット ＆ 演出動画 -->
-          <div class="phase-media-box">
-            <div style="display:flex;justify-content:space-between;align-items:center">
-              <b style="font-size:13px;color:var(--text)" id="phaseMediaLabel">🌅 朝の実際の画面（タスク連打＆貢献度）</b>
-              <span class="badge badge--reward" id="phaseTypeBadge">実画面スクショ</span>
+          <!-- 右側：選択中フェーズの実際のスマホプレイ動画 -->
+          <div class="phase-video-column">
+            <div style="width:100%;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+              <b style="font-size:12px;color:var(--text);font-weight:800" id="phaseMediaLabel">🌅 朝のプレイ動画（タスク発表・連打・貢献度）</b>
+              <span class="badge badge--reward" id="phaseTypeBadge">朝のプレイ動画</span>
             </div>
 
-            <div class="phase-screen-img">
-              <img id="phaseImg" src="img/actual_screen_morning_task.png" alt="実際のゲーム画面">
+            <div class="phase-phone-frame">
+              <video id="phaseVideo" src="movies/screen_morning.webm" poster="img/actual_screen_morning_task.png" autoplay loop muted playsinline controls></video>
             </div>
 
-            <div style="font-size:12px;color:var(--text-muted);font-weight:700">
-              🎬 ターン開始演出動画（自動ループ再生）
-            </div>
-            <div class="phase-movie-wrap">
-              <video id="phaseVideo" src="movies/morning_attack.mp4" autoplay loop muted playsinline controls></video>
-            </div>
+            <p style="font-size:11px;color:var(--text-sub);line-height:1.4;margin-top:8px;text-align:center" id="phaseMediaDesc">
+              昨晩の犠牲者発表から本日のタスク発表、画面タップでの連打ミニゲーム、タスク成否判定と個人貢献度ランキングまでの実際の操作画面です。
+            </p>
           </div>
         </div>
       </section>
@@ -1474,22 +1479,28 @@
       btnFullscreen.innerHTML = document.fullscreenElement ? '<span>✕</span> 解除' : '<span>⛶</span> 全画面';
     });
 
-    // Slide 6: フェーズメディア切替（実画面スクショ ＆ 演出動画）
+    // Slide 6: フェーズメディア切替（各ターンの実際のスマホプレイ動画）
     const phaseMediaData = [
       {
-        label: '🌅 朝の実際の画面（タスク連打＆貢献度）',
-        img: 'img/actual_screen_morning_task.png',
-        video: 'movies/morning_attack.mp4'
+        label: '🌅 朝のプレイ動画（タスク発表・連打・貢献度）',
+        badge: '朝のプレイ動画',
+        poster: 'img/actual_screen_morning_task.png',
+        video: 'movies/screen_morning.webm',
+        desc: '昨晩の犠牲者発表から本日のタスク発表、画面タップでの連打ミニゲーム、タスク成否判定と個人貢献度ランキングまでの実際の操作画面です。'
       },
       {
-        label: '☀️ 昼の実際の画面（話し合い＆生存者一覧）',
-        img: 'img/actual_screen_day_discuss.png',
-        video: 'movies/day_gather.mp4'
+        label: '☀️ 昼のプレイ動画（制限時間・生存者・貢献度確認）',
+        badge: '昼のプレイ動画',
+        poster: 'img/actual_screen_day_discuss.png',
+        video: 'movies/screen_day.webm',
+        desc: '昼の話し合いタイム。生存者一覧や円形タイマーのカウントダウン、モーダルでの朝のタスク貢献度・発動効果確認の実際の操作画面です。'
       },
       {
-        label: '🌙 夜の実際の画面（追放投票＆占い即時表示）',
-        img: 'img/actual_screen_night_vote.png',
-        video: 'movies/night_howl.mp4'
+        label: '🌙 夜のプレイ動画（追放投票・占いスキル・即時結果）',
+        badge: '夜のプレイ動画',
+        poster: 'img/actual_screen_night_vote.png',
+        video: 'movies/screen_night.webm',
+        desc: '追放投票で対象を選択する画面と、占い師が占う対象を選択して実行し、その場で即時に「人間」と判定が出る一連の操作画面です。'
       }
     ];
 
@@ -1502,8 +1513,10 @@
       }
 
       document.getElementById('phaseMediaLabel').textContent = data.label;
-      document.getElementById('phaseImg').src = data.img;
+      document.getElementById('phaseTypeBadge').textContent = data.badge;
+      document.getElementById('phaseMediaDesc').textContent = data.desc;
       const v = document.getElementById('phaseVideo');
+      v.poster = data.poster;
       v.src = data.video;
       v.play().catch(() => {});
     }
